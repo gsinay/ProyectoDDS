@@ -1,5 +1,6 @@
 
 using System.Text.Json;
+using Fire_Emblem.Characters;
 
 namespace Fire_Emblem;
 public class JsonHandler
@@ -40,24 +41,6 @@ public class JsonHandler
         return character;
     }
 
-    public Skill GetSkill(string skillName)
-    {
-        string jsonString = File.ReadAllText("skills.json");
-        var skills = JsonSerializer.Deserialize<List<Skill>>(jsonString);
-
-        if (skills == null)
-        {
-            throw new Exception("Error en deserializar");
-        }
-
-        var skill = skills.FirstOrDefault(s => s.Name.Equals(skillName, StringComparison.OrdinalIgnoreCase));
-
-        if (skill == null)
-        {
-            throw new Exception($"No se encontró la skill de ese nombre");
-        }
-
-        return skill;
-    }
+    
 }
 

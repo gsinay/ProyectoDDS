@@ -12,4 +12,9 @@
       <ProjectReference Include="..\Fire-Emblem-View\Fire-Emblem-View.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Skills\AtkDefPlusFive.cs" />
+      <Compile Remove="Skills\FairFight.cs" />
+    </ItemGroup>
+
 </Project>

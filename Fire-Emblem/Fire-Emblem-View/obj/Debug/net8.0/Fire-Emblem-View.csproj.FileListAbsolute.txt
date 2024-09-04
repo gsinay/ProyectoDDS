@@ -9,3 +9,15 @@
 /Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/refint/Fire-Emblem-View.dll
 /Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.pdb
 /Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/ref/Fire-Emblem-View.dll
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/bin/Debug/net8.0/Fire-Emblem-View.deps.json
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/bin/Debug/net8.0/Fire-Emblem-View.dll
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/bin/Debug/net8.0/Fire-Emblem-View.pdb
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.GeneratedMSBuildEditorConfig.editorconfig
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.AssemblyInfoInputs.cache
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.AssemblyInfo.cs
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.csproj.CoreCompileInputs.cache
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.sourcelink.json
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.dll
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/refint/Fire-Emblem-View.dll
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/Fire-Emblem-View.pdb
+/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/Debug/net8.0/ref/Fire-Emblem-View.dll

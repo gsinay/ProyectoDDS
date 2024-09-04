@@ -1,4 +1,5 @@
 using Fire_Emblem_View;
+using Fire_Emblem.Characters;
 
 namespace Fire_Emblem;
 
@@ -8,6 +9,7 @@ public class Setup
     private View _view;
     private string _teamsFolder;
     private JsonHandler _jsonHandler = new JsonHandler();
+    private SkillFactory _skillFactory;
     private Player[] _players;
 
     public Player[] Players => _players;
@@ -15,6 +17,7 @@ public class Setup
     public Setup(View view, string teamsFolder)
     {
         _view = view;
+        _skillFactory = new SkillFactory(_view);
         _teamsFolder = teamsFolder;
         _players = new Player[2];
         _players[0] = new Player(playerNumber:1);
@@ -64,20 +67,8 @@ public class Setup
 
     private string FormatFileName(int selectedFileIndex)
     {
-        string fileName = "";
-        if (selectedFileIndex < 10)
-        {
-            fileName = $"00{selectedFileIndex}.txt";
-        }
-        else if (selectedFileIndex < 100)
-        {
-            fileName = $"0{selectedFileIndex}.txt";
-        }
-        else
-        {
-            fileName = $"{selectedFileIndex}.txt";
-        }
-
+        string[] files = GetOrderedFiles();
+        var fileName = Path.GetFileName(files[selectedFileIndex]);
         return Path.Combine(_teamsFolder, fileName);
     }
 
@@ -122,7 +113,7 @@ public class Setup
         Character returnCharacter = _jsonHandler.GetCharacter(name);
         for (int skillIndex = 0; skillIndex < skillsArray.Length; skillIndex++)
         {
-            Skill skill = _jsonHandler.GetSkill(skillsArray[skillIndex]);
+            ISkill skill = _skillFactory.GetSkill(skillsArray[skillIndex]);
             returnCharacter.AddSkill(skill);
         }
 

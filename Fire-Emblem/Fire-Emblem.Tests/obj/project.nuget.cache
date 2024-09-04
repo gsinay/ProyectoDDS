@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xdcWoKCn6m2Ti3qcPMLfC42FDb8R92iQZKJhLTYDqPHA2+teXtHhjh9zhkpaC6NI5EkNzHbi5e5Qb+bOXHMcDw==",
+  "dgSpecHash": "IVMT07kMYztK3QucdPG/c1+6Zs/JZqfAdDu8WA0thJSF4SrtZMJdQUjxzyfIq8G196mew4prO2N4vgp6z8HulA==",
   "success": true,
-  "projectFilePath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
+  "projectFilePath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
   "expectedPackageFiles": [
     "/Users/gabrielsinay/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
     "/Users/gabrielsinay/.nuget/packages/microsoft.codecoverage/17.8.0/microsoft.codecoverage.17.8.0.nupkg.sha512",

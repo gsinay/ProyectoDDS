@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj": {}
+    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj": {}
   },
   "projects": {
-    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
+    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj",
+        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj",
         "projectName": "Fire-Emblem-View",
-        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj",
+        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj",
         "packagesPath": "/Users/gabrielsinay/.nuget/packages/",
-        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/obj/",
+        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/gabrielsinay/.nuget/NuGet/NuGet.Config"
@@ -57,14 +57,14 @@
         }
       }
     },
-    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj": {
+    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
+        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
         "projectName": "Fire-Emblem.Tests",
-        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
+        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/Fire-Emblem.Tests.csproj",
         "packagesPath": "/Users/gabrielsinay/.nuget/packages/",
-        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem.Tests/obj/",
+        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/gabrielsinay/.nuget/NuGet/NuGet.Config"
@@ -79,11 +79,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
-                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj"
+              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
+                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj"
               },
-              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj": {
-                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj"
+              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj": {
+                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj"
               }
             }
           }
@@ -135,14 +135,14 @@
         }
       }
     },
-    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj": {
+    "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj",
+        "projectUniqueName": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj",
         "projectName": "Fire-Emblem",
-        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj",
+        "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/Fire-Emblem.csproj",
         "packagesPath": "/Users/gabrielsinay/.nuget/packages/",
-        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem/obj/",
+        "outputPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/gabrielsinay/.nuget/NuGet/NuGet.Config"
@@ -157,8 +157,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
-                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj"
+              "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj": {
+                "projectPath": "/Users/gabrielsinay/Desktop/progra/UniversiDAT/IIC2113-DDS/ProyectoDDS/Fire-Emblem/Fire-Emblem-View/Fire-Emblem-View.csproj"
               }
             }
           }

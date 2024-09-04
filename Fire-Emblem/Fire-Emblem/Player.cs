@@ -1,3 +1,5 @@
+using Fire_Emblem.Characters;
+
 namespace Fire_Emblem;
 
 public class Player

@@ -1,4 +1,5 @@
 using Fire_Emblem_View;
+using Fire_Emblem.Characters;
 
 namespace Fire_Emblem;
 
@@ -9,11 +10,14 @@ public class Combat
 
     private View _view;
 
+    private CombatLog _combatlog;
+
     public Combat(View view, Setup setup)
     {
         Players = setup.Players;
         Turno = 0;
         _view = view;
+        _combatlog = new CombatLog(_view);
     }
     
     public void StartCombat()
@@ -29,13 +33,32 @@ public class Combat
     {
         Character attackChar = SelectCharacter(attacker);
         Character defendingChar = SelectCharacter(defender);
+        attackChar.IsInitiatingCombat = true;
+        defendingChar.IsInitiatingCombat = false;
+        attackChar.ResetHasAttackStatus();
+        defendingChar.ResetHasAttackStatus();
+    
+        attackChar.ApplySkillsBeforeCombat(defendingChar, _combatlog);
+        defendingChar.ApplySkillsBeforeCombat(attackChar, _combatlog);
+    
         _view.WriteLine($"Round {Turno + 1}: {attackChar.Name} (Player {attacker.PlayerNumber}) comienza");
         PrintAdvantage(attackChar, defendingChar);
+        _combatlog.PrintLog(attackChar, defendingChar);
+    
         PerformAttacks(attackChar, defendingChar);
+    
         _view.WriteLine($"{attackChar.Name} ({attackChar.GetHP}) : {defendingChar.Name} ({defendingChar.GetHP})");
+    
+        attackChar.UpdateMostRecentOpponent(defendingChar);
+        defendingChar.UpdateMostRecentOpponent(attackChar);
+        
+        attackChar.ResetModifiers();
+        defendingChar.ResetModifiers();
+    
         CheckAndRemoveDeadCharacter(attacker, attackChar);
         CheckAndRemoveDeadCharacter(defender, defendingChar);
     }
+
     private Character SelectCharacter(Player player)
     {
         _view.WriteLine($"Player {player.PlayerNumber} selecciona una opción");
@@ -57,9 +80,11 @@ public class Combat
     {
         double WTB = CheckTriangleAdvantage(attacker, defender);
         if (WTB == 1.2)
-            _view.WriteLine($"{attacker.Name} ({attacker.Weapon}) tiene ventaja con respecto a {defender.Name} ({defender.Weapon})");
+            _view.WriteLine($"{attacker.Name} ({attacker.Weapon}) tiene ventaja con respecto a {defender.Name} " +
+                            $"({defender.Weapon})");
         else if(WTB == 0.8)
-            _view.WriteLine($"{defender.Name} ({defender.Weapon}) tiene ventaja con respecto a {attacker.Name} ({attacker.Weapon})");
+            _view.WriteLine($"{defender.Name} ({defender.Weapon}) tiene ventaja con respecto a {attacker.Name} " +
+                            $"({attacker.Weapon})");
         else
         {
             _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
@@ -86,19 +111,23 @@ public class Combat
     private void PerformAttacks(Character attacker, Character defender)
     {
         Attack(attacker, defender);
+        attacker.SetHasAttackedStatus();
+        attacker.ResetFirstAttackModifiers();
         if (!defender.IsAlive()) return;
         Attack(defender, attacker);
+        defender.SetHasAttackedStatus();
+        defender.ResetFirstAttackModifiers();
         if (!attacker.IsAlive()) return;
-        if (attacker.Spd - defender.Spd >= 5) Attack(attacker, defender);
-        else if (defender.Spd - attacker.Spd >= 5) Attack(defender, attacker);
+        if (attacker.EffectiveSpd - defender.EffectiveSpd >= 5) Attack(attacker, defender);
+        else if (defender.EffectiveSpd - attacker.EffectiveSpd >= 5) Attack(defender, attacker);
         else
             _view.WriteLine("Ninguna unidad puede hacer un follow up");
     }
     private void Attack(Character attackChar, Character defendingChar)
     {
         double WTB = CheckTriangleAdvantage(attackChar, defendingChar);
-        int effectiveDefense = attackChar.Weapon == "Magic" ? defendingChar.Res : defendingChar.Def;
-        int damage = Math.Max(0, (int)(attackChar.Atk * WTB) - effectiveDefense);
+        int effectiveDefense = attackChar.Weapon == "Magic" ? defendingChar.EffectiveRes : defendingChar.EffectiveDef;
+        int damage = Math.Max(0, (int)(attackChar.EffectiveAtk * WTB) - effectiveDefense);
         defendingChar.TakeDamage(damage); 
         _view.WriteLine($"{attackChar.Name} ataca a {defendingChar.Name} con {damage} de daño");
 
