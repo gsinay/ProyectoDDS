@@ -4,6 +4,7 @@ namespace Fire_Emblem.Characters
     {
         // Los siguientes son atributos "base" del character
         public string Name { get; set; }
+        
         public string Weapon { get; set; }
         public string Gender { get; set; } 
         public string DeathQuote { get; set; }

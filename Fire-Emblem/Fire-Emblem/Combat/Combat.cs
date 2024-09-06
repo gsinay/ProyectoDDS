@@ -18,6 +18,7 @@ public class Combat
         Turno = 0;
         _view = view;
         _combatlog = new CombatLog(_view);
+        
     }
     
     public void StartCombat()

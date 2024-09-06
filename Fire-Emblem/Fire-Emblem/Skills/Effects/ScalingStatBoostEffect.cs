@@ -1,5 +1,6 @@
-using Fire_Emblem;
 using Fire_Emblem.Characters;
+
+namespace Fire_Emblem.Skills.Effects;
 
 public class ScalingStatBoostEffect : IEffect
 {
