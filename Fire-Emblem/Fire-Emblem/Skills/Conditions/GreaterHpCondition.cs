@@ -4,7 +4,7 @@ namespace Fire_Emblem;
 
 public class GreaterHpCondition : ICondition
 {
-    private int _hpDifference;
+    private readonly int _hpDifference;
 
     public GreaterHpCondition(int hpDifference)
     {

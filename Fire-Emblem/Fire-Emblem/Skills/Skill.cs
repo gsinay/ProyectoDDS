@@ -23,7 +23,7 @@ public class Skill : ISkill
         {
             foreach (var effect in _effects)
             {
-                effect.Apply(character, opponent,  combatLog);
+                effect.Apply(character, opponent);
             }
         }
     }

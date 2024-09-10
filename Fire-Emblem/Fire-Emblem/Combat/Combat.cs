@@ -113,10 +113,10 @@ public class Combat
     {
         Attack(attacker, defender);
         attacker.SetHasAttackedStatus();
-        attacker.ResetFirstAttackModifiers();
         if (!defender.IsAlive()) return;
         Attack(defender, attacker);
         defender.SetHasAttackedStatus();
+        attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
         if (!attacker.IsAlive()) return;
         if (attacker.EffectiveSpd - defender.EffectiveSpd >= 5) Attack(attacker, defender);

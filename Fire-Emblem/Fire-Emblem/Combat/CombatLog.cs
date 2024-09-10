@@ -5,74 +5,44 @@ namespace Fire_Emblem
 {
     public class CombatLog
     {
-        private CharacterCombatStats _attackerStats;
-        private CharacterCombatStats _defenderStats;
-
         private View _view;
 
+        // Constructor to initialize the View
         public CombatLog(View view)
         {
-            _attackerStats = new CharacterCombatStats();
-            _defenderStats = new CharacterCombatStats();
             _view = view;
-        }
-
-        public void LogBonus(Character character, string stat, int amount)
-        {
-            var stats = character.IsInitiatingCombat ? _attackerStats : _defenderStats;
-            stats.StatBonuses[stat] += amount;
-        }
-
-        public void LogPenalty(Character character, string stat, int amount)
-        {
-            var stats = character.IsInitiatingCombat ? _attackerStats : _defenderStats;
-            stats.StatPenalties[stat] += amount;
-        }
-
-        public void LogFirstAttackBonus(Character character, string stat, int amount)
-        {
-            var stats = character.IsInitiatingCombat ? _attackerStats : _defenderStats;
-            stats.FirstAttackBonuses[stat] += amount;
         }
 
         public void PrintLog(Character attacker, Character defender)
         {
-            PrintCharacterLog(attacker, _attackerStats);
-            PrintCharacterLog(defender, _defenderStats);
-            ResetStats();
+            PrintCharacterLog(attacker);
+            PrintCharacterLog(defender);
         }
 
-        private void PrintCharacterLog(Character character, CharacterCombatStats stats)
+        private void PrintCharacterLog(Character character)
         {
-            foreach (var stat in stats.StatBonuses.Keys)
-            {
-                if (stats.StatBonuses[stat] != 0)
-                {
-                    _view.WriteLine($"{character.Name} obtiene {stat}+{stats.StatBonuses[stat]}");
-                }
-            }
-
-            foreach (var stat in stats.StatPenalties.Keys)
-            {
-                if (stats.StatPenalties[stat] != 0)
-                {
-                    _view.WriteLine($"{character.Name} obtiene {stat}-{stats.StatPenalties[stat]}");
-                }
-            }
-
-            foreach (var stat in stats.FirstAttackBonuses.Keys)
-            {
-                if (stats.FirstAttackBonuses[stat] != 0)
-                {
-                    _view.WriteLine($"{character.Name} obtiene {stat}+{stats.FirstAttackBonuses[stat]} en su primer ataque");
-                }
-            }
+            PrintStats(character.Name, character.Stats.CombatBonuses, "{0} obtiene {1}+{2}");
+            PrintStats(character.Name, character.Stats.FirstAttackBonuses, 
+                "{0} obtiene {1}+{2} en su primer ataque");
+            PrintStats(character.Name, character.Stats.FollowupBonuses, 
+                "{0} obtiene {1}+{2} en su Follow-up");
+            PrintStats(character.Name, character.Stats.CombatPenalties, "{0} obtiene {1}{2}");
+            PrintStats(character.Name, character.Stats.FirstAttackPenalties, 
+                "{0} obtiene {1}{2} en su primer ataque");
+            PrintStats(character.Name, character.Stats.FollowupPenalties, 
+                "{0} obtiene {1}{2} en su Follow-up");
         }
 
-        private void ResetStats()
+        private void PrintStats(string characterName, Dictionary<string, int> stats, string messageFormat)
         {
-            _attackerStats.Reset();
-            _defenderStats.Reset();
+            foreach (var stat in stats)
+            {
+                if (stat.Value != 0)
+                {
+                    var printStatement = string.Format(messageFormat, characterName, stat.Key, stat.Value);
+                    _view.WriteLine(printStatement);
+                }
+            }
         }
     }
 }

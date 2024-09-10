@@ -12,11 +12,10 @@ public class FirstAttackBoostEffect : IEffect
         _percentage = percentage;
     }
 
-    public void Apply(Character character, Character opponent, CombatLog combatLog)
+    public void Apply(Character character, Character opponent)
     {
-        int boostAmount = (character.Atk * _percentage) / 100;
-        character.FirstAttackAtkModifier += boostAmount;
-        combatLog.LogFirstAttackBonus(character, "Atk", boostAmount);
+        int boostAmount = (character.Stats.BaseStats["Atk"] * _percentage) / 100;
+        character.Stats.FirstAttackBonuses["Atk"] += boostAmount;
         
     }
     

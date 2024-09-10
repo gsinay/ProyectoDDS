@@ -13,7 +13,7 @@ public class ScalingStatBoostEffect : IEffect
         _scalingFactor = scalingFactor;
     }
 
-    public void Apply(Character character, Character opponent, CombatLog combatLog)
+    public void Apply(Character character, Character opponent)
     {
         int baseStatValue = GetBaseStat(character); 
         int additionalBonus = baseStatValue / _scalingFactor; 
@@ -21,7 +21,6 @@ public class ScalingStatBoostEffect : IEffect
         if (additionalBonus > 0)
         {
             ApplyBonus(character, additionalBonus);
-            combatLog.LogBonus(character, _stat, additionalBonus);
         }
     }
 
@@ -29,10 +28,10 @@ public class ScalingStatBoostEffect : IEffect
     {
         return _stat switch
         {
-            "Atk" => character.Atk,
-            "Spd" => character.Spd,
-            "Def" => character.Def,
-            "Res" => character.Res,
+            "Atk" => character.Stats.BaseStats["Atk"],
+            "Spd" => character.Stats.BaseStats["Spd"],
+            "Def" => character.Stats.BaseStats["Def"],
+            "Res" => character.Stats.BaseStats["Res"],
             _ => 0
         };
     }
@@ -42,16 +41,16 @@ public class ScalingStatBoostEffect : IEffect
         switch (_stat)
         {
             case "Atk":
-                character.AtkModifier += amount;
+                character.Stats.CombatBonuses["Atk"] += amount;
                 break;
             case "Spd":
-                character.SpdModifier += amount;
+                character.Stats.CombatBonuses["Spd"] += amount;
                 break;
             case "Def":
-                character.DefModifier += amount;
+                character.Stats.CombatBonuses["Def"] += amount;
                 break;
             case "Res":
-                character.ResModifier += amount;
+                character.Stats.CombatBonuses["Res"] += amount;
                 break;
         }
     }

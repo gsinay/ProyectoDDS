@@ -25,19 +25,17 @@ public class JsonHandler
         }
 
         var character = new Character
-        {
-            Name = characterData["Name"],
-            Weapon = characterData["Weapon"],
-            Gender = characterData["Gender"],
-            DeathQuote = characterData["DeathQuote"],
-            Atk = int.Parse(characterData["Atk"]),
-            Spd = int.Parse(characterData["Spd"]),
-            Def = int.Parse(characterData["Def"]),
-            Res = int.Parse(characterData["Res"])
-        };
-        
-        character.SetHP(int.Parse(characterData["HP"]));
-
+        (
+            characterData["Name"],
+            characterData["Weapon"],
+           characterData["Gender"],
+            characterData["DeathQuote"],
+            int.Parse(characterData["HP"]),
+            int.Parse(characterData["Atk"]),
+            int.Parse(characterData["Spd"]),
+            int.Parse(characterData["Def"]),
+            int.Parse(characterData["Res"])
+        );
         return character;
     }
 

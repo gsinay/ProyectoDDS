@@ -2,54 +2,26 @@ namespace Fire_Emblem.Characters
 {
     public class Character
     {
-        // Los siguientes son atributos "base" del character
-        public string Name { get; set; }
-        
-        public string Weapon { get; set; }
-        public string Gender { get; set; } 
-        public string DeathQuote { get; set; }
-        
+        // Attributes "ultra base" del character. Son "publicos" pero por debajo no lo son.
+        public string Name { get; private set; }
+        public string Weapon { get; private set; }
+        public string Gender { get; private set; }
+        public string DeathQuote { get; private set; }
+
         private int _HP;
         private int _maxHP;
-
-        public int Atk { get; set; }
-        public int Spd { get; set; }
-        public int Def { get; set; }
-        public int Res { get; set; }
+        private CharacterStats _stats;
         
-        // Modifiers para skills por turno
-        public int AtkModifier { get;  set; }
-        public int SpdModifier { get; set; }
-        public int DefModifier { get; set; }
-        public int ResModifier { get; set; }
+        public CharacterStats Stats => _stats;
         
-        //Modifiers para skills que son para unicamente primer ataque:
-        public int FirstAttackAtkModifier { get;  set; }
-        public int FirstAttackSpdModifier { get; set; }
-        public int FirstAttackDefModifier { get; set; }
-        public int FirstAttackResModifier { get; set; }
-        
-        // properties necesarias para condiciones de distintas skills
+        // Properties necesarias para condiciones de distintas skills
         public bool IsInitiatingCombat { get; set; }
         public Character MostRecentOpponent { get; private set; }
-        
         public bool HasAttacked { get; private set; }
 
+        private SkillList _skills;
 
-
-        private SkillList _Skills;
-
-        public Character()
-        {
-            _Skills = new SkillList();
-            AtkModifier = 0;
-            SpdModifier = 0;
-            DefModifier = 0;
-            ResModifier = 0;
-        }
-
-        public Character(string name, string weapon, string gender,
-            string deathQuote, int hp, int atk, int spd, int def, int res)
+        public Character(string name, string weapon, string gender, string deathQuote, int hp, int atk, int spd, int def, int res)
         {
             Name = name;
             Weapon = weapon;
@@ -57,31 +29,18 @@ namespace Fire_Emblem.Characters
             DeathQuote = deathQuote;
             _HP = hp;
             _maxHP = hp;
-            Atk = atk;
-            Spd = spd;
-            Def = def;
-            Res = res;
-            AtkModifier = 0;
-            SpdModifier = 0;
-            DefModifier = 0;
-            ResModifier = 0;
-            _Skills = new SkillList();
-        }
-
-        public void SetHP(int hp)
-        {
-            _HP = Math.Max(0, hp);
-            _maxHP = Math.Max(0, hp);
+            _stats = new CharacterStats(atk, spd, def, res); 
+            _skills = new SkillList();
         }
 
         public void AddSkill(ISkill skill)
         {
-            _Skills.AddSkill(skill);
+            _skills.AddSkill(skill);
         }
 
-        public int SkillCount() => _Skills.Count();
+        public int SkillCount() => _skills.Count();
 
-        public List<ISkill> GetSkills() => _Skills.GetSkills();
+        public List<ISkill> GetSkills() => _skills.GetSkills();
 
         public bool IsAlive() => _HP > 0;
 
@@ -94,27 +53,28 @@ namespace Fire_Emblem.Characters
             _HP = Math.Max(0, _HP - damage);
         }
 
-        public int GetRemainingHpPercentage() => _HP / _maxHP;
+        public int GetRemainingHpPercentage() => _HP  / _maxHP;
 
-        // properties de stats efectivas
-        public int EffectiveAtk => Atk + AtkModifier + FirstAttackAtkModifier;
-        public int EffectiveSpd => Spd + SpdModifier + FirstAttackSpdModifier;
-        public int EffectiveDef => Def + DefModifier + FirstAttackDefModifier;
-        public int EffectiveRes => Res + ResModifier + FirstAttackResModifier;
+        // Get effective stats using the new dictionary-based structure in CharacterStats
+        public int EffectiveAtk => _stats.GetEffectiveStat("Atk");
+        public int EffectiveSpd => _stats.GetEffectiveStat("Spd");
+        public int EffectiveDef => _stats.GetEffectiveStat("Def");
+        public int EffectiveRes => _stats.GetEffectiveStat("Res");
 
+        // Apply skills before combat
         public void ApplySkillsBeforeCombat(Character opponent, CombatLog combatLog)
         {
-            foreach (var skill in _Skills.GetSkills())
+            foreach (var skill in _skills.GetSkills())
             {
                 skill.ApplyEffect(this, opponent, combatLog);
             }
         }
-        
+
         public void UpdateMostRecentOpponent(Character opponent)
         {
             MostRecentOpponent = opponent;
         }
-        
+
         public void SetHasAttackedStatus()
         {
             HasAttacked = true;
@@ -124,22 +84,13 @@ namespace Fire_Emblem.Characters
         {
             HasAttacked = false;
         }
-
         public void ResetModifiers()
         {
-            AtkModifier = 0;
-            SpdModifier = 0;
-            DefModifier = 0;
-            ResModifier = 0;
+            _stats.Reset();
         }
-
         public void ResetFirstAttackModifiers()
         {
-            FirstAttackAtkModifier = 0;
-            FirstAttackSpdModifier = 0;
-            FirstAttackDefModifier = 0;
-            FirstAttackResModifier = 0;
+            _stats.ResetFirstAttackModifiers();
         }
-        
     }
 }

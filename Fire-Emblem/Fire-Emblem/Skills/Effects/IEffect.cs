@@ -3,5 +3,5 @@ using Fire_Emblem.Characters;
 
 public interface IEffect
 {
-    void Apply(Character character, Character opponent, CombatLog combatLog);
+    void Apply(Character character, Character opponent);
 }
