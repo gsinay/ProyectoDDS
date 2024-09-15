@@ -5,11 +5,11 @@ public class OpposingWeaponTypeCondition : ICondition
 {
     public bool IsSatisfied(Character character, Character opponent)
     {
-        bool characterUsingPhysicalWeapon = IsPhysicalWeapon(character.Weapon);
-        bool opponentUsingMagicWeapon = opponent.Weapon == "Magic";
+        bool characterUsingPhysicalWeapon = IsPhysicalWeapon(character.Info.Weapon);
+        bool opponentUsingMagicWeapon = opponent.Info.Weapon == "Magic";
 
-        bool characterUsingMagicWeapon = character.Weapon == "Magic";
-        bool opponentUsingPhysicalWeapon = IsPhysicalWeapon(opponent.Weapon);
+        bool characterUsingMagicWeapon = character.Info.Weapon == "Magic";
+        bool opponentUsingPhysicalWeapon = IsPhysicalWeapon(opponent.Info.Weapon);
 
         return (characterUsingPhysicalWeapon && opponentUsingMagicWeapon) ||
                (characterUsingMagicWeapon && opponentUsingPhysicalWeapon);

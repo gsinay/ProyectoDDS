@@ -28,7 +28,7 @@ public class Player
     public string GetCharacterName(int characterIndex)
     {
         Character selectedCharacter = Characters[characterIndex];
-        return selectedCharacter.Name;
+        return selectedCharacter.Info.Name;
     }
     public bool IsAlive()
     {

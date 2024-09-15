@@ -16,9 +16,5 @@ public class UnimplementedSkill : ISkill
     public void ApplyEffect(Character character, Character opponent, CombatLog combatLog)
     {
     }
-
-    public void RemoveEffect(Character character, Character opponent)
-    {
-      
-    }
+    
 }

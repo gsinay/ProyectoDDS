@@ -7,7 +7,7 @@ public class IsMaleCondition(bool rivalGender = false) : ICondition
     public bool IsSatisfied(Character character, Character opponent)
     {
         if (rivalGender)
-            return opponent.Gender == "Male";
-        return character.Gender == "Male";
+            return opponent.Info.Gender == "Male";
+        return character.Info.Gender == "Male";
     }
 }

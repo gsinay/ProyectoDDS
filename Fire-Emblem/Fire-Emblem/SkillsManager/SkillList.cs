@@ -14,6 +14,11 @@ public class SkillList
         _skills.Add(skill);
     }
 
+    public void RemoveSkill(ISkill skill)
+    {
+        _skills.Remove(skill);
+    }
+
     public int Count() => _skills.Count;
 
     public List<ISkill> GetSkills() => _skills;

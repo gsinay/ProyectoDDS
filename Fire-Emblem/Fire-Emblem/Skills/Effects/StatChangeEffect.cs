@@ -5,23 +5,29 @@ namespace Fire_Emblem;
 
 public class StatChangeEffect : IEffect
 {
-    private readonly string _stat;
+    private readonly StatName _stat;
     private readonly int _amount;
     private readonly bool _applyToBoth;
     private readonly bool _applyToOpponent;
-    private View _view;
-    public StatChangeEffect(string stat, int amount, View view, bool applyToBoth = false, bool applyToOpponent = false)
+   
+    public StatChangeEffect(StatName stat, int amount, bool applyToBoth = false, bool applyToOpponent = false)
     {
         _stat = stat;
         _amount = amount;
         _applyToBoth = applyToBoth;
         _applyToOpponent = applyToOpponent;
-        _view = view;
+        
     }
 
     public void Apply(Character character, Character opponent)
     {
-        if (!_applyToOpponent)
+        if (_applyToOpponent)
+        {
+            ApplyPenaltyEffect(opponent);
+            return;
+        }
+
+        if (_amount > 0)
         {
             ApplyBoostEffect(character);
             if (_applyToBoth)
@@ -29,25 +35,28 @@ public class StatChangeEffect : IEffect
         }
         else
         {
-            ApplyPenaltyEffect(opponent);
+            ApplyPenaltyEffect(character);
+            if (_applyToBoth)
+                ApplyPenaltyEffect(opponent);
         }
     }
+
     
     private void ApplyBoostEffect(Character target)
     {
         switch (_stat)
         {
-            case "Atk":
-                target.Stats.CombatBonuses["Atk"] += _amount;
+            case StatName.Atk:
+                target.Stats.CombatBonuses[StatName.Atk] += _amount;
                 break;
-            case "Spd":
-                target.Stats.CombatBonuses["Spd"] += _amount;
+            case StatName.Spd:
+                target.Stats.CombatBonuses[StatName.Spd] += _amount;
                 break;
-            case "Def":
-                target.Stats.CombatBonuses["Def"] += _amount;
+            case StatName.Def:
+                target.Stats.CombatBonuses[StatName.Def] += _amount;
                 break;
-            case "Res":
-                target.Stats.CombatBonuses["Res"] += _amount;
+            case StatName.Res:
+                target.Stats.CombatBonuses[StatName.Res] += _amount;
                 break;
         }
     }
@@ -56,17 +65,17 @@ public class StatChangeEffect : IEffect
     {
         switch (_stat)
         {
-            case "Atk":
-                target.Stats.CombatPenalties["Atk"] -= _amount;
+            case StatName.Atk:
+                target.Stats.CombatPenalties[StatName.Atk] += _amount;
                 break;
-            case "Spd":
-                target.Stats.CombatPenalties["Spd"] -= _amount;
+            case StatName.Spd:
+                target.Stats.CombatPenalties[StatName.Spd] += _amount;
                 break;
-            case "Def":
-                target.Stats.CombatPenalties["Def"] -= _amount;
+            case StatName.Def:
+                target.Stats.CombatPenalties[StatName.Def] += _amount;
                 break;
-            case "Res":
-                target.Stats.CombatPenalties["Res"] -= _amount;
+            case StatName.Res:
+                target.Stats.CombatPenalties[StatName.Res] += _amount;
                 break;
         }
     }

@@ -4,10 +4,10 @@ namespace Fire_Emblem.Skills.Effects;
 
 public class ScalingStatBoostEffect : IEffect
 {
-    private readonly string _stat; 
+    private readonly StatName _stat; 
     private readonly int _scalingFactor; 
 
-    public ScalingStatBoostEffect(string stat, int scalingFactor)
+    public ScalingStatBoostEffect(StatName stat, int scalingFactor)
     {
         _stat = stat;
         _scalingFactor = scalingFactor;
@@ -28,10 +28,10 @@ public class ScalingStatBoostEffect : IEffect
     {
         return _stat switch
         {
-            "Atk" => character.Stats.BaseStats["Atk"],
-            "Spd" => character.Stats.BaseStats["Spd"],
-            "Def" => character.Stats.BaseStats["Def"],
-            "Res" => character.Stats.BaseStats["Res"],
+            StatName.Atk => character.Stats.BaseStats[StatName.Atk],
+           StatName.Spd => character.Stats.BaseStats[StatName.Spd],
+            StatName.Def => character.Stats.BaseStats[StatName.Def],
+            StatName.Res => character.Stats.BaseStats[StatName.Res],
             _ => 0
         };
     }
@@ -40,17 +40,17 @@ public class ScalingStatBoostEffect : IEffect
     {
         switch (_stat)
         {
-            case "Atk":
-                character.Stats.CombatBonuses["Atk"] += amount;
+            case StatName.Atk:
+                character.Stats.CombatBonuses[StatName.Atk] += amount;
                 break;
-            case "Spd":
-                character.Stats.CombatBonuses["Spd"] += amount;
+            case StatName.Spd:
+                character.Stats.CombatBonuses[StatName.Spd] += amount;
                 break;
-            case "Def":
-                character.Stats.CombatBonuses["Def"] += amount;
+            case StatName.Def:
+                character.Stats.CombatBonuses[StatName.Def] += amount;
                 break;
-            case "Res":
-                character.Stats.CombatBonuses["Res"] += amount;
+            case StatName.Res:
+                character.Stats.CombatBonuses[StatName.Res] += amount;
                 break;
         }
     }

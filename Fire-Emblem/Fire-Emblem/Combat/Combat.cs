@@ -6,7 +6,7 @@ namespace Fire_Emblem;
 public class Combat
 {
     public Player[] Players;
-    public int Turno { get; private set;  }
+    private int _turn;
 
     private View _view;
 
@@ -15,7 +15,7 @@ public class Combat
     public Combat(View view, Setup setup)
     {
         Players = setup.Players;
-        Turno = 0;
+        _turn = 0;
         _view = view;
         _combatlog = new CombatLog(_view);
         
@@ -23,41 +23,48 @@ public class Combat
     
     public void StartCombat()
     {
+        foreach (var player in Players)
+        {
+            foreach (var character in player.Characters)
+            {
+                character.ApplyPermanentEffects(); 
+            }
+        }
         while (Players[0].IsAlive() && Players[1].IsAlive())
         {
-            ExecuteTurn(Players[Turno % 2], Players[(Turno + 1) % 2]);
-            Turno++;
+            ExecuteTurn(Players[_turn % 2], Players[(_turn + 1) % 2]);
+            _turn++;
         }
         PrintEndGameMessage();
     }
     private void ExecuteTurn(Player attacker, Player defender)
     {
-        Character attackChar = SelectCharacter(attacker);
-        Character defendingChar = SelectCharacter(defender);
-        attackChar.IsInitiatingCombat = true;
-        defendingChar.IsInitiatingCombat = false;
-        attackChar.ResetHasAttackStatus();
-        defendingChar.ResetHasAttackStatus();
-    
+        Character attackChar = SelectAndPrepareCharacter(attacker);
+        Character defendingChar = SelectAndPrepareCharacter(defender);
+        
         attackChar.ApplySkillsBeforeCombat(defendingChar, _combatlog);
         defendingChar.ApplySkillsBeforeCombat(attackChar, _combatlog);
-    
-        _view.WriteLine($"Round {Turno + 1}: {attackChar.Name} (Player {attacker.PlayerNumber}) comienza");
-        PrintAdvantage(attackChar, defendingChar);
-        _combatlog.PrintLog(attackChar, defendingChar);
+
+        PrintPreAttackLogs(attacker, attackChar, defendingChar);
     
         PerformAttacks(attackChar, defendingChar);
     
-        _view.WriteLine($"{attackChar.Name} ({attackChar.GetHP}) : {defendingChar.Name} ({defendingChar.GetHP})");
-    
-        attackChar.UpdateMostRecentOpponent(defendingChar);
-        defendingChar.UpdateMostRecentOpponent(attackChar);
-        
-        attackChar.ResetModifiers();
-        defendingChar.ResetModifiers();
+        _combatlog.AnnounceResults(attackChar, defendingChar);
+
+        PostAttackCharacterUpdate(attackChar, defendingChar);
+       
     
         CheckAndRemoveDeadCharacter(attacker, attackChar);
         CheckAndRemoveDeadCharacter(defender, defendingChar);
+    }
+
+    private Character SelectAndPrepareCharacter(Player player)
+    {
+        Character character = SelectCharacter(player);
+        character.IsInitiatingCombat = (_turn % 2 + 1 == player.PlayerNumber);
+        character.ResetHasAttackStatus();
+        return character;
+
     }
 
     private Character SelectCharacter(Player player)
@@ -75,21 +82,13 @@ public class Combat
             _view.WriteLine($"{i}: {player.GetCharacterName(i)}");
         }
     }
-    
 
-    private void PrintAdvantage(Character attacker, Character defender)
+    private void PrintPreAttackLogs(Player attacker, Character attackChar, Character defendingChar)
     {
-        double WTB = CheckTriangleAdvantage(attacker, defender);
-        if (WTB == 1.2)
-            _view.WriteLine($"{attacker.Name} ({attacker.Weapon}) tiene ventaja con respecto a {defender.Name} " +
-                            $"({defender.Weapon})");
-        else if(WTB == 0.8)
-            _view.WriteLine($"{defender.Name} ({defender.Weapon}) tiene ventaja con respecto a {attacker.Name} " +
-                            $"({attacker.Weapon})");
-        else
-        {
-            _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
-        }
+        _combatlog.AnnounceTurn(_turn, attackChar.Info.Name, attacker.PlayerNumber);
+        double WTB = CheckTriangleAdvantage(attackChar, defendingChar);
+        _combatlog.PrintAdvantage(attackChar, defendingChar, WTB);
+        _combatlog.PrintLog(attackChar, defendingChar);
     }
     
     private double CheckTriangleAdvantage(Character attacker, Character defender)
@@ -98,11 +97,11 @@ public class Combat
         {
             { "Sword", "Axe" }, { "Axe", "Lance" }, { "Lance", "Sword" }
         };
-        if (advantage.ContainsKey(attacker.Weapon) && advantage[attacker.Weapon] == defender.Weapon)
+        if (advantage.ContainsKey(attacker.Info.Weapon) && advantage[attacker.Info.Weapon] == defender.Info.Weapon)
         {
             return 1.2; 
         }
-        else if (advantage.ContainsKey(defender.Weapon) && advantage[defender.Weapon] == attacker.Weapon)
+        else if (advantage.ContainsKey(defender.Info.Weapon) && advantage[defender.Info.Weapon] == attacker.Info.Weapon)
         {
             return 0.8;
         }
@@ -112,9 +111,9 @@ public class Combat
     private void PerformAttacks(Character attacker, Character defender)
     {
         Attack(attacker, defender);
-        attacker.SetHasAttackedStatus();
         if (!defender.IsAlive()) return;
         Attack(defender, attacker);
+        attacker.SetHasAttackedStatus();
         defender.SetHasAttackedStatus();
         attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
@@ -127,11 +126,20 @@ public class Combat
     private void Attack(Character attackChar, Character defendingChar)
     {
         double WTB = CheckTriangleAdvantage(attackChar, defendingChar);
-        int effectiveDefense = attackChar.Weapon == "Magic" ? defendingChar.EffectiveRes : defendingChar.EffectiveDef;
+        int effectiveDefense = attackChar.Info.Weapon == "Magic" ? defendingChar.EffectiveRes : defendingChar.EffectiveDef;
         int damage = Math.Max(0, (int)(attackChar.EffectiveAtk * WTB) - effectiveDefense);
         defendingChar.TakeDamage(damage); 
-        _view.WriteLine($"{attackChar.Name} ataca a {defendingChar.Name} con {damage} de daño");
+        _view.WriteLine($"{attackChar.Info.Name} ataca a {defendingChar.Info.Name} con {damage} de daño");
 
+    }
+
+    public void PostAttackCharacterUpdate(Character attacker, Character defender)
+    {
+        attacker.UpdateMostRecentOpponent(defender);
+        defender.UpdateMostRecentOpponent(attacker);
+        
+        attacker.ResetModifiers();
+        defender.ResetModifiers();
     }
 
     private void CheckAndRemoveDeadCharacter(Player player, Character character)

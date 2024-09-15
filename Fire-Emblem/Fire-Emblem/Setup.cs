@@ -1,5 +1,6 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Characters;
+using Fire_Emblem.SkillsManager;
 
 namespace Fire_Emblem;
 
@@ -127,7 +128,7 @@ public class Setup
             if (player.CharacterCount() is < 1 or > 3)
                 return false;
             
-            var characterNames = player.Characters.Select(c => c.Name).ToList();
+            var characterNames = player.Characters.Select(c => c.Info.Name).ToList();
             if (characterNames.Count != characterNames.Distinct().Count())
                 return false;
 

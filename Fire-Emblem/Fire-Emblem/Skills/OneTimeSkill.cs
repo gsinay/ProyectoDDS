@@ -1,14 +1,14 @@
 using Fire_Emblem;
 using Fire_Emblem.Characters;
 
-public class Skill : ISkill
+public class OneTimeSkill : ISkill
 {
     public string Name { get; }
     public string Description { get; }
     private readonly ICondition _condition;  
     private readonly List<IEffect> _effects;
 
-    public Skill(string name, string description, ICondition condition, List<IEffect> effects)
+    public OneTimeSkill(string name, string description, ICondition condition, List<IEffect> effects)
     {
         Name = name;
         Description = description;

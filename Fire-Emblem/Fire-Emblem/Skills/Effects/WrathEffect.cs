@@ -10,8 +10,8 @@ public class WrathEffect : IEffect
         int hpLost = character.GetMaxHP - character.GetHP; 
         int bonus = Math.Min(hpLost, MaxBonus); 
 
-        character.Stats.CombatBonuses["Atk"] += bonus;
-        character.Stats.CombatBonuses["Spd"] += bonus;
+        character.Stats.CombatBonuses[StatName.Atk] += bonus;
+        character.Stats.CombatBonuses[StatName.Spd] += bonus;
     }
     
 }

@@ -2,78 +2,102 @@ namespace Fire_Emblem.Characters
 {
     public class CharacterStats
     {
-        
-        public Dictionary<string, int> BaseStats;
-        
-        
-        public Dictionary<string, int> CombatBonuses;
-        public Dictionary<string, int> FirstAttackBonuses;
-        public Dictionary<string, int> FollowupBonuses;
-        
-        public Dictionary<string, int> CombatPenalties;
-        public Dictionary<string, int> FirstAttackPenalties;
-        public Dictionary<string, int> FollowupPenalties;
-        
-        public CharacterStats(int atk, int spd, int def, int res)
+
+        public Dictionary<StatName, int> BaseStats;
+
+
+        public Dictionary<StatName, int> CombatBonuses;
+        public Dictionary<StatName, int> FirstAttackBonuses;
+        public Dictionary<StatName, int> FollowupBonuses;
+
+        public Dictionary<StatName, int> CombatPenalties;
+        public Dictionary<StatName, int> FirstAttackPenalties;
+        public Dictionary<StatName, int> FollowupPenalties;
+
+        public Dictionary<StatName, bool> NeutralizedBonuses;
+        public Dictionary<StatName, bool> NeutralizedPenalties;
+
+
+        public CharacterStats(int hp, int atk, int spd, int def, int res)
         {
-            BaseStats = new Dictionary<string, int>
+            BaseStats = new Dictionary<StatName, int>
             {
-                { "Atk", atk },
-                { "Spd", spd },
-                { "Def", def },
-                { "Res", res }
+                {StatName.Hp, hp},
+                {StatName.MaxHp, hp},
+                { StatName.Atk, atk },
+                { StatName.Spd, spd },
+                { StatName.Def, def },
+                { StatName.Res, res }
             };
 
-           
+
             CombatBonuses = InitializeStatDictionary();
             FirstAttackBonuses = InitializeStatDictionary();
             FollowupBonuses = InitializeStatDictionary();
-            
+
             CombatPenalties = InitializeStatDictionary();
             FirstAttackPenalties = InitializeStatDictionary();
             FollowupPenalties = InitializeStatDictionary();
+
+            NeutralizedBonuses = InitializeNeutralizationDictionary();
+            NeutralizedPenalties = InitializeNeutralizationDictionary();
         }
-        
-        private Dictionary<string, int> InitializeStatDictionary()
+
+        private Dictionary<StatName, int> InitializeStatDictionary()
         {
-            return new Dictionary<string, int>
+            return new Dictionary<StatName, int>
             {
-                { "Atk", 0 },
-                { "Spd", 0 },
-                { "Def", 0 },
-                { "Res", 0 }
+                { StatName.Atk, 0 },
+                { StatName.Spd, 0 },
+                { StatName.Def, 0 },
+                { StatName.Res, 0 }
             };
         }
-        
+
+        private Dictionary<StatName, bool> InitializeNeutralizationDictionary()
+        {
+            return new Dictionary<StatName, bool>
+            {
+                { StatName.Atk, false },
+                { StatName.Spd, false },
+                { StatName.Def, false },
+                { StatName.Res, false }
+            };
+        }
+
+
         public void Reset()
         {
-            ResetDictionary(CombatBonuses);
-            ResetDictionary(FirstAttackBonuses);
-            ResetDictionary(FollowupBonuses);
-            ResetDictionary(CombatPenalties);
-            ResetDictionary(FirstAttackPenalties);
-            ResetDictionary(FollowupPenalties);
+            CombatBonuses = InitializeStatDictionary();
+            FirstAttackBonuses = InitializeStatDictionary();
+            FollowupBonuses = InitializeStatDictionary();
+
+            CombatPenalties = InitializeStatDictionary();
+            FirstAttackPenalties = InitializeStatDictionary();
+            FollowupPenalties = InitializeStatDictionary();
+
+            NeutralizedBonuses = InitializeNeutralizationDictionary();
+            NeutralizedPenalties = InitializeNeutralizationDictionary();
         }
 
         public void ResetFirstAttackModifiers()
         {
-            ResetDictionary(FirstAttackBonuses);
-            ResetDictionary(FirstAttackPenalties);
+            FirstAttackBonuses = InitializeStatDictionary();
+            FirstAttackPenalties = InitializeStatDictionary();
+
         }
 
-        private void ResetDictionary(Dictionary<string, int> statDictionary)
+        public int GetEffectiveStat(StatName stat, bool hasAlreadyAttacked)
         {
-            foreach (var stat in statDictionary.Keys.ToList())
-            {
-                statDictionary[stat] = 0;
-            }
-        }
-        
-        public int GetEffectiveStat(string stat)
-        {
-            return BaseStats[stat] +
-                   CombatBonuses[stat] + FirstAttackBonuses[stat] + FollowupBonuses[stat] +
-                   CombatPenalties[stat] + FirstAttackPenalties[stat] + FollowupPenalties[stat];
+            int effectiveBonuses = NeutralizedBonuses[stat]
+                ? 0
+                : CombatBonuses[stat] + FirstAttackBonuses[stat] + (hasAlreadyAttacked ? FollowupBonuses[stat] : 0);
+
+            int effectivePenalties = NeutralizedPenalties[stat]
+                ? 0
+                : CombatPenalties[stat] + FirstAttackPenalties[stat] + (hasAlreadyAttacked ? FollowupPenalties[stat] : 0);
+            
+            return Math.Max(0, BaseStats[stat] + effectiveBonuses + effectivePenalties);
         }
     }
 }
