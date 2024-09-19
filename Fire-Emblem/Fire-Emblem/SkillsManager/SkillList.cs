@@ -1,4 +1,6 @@
-namespace Fire_Emblem;
+using Fire_Emblem.Skills;
+
+namespace Fire_Emblem.SkillsManager;
 
 public class SkillList
 {

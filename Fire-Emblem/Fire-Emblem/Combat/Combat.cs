@@ -1,7 +1,7 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Characters;
 
-namespace Fire_Emblem;
+namespace Fire_Emblem.Combat;
 
 public class Combat
 {
@@ -93,21 +93,31 @@ public class Combat
     
     private double CheckTriangleAdvantage(Character attacker, Character defender)
     {
-        var advantage = new Dictionary<string, string>
-        {
-            { "Sword", "Axe" }, { "Axe", "Lance" }, { "Lance", "Sword" }
-        };
-        if (advantage.ContainsKey(attacker.Info.Weapon) && advantage[attacker.Info.Weapon] == defender.Info.Weapon)
-        {
-            return 1.2; 
-        }
-        else if (advantage.ContainsKey(defender.Info.Weapon) && advantage[defender.Info.Weapon] == attacker.Info.Weapon)
-        {
-            return 0.8;
-        }
+        if (HasAdvantage(attacker, defender)) return 1.2; 
+        if (HasDisadvantage(attacker, defender)) return 0.8;
         return 1;
     }
     
+    private bool HasAdvantage(Character attacker, Character defender)
+    {
+        return GetAdvantagedWeapon(attacker.Info.Weapon) == defender.Info.Weapon;
+    }
+
+    private bool HasDisadvantage(Character attacker, Character defender)
+    {
+        return GetAdvantagedWeapon(defender.Info.Weapon) == attacker.Info.Weapon;
+    }
+    
+    private WeaponName GetAdvantagedWeapon(WeaponName weapon)
+    {
+        return weapon switch
+        {
+            WeaponName.Sword => WeaponName.Axe,
+            WeaponName.Axe => WeaponName.Lance,
+            WeaponName.Lance => WeaponName.Sword,
+            _ => WeaponName.None
+        };
+    }
     private void PerformAttacks(Character attacker, Character defender)
     {
         Attack(attacker, defender);
@@ -118,22 +128,64 @@ public class Combat
         attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
         if (!attacker.IsAlive()) return;
-        if (attacker.EffectiveSpd - defender.EffectiveSpd >= 5) Attack(attacker, defender);
-        else if (defender.EffectiveSpd - attacker.EffectiveSpd >= 5) Attack(defender, attacker);
-        else
+        HandleFollowUps(attacker, defender);
+    }
+    private void Attack(Character attacker, Character defender)
+    {
+        double WTB = CheckTriangleAdvantage(attacker, defender);
+        int effectiveDefense = GetEffectiveDefense(attacker, defender);
+        int attackPower = CalculateAttackPower(attacker, WTB);
+        int damage = CalculateDamage(attackPower, effectiveDefense);
+
+        defender.TakeDamage(damage);
+        _combatlog.DisplayAttackResult(attacker, defender, damage);
+    }
+    
+    private int CalculateAttackPower(Character attacker, double WTB)
+    {
+        return (int)(attacker.EffectiveAtk * WTB);
+    }
+    
+    private int CalculateDamage(int attackPower, int effectiveDefense)
+    {
+        int rawDamage = attackPower - effectiveDefense;
+        return Math.Max(0, rawDamage);
+    }
+
+
+    
+    private int GetEffectiveDefense(Character attacker, Character defender)
+    {
+        if (attacker.Info.Weapon == WeaponName.Magic)
+            return defender.EffectiveRes;
+        return defender.EffectiveDef;
+    }
+
+
+
+    private void HandleFollowUps(Character attacker, Character defender)
+    {
+        bool noFollowUps = true;
+        if (CanFollowUp(attacker, defender))
+        {
+            Attack(attacker, defender);
+            noFollowUps = false;
+        }
+        if (CanFollowUp(defender, attacker))
+        {
+            Attack(defender, attacker);
+            noFollowUps = false;
+        }
+        if (noFollowUps)
             _view.WriteLine("Ninguna unidad puede hacer un follow up");
     }
-    private void Attack(Character attackChar, Character defendingChar)
-    {
-        double WTB = CheckTriangleAdvantage(attackChar, defendingChar);
-        int effectiveDefense = attackChar.Info.Weapon == "Magic" ? defendingChar.EffectiveRes : defendingChar.EffectiveDef;
-        int damage = Math.Max(0, (int)(attackChar.EffectiveAtk * WTB) - effectiveDefense);
-        defendingChar.TakeDamage(damage); 
-        _view.WriteLine($"{attackChar.Info.Name} ataca a {defendingChar.Info.Name} con {damage} de daño");
 
+    private bool CanFollowUp(Character attacker, Character defender)
+    {
+        return attacker.EffectiveSpd - defender.EffectiveSpd >= 5;
     }
 
-    public void PostAttackCharacterUpdate(Character attacker, Character defender)
+    private void PostAttackCharacterUpdate(Character attacker, Character defender)
     {
         attacker.UpdateMostRecentOpponent(defender);
         defender.UpdateMostRecentOpponent(attacker);

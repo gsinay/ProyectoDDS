@@ -13,7 +13,7 @@ public class JsonHandler
 
         if (characterJsonList == null)
         {
-            throw new Exception("Error con la deserializacion");
+            throw new Exception("Error during deserialization");
         }
 
         var characterData = characterJsonList.FirstOrDefault(c =>
@@ -21,14 +21,13 @@ public class JsonHandler
 
         if (characterData == null)
         {
-            throw new Exception($"No existe ese character");
+            throw new Exception($"Character '{name}' does not exist.");
         }
-
         var character = new Character
         (
             characterData["Name"],
-            characterData["Weapon"],
-           characterData["Gender"],
+            weapon: GetWeaponName(characterData["Weapon"]),
+            characterData["Gender"],
             characterData["DeathQuote"],
             int.Parse(characterData["HP"]),
             int.Parse(characterData["Atk"]),
@@ -38,6 +37,21 @@ public class JsonHandler
         );
         return character;
     }
+    
+    
+    private static WeaponName GetWeaponName(string weaponString)
+    {
+        try
+        {
+            return (WeaponName)Enum.Parse(typeof(WeaponName), weaponString, true);
+        }
+        catch (ArgumentException)
+        {
+            throw new Exception($"Invalid weapon type: {weaponString}");
+        }
+    }
+
+
 
     
 }

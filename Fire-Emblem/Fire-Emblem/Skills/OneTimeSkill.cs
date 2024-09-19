@@ -1,5 +1,9 @@
-using Fire_Emblem;
 using Fire_Emblem.Characters;
+using Fire_Emblem.Combat;
+using Fire_Emblem.Skills.Conditions;
+using Fire_Emblem.Skills.Effects;
+
+namespace Fire_Emblem.Skills;
 
 public class OneTimeSkill : ISkill
 {

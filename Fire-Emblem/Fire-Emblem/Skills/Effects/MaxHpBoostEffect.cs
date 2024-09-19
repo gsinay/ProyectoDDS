@@ -13,6 +13,6 @@ public class MaxHpBoostEffect : IEffect
 
     public void Apply(Character character, Character opponent)
     {
-        character.IncreaseMaxHP(_hpBoostAmount);
+        character.IncreaseMaxHp(_hpBoostAmount);
     }
 }

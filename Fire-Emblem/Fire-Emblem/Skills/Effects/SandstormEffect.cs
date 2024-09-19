@@ -7,8 +7,8 @@ public class SandstormEffect : IEffect
     public void Apply(Character character, Character opponent)
     {
         
-        double Z = Math.Floor(1.5 * character.Stats.BaseStats[StatName.Def]); 
-        int truncatedZ = Convert.ToInt32(Z); 
+        double z = Math.Floor(1.5 * character.Stats.BaseStats[StatName.Def]); 
+        int truncatedZ = Convert.ToInt32(z); 
 
        
         int atkDifference = truncatedZ - character.Stats.BaseStats[StatName.Atk];

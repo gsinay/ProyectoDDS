@@ -1,5 +1,6 @@
 using Fire_Emblem.Characters;
-namespace Fire_Emblem;
+
+namespace Fire_Emblem.Skills.Conditions;
 
 
 public class InitiatingCombatCondition(bool rivalStarting = false) : ICondition

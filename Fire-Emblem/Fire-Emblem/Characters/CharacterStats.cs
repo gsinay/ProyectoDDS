@@ -87,17 +87,6 @@ namespace Fire_Emblem.Characters
 
         }
 
-        public int GetEffectiveStat(StatName stat, bool hasAlreadyAttacked)
-        {
-            int effectiveBonuses = NeutralizedBonuses[stat]
-                ? 0
-                : CombatBonuses[stat] + FirstAttackBonuses[stat] + (hasAlreadyAttacked ? FollowupBonuses[stat] : 0);
-
-            int effectivePenalties = NeutralizedPenalties[stat]
-                ? 0
-                : CombatPenalties[stat] + FirstAttackPenalties[stat] + (hasAlreadyAttacked ? FollowupPenalties[stat] : 0);
-            
-            return Math.Max(0, BaseStats[stat] + effectiveBonuses + effectivePenalties);
-        }
+       
     }
 }

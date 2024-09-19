@@ -1,6 +1,6 @@
-using Fire_Emblem_View;
 using Fire_Emblem.Characters;
-namespace Fire_Emblem;
+
+namespace Fire_Emblem.Skills.Effects;
 
 
 public class StatChangeEffect : IEffect

@@ -1,5 +1,6 @@
-using Fire_Emblem;
 using Fire_Emblem.Characters;
+
+namespace Fire_Emblem.Skills.Effects;
 
 public class WrathEffect : IEffect
 {
@@ -7,7 +8,7 @@ public class WrathEffect : IEffect
 
     public void Apply(Character character, Character opponent)
     {
-        int hpLost = character.GetMaxHP - character.GetHP; 
+        int hpLost = character.GetMaxHp - character.GetHp; 
         int bonus = Math.Min(hpLost, MaxBonus); 
 
         character.Stats.CombatBonuses[StatName.Atk] += bonus;

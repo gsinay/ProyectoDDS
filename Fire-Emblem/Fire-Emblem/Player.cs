@@ -4,26 +4,26 @@ namespace Fire_Emblem;
 
 public class Player
 {
-    private CharacterList characters;
+    private CharacterList _characters;
     public int PlayerNumber;
 
     public Player(int playerNumber)
     {
        
-        characters = new CharacterList();
+        _characters = new CharacterList();
         PlayerNumber = playerNumber;
     }
 
     public void AddCharacter(Character character)
     {
-        characters.AddCharacter(character);
+        _characters.AddCharacter(character);
     }
 
     public int CharacterCount()
     {
-        return characters.Count();
+        return _characters.Count();
     }
-    public List<Character> Characters => characters.GetCharacters();
+    public List<Character> Characters => _characters.GetCharacters();
     
     public string GetCharacterName(int characterIndex)
     {
@@ -34,7 +34,7 @@ public class Player
     {
         for (int i = 0; i < Characters.Count; i++)
         {
-            if (Characters[i].GetHP > 0)
+            if (Characters[i].GetHp > 0)
                 return true;
         }
         

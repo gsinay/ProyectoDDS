@@ -1,17 +1,12 @@
-using Fire_Emblem_View;
 using Fire_Emblem.Characters;
 using Fire_Emblem.Skills;
+using Fire_Emblem.Skills.Conditions;
 using Fire_Emblem.Skills.Effects;
 
 namespace Fire_Emblem.SkillsManager;
 
 public class SkillFactory
 {
-    private View _view;
-    public SkillFactory(View view)
-    {
-        _view = view;
-    }
     public ISkill GetSkill(string skillName)
     {
         return skillName.ToLower() switch
@@ -58,7 +53,7 @@ public class SkillFactory
             "tome precision" => new Skill(
                 "Tome Precision",
                 "Otorga Atk/Spd+6 al usar magia.",
-                new UsingSpecificWeaponCondition("Magic"),
+                new UsingSpecificWeaponCondition(WeaponName.Magic),
                 [
                     new StatChangeEffect(StatName.Atk, 6),
                     new StatChangeEffect(StatName.Spd, 6)
@@ -130,11 +125,11 @@ public class SkillFactory
             "deadly blade" => new Skill(
                 "Deadly blade",
                 "Si la unidad inicia el combate con una espada, otorga Atk/Spd+8 durante el combate",
-                new CompositeCondition(
+                new AndCondition(
                     [
                         new InitiatingCombatCondition(),
-                        new UsingSpecificWeaponCondition("Sword")
-                    ], useOr: false),
+                        new UsingSpecificWeaponCondition(WeaponName.Sword)
+                    ]),
                 [
                     new StatChangeEffect(StatName.Atk, 8),
                     new StatChangeEffect(StatName.Spd, 8)
@@ -287,9 +282,9 @@ public class SkillFactory
                 "Chaos Style",
                 "Si la unidad inicia el combate con un ataque fisico contra un rival armado con magia," +
                 " o viceversa, otorga Spd+3 durante el combate.",
-                new CompositeCondition(
+                new AndCondition(
                     [new OpposingWeaponTypeCondition(),
-                    new InitiatingCombatCondition()], useOr: false),
+                    new InitiatingCombatCondition()]),
                 [new StatChangeEffect(StatName.Spd, 3)]
                 ),
             "blinding flash" => new Skill(
@@ -337,12 +332,11 @@ public class SkillFactory
                 "Belief in love",
                 "Si el rival inicia el combate o tiene HP=100 % al inicio del combate, " +
                 "inflige Atk/Def-5 en el rival durante el combate.",
-                new CompositeCondition(
+                new OrCondition(
                     [
                         new InitiatingCombatCondition(rivalStarting: true), 
                         new HighHpCondition(1, rivalHp:true)
-                    ], 
-                    useOr: true),
+                    ]),
                 [
                     new StatChangeEffect(StatName.Atk, -5, applyToOpponent:true),
                     new StatChangeEffect(StatName.Def, -5, applyToOpponent:true),
@@ -376,7 +370,7 @@ public class SkillFactory
                 "Sea Z el promedio entre la Def y Res base del rival. Entonces X es Z " +
                 "menos la Def base del rival e Y es Z menos la Res base del rival. " +
                 "Dependiendo si X e Y son positivos o negativos, se consideraran bonus o penalties.",
-                new UsingSpecificWeaponCondition("Sword"),
+                new UsingSpecificWeaponCondition(WeaponName.Sword),
                 [new SoulbladeEffect()]
                 ),
             "sandstorm" => new Skill(
@@ -391,7 +385,7 @@ public class SkillFactory
             "sword agility" => new Skill(
                 "Sword Agility",
                 "Si la unidad usa espada, otorga Spd+12 a un costo de Atk-6 durante el combate.",
-                new UsingSpecificWeaponCondition("Sword"),
+                new UsingSpecificWeaponCondition(WeaponName.Sword),
                 [
                     new StatChangeEffect(StatName.Spd, 12),
                     new StatChangeEffect(StatName.Atk, -6)
@@ -400,7 +394,7 @@ public class SkillFactory
             "lance power" => new Skill(
                 "Lance Power",
                 "Otorga Atk+10 a un costo de Def-10 al usar una lanza.",
-                new UsingSpecificWeaponCondition("Lance"),
+                new UsingSpecificWeaponCondition(WeaponName.Lance),
                 [
                     new StatChangeEffect(StatName.Atk, 10),
                     new StatChangeEffect(StatName.Def, -10)
@@ -408,7 +402,7 @@ public class SkillFactory
             "sword power" => new Skill(
                 "Sword Power",
                 "Otorga Atk+10 a un costo de Def-10 al usar una espada.",
-                new UsingSpecificWeaponCondition("Sword"),
+                new UsingSpecificWeaponCondition(WeaponName.Sword),
                 [
                     new StatChangeEffect(StatName.Atk, 10),
                     new StatChangeEffect(StatName.Def, -10)
@@ -416,7 +410,7 @@ public class SkillFactory
             "bow focus" => new Skill(
                 "Bow Focus",
                 "Otorga Atk+10 a un costo de Res-10 al usar un arco.",
-                new UsingSpecificWeaponCondition("Bow"),
+                new UsingSpecificWeaponCondition(WeaponName.Bow),
                 [
                     new StatChangeEffect(StatName.Atk, 10),
                     new StatChangeEffect(StatName.Res, -10)
@@ -424,7 +418,7 @@ public class SkillFactory
             "lance agility" => new Skill(
                 "Lance Agility",
                 "Otorga Spd+12 a un costo de Atk-6 al usar una lanza.",
-                new UsingSpecificWeaponCondition("Lance"),
+                new UsingSpecificWeaponCondition(WeaponName.Lance),
                 [
                     new StatChangeEffect(StatName.Spd, 12),
                     new StatChangeEffect(StatName.Atk, -6)
@@ -432,7 +426,7 @@ public class SkillFactory
             "axe power" => new Skill(
                 "Axe Power",
                 "Otorga Atk+10 a un costo de Def-10 al usar una hacha.",
-                new UsingSpecificWeaponCondition("Axe"),
+                new UsingSpecificWeaponCondition(WeaponName.Axe),
                 [
                     new StatChangeEffect(StatName.Atk, 10),
                     new StatChangeEffect(StatName.Def, -10)
@@ -440,7 +434,7 @@ public class SkillFactory
             "bow agility" => new Skill(
                 "Bow Agility",
                 "Otorga Spd+12 a un costo de Atk-6 al usar un arco.",
-                new UsingSpecificWeaponCondition("Bow"),
+                new UsingSpecificWeaponCondition(WeaponName.Bow),
                 [
                     new StatChangeEffect(StatName.Spd, 12),
                     new StatChangeEffect(StatName.Atk, -6)
@@ -448,7 +442,7 @@ public class SkillFactory
             "sword focus" => new Skill(
                 "Sword Focus",
                 "Otorga Atk+10 a un costo de Res-10 al usar una espada.",
-                new UsingSpecificWeaponCondition("Sword"),
+                new UsingSpecificWeaponCondition(WeaponName.Sword),
                 [
                     new StatChangeEffect(StatName.Atk, 10),
                     new StatChangeEffect(StatName.Res, -10)
@@ -457,16 +451,16 @@ public class SkillFactory
                 "Close Def",
                 "Si el rival inicia el combate usando espada, lanza o hacha," +
                 " otorga Def/Res+8 y neutraliza los bonus del rival durante el combate.",
-                new CompositeCondition(
+                new AndCondition(
                     [
-                        new CompositeCondition(
+                        new OrCondition(
                         [
-                            new UsingSpecificWeaponCondition("Sword", opponentUsing: true),
-                            new UsingSpecificWeaponCondition("Lance", opponentUsing: true),
-                            new UsingSpecificWeaponCondition("Axe", opponentUsing: true),
-                        ], useOr: true),
+                            new UsingSpecificWeaponCondition(WeaponName.Sword, opponentUsing: true),
+                            new UsingSpecificWeaponCondition(WeaponName.Lance, opponentUsing: true),
+                            new UsingSpecificWeaponCondition(WeaponName.Axe, opponentUsing: true),
+                        ]),
                         new InitiatingCombatCondition(rivalStarting: true)
-                    ], useOr: false),
+                    ]),
                 [
                     new StatChangeEffect(StatName.Def, 8),
                     new StatChangeEffect(StatName.Res, 8),
@@ -480,15 +474,15 @@ public class SkillFactory
                 "Distant Def",
                 "Si el rival inicia el combate usando magia o arco," +
                 " otorga Def/Res+8 y neutraliza los bonus del rival durante el combate.",
-                new CompositeCondition(
+                new AndCondition(
                 [
-                    new CompositeCondition(
+                    new OrCondition(
                     [
-                        new UsingSpecificWeaponCondition("Magic", opponentUsing: true),
-                        new UsingSpecificWeaponCondition("Bow", opponentUsing: true),
-                    ], useOr: true),
+                        new UsingSpecificWeaponCondition(WeaponName.Magic, opponentUsing: true),
+                        new UsingSpecificWeaponCondition(WeaponName.Bow, opponentUsing: true),
+                    ]),
                     new InitiatingCombatCondition(rivalStarting: true)
-                ], useOr: false),
+                ]),
                 [
                     new StatChangeEffect(StatName.Def, 8),
                     new StatChangeEffect(StatName.Res, 8),
@@ -599,11 +593,11 @@ public class SkillFactory
                 "Dragonskin",
                 "Si el rival inicia el combate o si el HP del rival >= 75% al inicio del combate, " +
                 "otorga Atk/Spd/Def/Res+6 a la unidad durante el combate y neutraliza los bonus del rival.",
-                new CompositeCondition(
+                new OrCondition(
                     [
                         new InitiatingCombatCondition(rivalStarting: true),
                         new HighHpCondition(0.75, rivalHp: true)
-                    ], useOr: true
+                    ]
                     ),
                 [
                     new StatChangeEffect(StatName.Atk, 6),

@@ -1,13 +1,13 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Characters;
 
-namespace Fire_Emblem
+namespace Fire_Emblem.Combat
 {
     public class CombatLog
     {
-        private View _view;
+        private readonly View _view;
 
-        // Constructor to initialize the View
+       
         public CombatLog(View view)
         {
             _view = view;
@@ -22,11 +22,11 @@ namespace Fire_Emblem
         {
            
             if (WTB == 1.2)
-                _view.WriteLine($"{attacker.Info.Name} ({attacker.Info.Weapon}) tiene ventaja con respecto a {defender.Info.Name} " +
-                                $"({defender.Info.Weapon})");
+                _view.WriteLine($"{attacker.Info.Name} ({attacker.Info.Weapon}) tiene ventaja con respecto a " +
+                                $"{defender.Info.Name} ({defender.Info.Weapon})");
             else if(WTB == 0.8)
-                _view.WriteLine($"{defender.Info.Name} ({defender.Info.Weapon}) tiene ventaja con respecto a {attacker.Info.Name} " +
-                                $"({attacker.Info.Weapon})");
+                _view.WriteLine($"{defender.Info.Name} ({defender.Info.Weapon}) tiene ventaja con respecto a " +
+                                $"{attacker.Info.Name} ({attacker.Info.Weapon})");
             else
             {
                 _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
@@ -81,10 +81,16 @@ namespace Fire_Emblem
                 }
             }
         }
+        
+        public void DisplayAttackResult(Character attacker, Character defender, int damage)
+        {
+            _view.WriteLine($"{attacker.Info.Name} ataca a {defender.Info.Name} con {damage} de daño");
+        }
+
 
         public void AnnounceResults(Character attacker, Character defender)
         {
-            _view.WriteLine($"{attacker.Info.Name} ({attacker.GetHP}) : {defender.Info.Name} ({defender.GetHP})");
+            _view.WriteLine($"{attacker.Info.Name} ({attacker.GetHp}) : {defender.Info.Name} ({defender.GetHp})");
         }
     }
 }

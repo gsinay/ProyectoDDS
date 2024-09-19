@@ -1,6 +1,4 @@
-using Fire_Emblem.Characters;
-
-namespace Fire_Emblem;
+namespace Fire_Emblem.Characters;
 
 public class CharacterList
 {

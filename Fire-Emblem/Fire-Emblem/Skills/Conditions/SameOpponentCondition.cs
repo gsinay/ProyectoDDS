@@ -1,4 +1,4 @@
-namespace Fire_Emblem;
+namespace Fire_Emblem.Skills.Conditions;
 
 using Fire_Emblem.Characters;
 

@@ -1,5 +1,6 @@
 using Fire_Emblem.Characters;
 
+namespace Fire_Emblem.Skills.Conditions;
 
 public interface ICondition
 {

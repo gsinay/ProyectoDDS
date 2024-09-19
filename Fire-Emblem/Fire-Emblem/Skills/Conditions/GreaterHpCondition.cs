@@ -1,6 +1,6 @@
 using Fire_Emblem.Characters;
 
-namespace Fire_Emblem;
+namespace Fire_Emblem.Skills.Conditions;
 
 public class GreaterHpCondition : ICondition
 {
@@ -12,6 +12,6 @@ public class GreaterHpCondition : ICondition
     }
     public bool IsSatisfied(Character character, Character opponent)
     {
-        return character.GetHP >= opponent.GetHP + _hpDifference;
+        return character.GetHp>= opponent.GetHp + _hpDifference;
     }
 }

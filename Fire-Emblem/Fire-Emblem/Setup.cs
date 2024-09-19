@@ -1,5 +1,6 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Characters;
+using Fire_Emblem.Skills;
 using Fire_Emblem.SkillsManager;
 
 namespace Fire_Emblem;
@@ -9,7 +10,7 @@ public class Setup
 
     private View _view;
     private string _teamsFolder;
-    private JsonHandler _jsonHandler = new JsonHandler();
+    private JsonHandler _jsonHandler = new ();
     private SkillFactory _skillFactory;
     private Player[] _players;
 
@@ -18,7 +19,7 @@ public class Setup
     public Setup(View view, string teamsFolder)
     {
         _view = view;
-        _skillFactory = new SkillFactory(_view);
+        _skillFactory = new SkillFactory();
         _teamsFolder = teamsFolder;
         _players = new Player[2];
         _players[0] = new Player(playerNumber:1);

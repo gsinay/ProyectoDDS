@@ -1,7 +1,6 @@
-namespace Fire_Emblem;
-
-using Fire_Emblem;
 using Fire_Emblem.Characters;
+
+namespace Fire_Emblem.Skills.Effects;
 
 public class FirstAttackBoostEffect : IEffect
 {

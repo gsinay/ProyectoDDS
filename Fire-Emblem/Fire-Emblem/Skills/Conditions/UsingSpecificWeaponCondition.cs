@@ -1,14 +1,12 @@
-
 using Fire_Emblem.Characters;
-
-namespace Fire_Emblem;
+namespace Fire_Emblem.Skills.Conditions;
 
 public class UsingSpecificWeaponCondition: ICondition
 {
-    private string _weapon;
+    private WeaponName _weapon;
     private bool _opponentUsing;
 
-    public UsingSpecificWeaponCondition(string weapon, bool opponentUsing = false)
+    public UsingSpecificWeaponCondition(WeaponName weapon, bool opponentUsing = false)
     {
         _weapon = weapon;
         _opponentUsing = opponentUsing;
