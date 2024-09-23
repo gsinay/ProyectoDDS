@@ -19,7 +19,7 @@ public class StatChangeEffect : IEffect
         
     }
 
-    public void Apply(Character character, Character opponent)
+    public void Apply(Character? character, Character opponent)
     {
         if (_applyToOpponent)
         {
@@ -42,7 +42,7 @@ public class StatChangeEffect : IEffect
     }
 
     
-    private void ApplyBoostEffect(Character target)
+    private void ApplyBoostEffect(Character? target)
     {
         switch (_stat)
         {
@@ -61,7 +61,7 @@ public class StatChangeEffect : IEffect
         }
     }
 
-    private void ApplyPenaltyEffect(Character target)
+    private void ApplyPenaltyEffect(Character? target)
     {
         switch (_stat)
         {

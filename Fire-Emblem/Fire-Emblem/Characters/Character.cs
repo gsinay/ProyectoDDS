@@ -12,7 +12,7 @@ namespace Fire_Emblem.Characters
         private SkillList _skills;
         
         public bool IsInitiatingCombat { get; set; }
-        public Character MostRecentOpponent { get; private set; }
+        public Character? MostRecentOpponent { get; private set; }
         public bool HasAttacked { get; private set; }
         
         public Character(string name, WeaponName weapon, string gender, string deathQuote,
@@ -50,7 +50,7 @@ namespace Fire_Emblem.Characters
             {
                 if (skill is OneTimeSkill permanentSkill)
                 {
-                    permanentSkill.ApplyEffect(this, null, null);
+                    permanentSkill.ApplyEffect(this, null!);
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace Fire_Emblem.Characters
         {
             foreach (var skill in _skills.GetSkills())
             {
-                skill.ApplyEffect(this, opponent, combatLog);
+                skill.ApplyEffect(this, opponent);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Fire_Emblem.Characters
         }
 
     
-        public void UpdateMostRecentOpponent(Character opponent)
+        public void UpdateMostRecentOpponent(Character? opponent)
         {
             MostRecentOpponent = opponent;
         }

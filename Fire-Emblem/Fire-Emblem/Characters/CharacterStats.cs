@@ -86,7 +86,5 @@ namespace Fire_Emblem.Characters
             FirstAttackPenalties = InitializeStatDictionary();
 
         }
-
-       
     }
 }

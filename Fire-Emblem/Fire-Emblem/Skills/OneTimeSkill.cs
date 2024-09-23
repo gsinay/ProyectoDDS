@@ -20,7 +20,7 @@ public class OneTimeSkill : ISkill
         _effects = effects;
     }
 
-    public void ApplyEffect(Character character, Character opponent, CombatLog combatLog)
+    public void ApplyEffect(Character? character, Character opponent)
     {
         if (_condition.IsSatisfied(character, opponent))  
         {
@@ -30,4 +30,5 @@ public class OneTimeSkill : ISkill
             }
         }
     }
+    
 }

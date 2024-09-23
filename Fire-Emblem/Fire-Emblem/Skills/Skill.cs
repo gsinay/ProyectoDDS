@@ -20,7 +20,7 @@ public class Skill : ISkill
         _effects = effects;
     }
 
-    public void ApplyEffect(Character character, Character opponent, CombatLog combatLog)
+    public void ApplyEffect(Character? character, Character opponent)
     {
         if (_condition.IsSatisfied(character, opponent))  
         {

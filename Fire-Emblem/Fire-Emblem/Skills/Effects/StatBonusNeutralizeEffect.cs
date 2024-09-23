@@ -11,7 +11,7 @@ public class StatBonusNeutralizeEffect : IEffect
         _stat = stat;
     }
 
-    public void Apply(Character character, Character opponent)
+    public void Apply(Character? character, Character opponent)
     {
         opponent.Stats.NeutralizedBonuses[_stat] = true;
     }

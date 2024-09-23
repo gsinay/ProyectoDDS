@@ -21,7 +21,7 @@ public class Combat
         
     }
     
-    public void StartCombat()
+    public void StartCombat() 
     {
         foreach (var player in Players)
         {

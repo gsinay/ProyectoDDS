@@ -14,7 +14,7 @@ public class UnimplementedSkill : ISkill
         Description = $"The skill '{skillName}' has not been implemented yet.";
     }
 
-    public void ApplyEffect(Character character, Character opponent, CombatLog combatLog)
+    public void ApplyEffect(Character? character, Character opponent)
     {
     }
     

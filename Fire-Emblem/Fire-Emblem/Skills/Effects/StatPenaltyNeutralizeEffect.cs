@@ -11,7 +11,7 @@ public class StatPenaltyNeutralizeEffect : IEffect
         _stat = stat;
     }
 
-    public void Apply(Character character, Character opponent)
+    public void Apply(Character? character, Character opponent)
     {
         character.Stats.NeutralizedPenalties[_stat] = true;
     }

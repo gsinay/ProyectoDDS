@@ -4,7 +4,7 @@ namespace Fire_Emblem.Skills.Effects;
 
 public class SoulbladeEffect : IEffect
 {
-    public void Apply(Character character, Character opponent)
+    public void Apply(Character? character, Character opponent)
     {
         var average = (opponent.Stats.BaseStats[StatName.Def] + opponent.Stats.BaseStats[StatName.Res]) / 2;
 

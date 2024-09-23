@@ -6,7 +6,7 @@ public class WrathEffect : IEffect
 {
     private const int MaxBonus = 30;
 
-    public void Apply(Character character, Character opponent)
+    public void Apply(Character? character, Character opponent)
     {
         int hpLost = character.GetMaxHp - character.GetHp; 
         int bonus = Math.Min(hpLost, MaxBonus); 

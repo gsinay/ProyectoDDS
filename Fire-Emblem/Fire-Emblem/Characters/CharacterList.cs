@@ -2,14 +2,14 @@ namespace Fire_Emblem.Characters;
 
 public class CharacterList
 {
-    private List<Character> _characters;
+    private List<Character?> _characters;
 
     public CharacterList()
     {
-        _characters = new List<Character>();
+        _characters = new List<Character?>();
     }
 
-    public void AddCharacter(Character character)
+    public void AddCharacter(Character? character)
     {
         _characters.Add(character);
     }
