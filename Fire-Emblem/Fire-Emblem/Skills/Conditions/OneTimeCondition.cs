@@ -4,7 +4,7 @@ namespace Fire_Emblem.Skills.Conditions;
 
 public class OneTimeCondition : ICondition
 {
-    private bool _used = false;
+    private bool _used;
 
     public bool IsSatisfied(Character character, Character opponent)
     {

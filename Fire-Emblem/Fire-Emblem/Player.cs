@@ -4,8 +4,8 @@ namespace Fire_Emblem;
 
 public class Player
 {
-    private CharacterList _characters;
-    public int PlayerNumber;
+    private readonly CharacterList _characters;
+    public int PlayerNumber { get; }
 
     public Player(int playerNumber)
     {
@@ -13,6 +13,7 @@ public class Player
         _characters = new CharacterList();
         PlayerNumber = playerNumber;
     }
+    
 
     public void AddCharacter(Character character)
     {
@@ -32,12 +33,12 @@ public class Player
     }
     public bool IsAlive()
     {
-        for (int i = 0; i < Characters.Count; i++)
+        foreach (var character in Characters)
         {
-            if (Characters[i].GetHp > 0)
+            if (character.GetHp > 0)
                 return true;
         }
-        
+
         return false;
     }
 

@@ -4,7 +4,7 @@ namespace Fire_Emblem.Skills.Conditions;
 
 public class LowHpCondition : ICondition
 {
-    private double _percentage;
+    private readonly double _percentage;
 
     public LowHpCondition(double percentage)
     {

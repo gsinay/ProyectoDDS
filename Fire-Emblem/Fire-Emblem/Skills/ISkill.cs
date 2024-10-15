@@ -6,6 +6,6 @@ public interface ISkill
 {
     string Name { get; }
     string Description { get; }
-    void ApplyEffect(Character? character, Character opponent);
+    void ApplySkill(Character character, Character opponent);
    
 }

@@ -28,10 +28,10 @@ public class ScalingStatBoostEffect : IEffect
     {
         return _stat switch
         {
-            StatName.Atk => character.Stats.BaseStats[StatName.Atk],
-           StatName.Spd => character.Stats.BaseStats[StatName.Spd],
-            StatName.Def => character.Stats.BaseStats[StatName.Def],
-            StatName.Res => character.Stats.BaseStats[StatName.Res],
+            StatName.Atk => character.Stats.BaseStats.GetBaseStat(StatName.Atk),
+           StatName.Spd => character.Stats.BaseStats.GetBaseStat(StatName.Spd),
+            StatName.Def => character.Stats.BaseStats.GetBaseStat(StatName.Def),
+            StatName.Res => character.Stats.BaseStats.GetBaseStat(StatName.Res),
             _ => 0
         };
     }
@@ -41,16 +41,16 @@ public class ScalingStatBoostEffect : IEffect
         switch (_stat)
         {
             case StatName.Atk:
-                character.Stats.CombatBonuses[StatName.Atk] += amount;
+                character.Stats.CombatBonuses.AddBonus(StatName.Atk, amount);
                 break;
             case StatName.Spd:
-                character.Stats.CombatBonuses[StatName.Spd] += amount;
+                character.Stats.CombatBonuses.AddBonus(StatName.Spd, amount);
                 break;
             case StatName.Def:
-                character.Stats.CombatBonuses[StatName.Def] += amount;
+                character.Stats.CombatBonuses.AddBonus(StatName.Def, amount);
                 break;
             case StatName.Res:
-                character.Stats.CombatBonuses[StatName.Res] += amount;
+                character.Stats.CombatBonuses.AddBonus(StatName.Res, amount); 
                 break;
         }
     }

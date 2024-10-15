@@ -1,41 +1,50 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Characters;
 
+
 namespace Fire_Emblem.Combat;
 
 public class Combat
 {
-    public Player[] Players;
+    private const double _AdvantageWTB = 1.2;
+    private const double _DisadvantageWTB = 0.8;
+    private readonly Player[] _players;
     private int _turn;
 
-    private View _view;
+    private readonly View _view;
 
-    private CombatLog _combatlog;
+    private readonly CombatLog _combatlog;
 
     public Combat(View view, Setup setup)
     {
-        Players = setup.Players;
+        _players = setup.Players;
         _turn = 0;
         _view = view;
         _combatlog = new CombatLog(_view);
         
     }
     
-    public void StartCombat() 
+    public void StartCombat()
     {
-        foreach (var player in Players)
+        ApplyMatchBasedEffects();
+        
+        while (_players[0].IsAlive() && _players[1].IsAlive())
+        {
+            ExecuteTurn(_players[_turn % 2], _players[(_turn + 1) % 2]);
+            _turn++;
+        }
+        PrintEndGameMessage();
+    }
+
+    private void ApplyMatchBasedEffects()
+    {
+        foreach (var player in _players)
         {
             foreach (var character in player.Characters)
             {
                 character.ApplyPermanentEffects(); 
             }
         }
-        while (Players[0].IsAlive() && Players[1].IsAlive())
-        {
-            ExecuteTurn(Players[_turn % 2], Players[(_turn + 1) % 2]);
-            _turn++;
-        }
-        PrintEndGameMessage();
     }
     private void ExecuteTurn(Player attacker, Player defender)
     {
@@ -62,39 +71,33 @@ public class Combat
     {
         Character character = SelectCharacter(player);
         character.IsInitiatingCombat = (_turn % 2 + 1 == player.PlayerNumber);
-        character.ResetHasAttackStatus();
+        character.MarkAsNotAttacked();
         return character;
 
     }
 
     private Character SelectCharacter(Player player)
     {
-        _view.WriteLine($"Player {player.PlayerNumber} selecciona una opción");
-        ListCharacters(player);
+        _combatlog.AnnounceOption(player.PlayerNumber);
+        _combatlog.ListCharacters(player);
         int selection = Convert.ToInt32(_view.ReadLine());
         return player.Characters[selection];
 
     }
-    private void ListCharacters(Player player)
-    {
-        for (int i = 0; i < player.CharacterCount(); i++)
-        {
-            _view.WriteLine($"{i}: {player.GetCharacterName(i)}");
-        }
-    }
+    
 
     private void PrintPreAttackLogs(Player attacker, Character attackChar, Character defendingChar)
     {
         _combatlog.AnnounceTurn(_turn, attackChar.Info.Name, attacker.PlayerNumber);
-        double WTB = CheckTriangleAdvantage(attackChar, defendingChar);
-        _combatlog.PrintAdvantage(attackChar, defendingChar, WTB);
+        double wtb = GetTriangleAdvantage(attackChar, defendingChar);
+        _combatlog.PrintAdvantage(attackChar, defendingChar, wtb);
         _combatlog.PrintLog(attackChar, defendingChar);
     }
     
-    private double CheckTriangleAdvantage(Character attacker, Character defender)
+    private double GetTriangleAdvantage(Character attacker, Character defender)
     {
-        if (HasAdvantage(attacker, defender)) return 1.2; 
-        if (HasDisadvantage(attacker, defender)) return 0.8;
+        if (HasAdvantage(attacker, defender)) return _AdvantageWTB; 
+        if (HasDisadvantage(attacker, defender)) return _DisadvantageWTB;
         return 1;
     }
     
@@ -123,8 +126,8 @@ public class Combat
         Attack(attacker, defender);
         if (!defender.IsAlive()) return;
         Attack(defender, attacker);
-        attacker.SetHasAttackedStatus();
-        defender.SetHasAttackedStatus();
+        attacker.MarkAsAttacked();
+        defender.MarkAsAttacked();
         attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
         if (!attacker.IsAlive()) return;
@@ -132,18 +135,18 @@ public class Combat
     }
     private void Attack(Character attacker, Character defender)
     {
-        double WTB = CheckTriangleAdvantage(attacker, defender);
+        double wtb = GetTriangleAdvantage(attacker, defender);
         int effectiveDefense = GetEffectiveDefense(attacker, defender);
-        int attackPower = CalculateAttackPower(attacker, WTB);
+        int attackPower = CalculateAttackPower(attacker, wtb);
         int damage = CalculateDamage(attackPower, effectiveDefense);
 
         defender.TakeDamage(damage);
         _combatlog.DisplayAttackResult(attacker, defender, damage);
     }
     
-    private int CalculateAttackPower(Character attacker, double WTB)
+    private int CalculateAttackPower(Character attacker, double wtb)
     {
-        return (int)(attacker.EffectiveAtk * WTB);
+        return (int)(attacker.EffectiveAtk * wtb);
     }
     
     private int CalculateDamage(int attackPower, int effectiveDefense)
@@ -177,7 +180,7 @@ public class Combat
             noFollowUps = false;
         }
         if (noFollowUps)
-            _view.WriteLine("Ninguna unidad puede hacer un follow up");
+            _combatlog.AnnounceNoFollowUps();
     }
 
     private bool CanFollowUp(Character attacker, Character defender)
@@ -202,8 +205,8 @@ public class Combat
 
     private void PrintEndGameMessage()
     {
-        Player winner = Players[0].IsAlive() ? Players[0] : Players[1];
-        _view.WriteLine($"Player {winner.PlayerNumber} ganó");
+        Player winner = _players[0].IsAlive() ? _players[0] : _players[1];
+        _combatlog.AnnounceWinner(winner.PlayerNumber);
     }
     
 }

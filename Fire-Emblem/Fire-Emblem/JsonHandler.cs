@@ -1,29 +1,47 @@
-
+namespace Fire_Emblem;
 using System.Text.Json;
 using Fire_Emblem.Characters;
 
-namespace Fire_Emblem;
 public class JsonHandler
 {
-    
     public Character GetCharacter(string name)
+    {
+        var characterData = FindCharacterData(name);
+        return CreateCharacterFromData(characterData);
+    }
+    
+    private Dictionary<string, string> FindCharacterData(string name)
+    {
+        var characterJsonList = ReadCharacterJson();
+        var characterData = characterJsonList
+            .FirstOrDefault(c => c["Name"].Equals(name, StringComparison.OrdinalIgnoreCase));
+
+        if (characterData == null)
+        {
+            throw new ArgumentException($"Character '{name}' does not exist.");
+        }
+
+        return characterData;
+    }
+
+
+    private List<Dictionary<string, string>> ReadCharacterJson()
     {
         string jsonString = File.ReadAllText("characters.json");
         var characterJsonList = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(jsonString);
 
         if (characterJsonList == null)
         {
-            throw new Exception("Error during deserialization");
+            throw new InvalidOperationException("Error during deserialization: character list is null.");
         }
 
-        var characterData = characterJsonList.FirstOrDefault(c =>
-            c["Name"].Equals(name, StringComparison.OrdinalIgnoreCase));
+        return characterJsonList;
+    }
 
-        if (characterData == null)
-        {
-            throw new Exception($"Character '{name}' does not exist.");
-        }
-        var character = new Character
+   
+    private Character CreateCharacterFromData(Dictionary<string, string> characterData)
+    {
+        return new Character
         (
             characterData["Name"],
             weapon: GetWeaponName(characterData["Weapon"]),
@@ -35,24 +53,14 @@ public class JsonHandler
             int.Parse(characterData["Def"]),
             int.Parse(characterData["Res"])
         );
-        return character;
     }
-    
-    
+
     private static WeaponName GetWeaponName(string weaponString)
     {
-        try
+        if (Enum.TryParse<WeaponName>(weaponString, true, out var weapon))
         {
-            return (WeaponName)Enum.Parse(typeof(WeaponName), weaponString, true);
+            return weapon;
         }
-        catch (ArgumentException)
-        {
-            throw new Exception($"Invalid weapon type: {weaponString}");
-        }
+        throw new ArgumentException($"Invalid weapon type: {weaponString}");
     }
-
-
-
-    
 }
-

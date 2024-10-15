@@ -6,8 +6,10 @@ public class LunaPenaltyEffect : IEffect
 {
     public void Apply(Character character, Character opponent)
     {
-        opponent.Stats.FirstAttackPenalties[StatName.Def] -= opponent.Stats.BaseStats[StatName.Def] / 2;
-        opponent.Stats.FirstAttackPenalties[StatName.Res] -= opponent.Stats.BaseStats[StatName.Res] / 2;
-        
+        int defPenalty = opponent.Stats.BaseStats.GetBaseStat(StatName.Def) / 2;
+        int resPenalty = opponent.Stats.BaseStats.GetBaseStat(StatName.Res) / 2;
+
+        opponent.Stats.FirstAttackPenalties.AddPenalty(StatName.Def, defPenalty);
+        opponent.Stats.FirstAttackPenalties.AddPenalty(StatName.Res, resPenalty);
     }
 }

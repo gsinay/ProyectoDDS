@@ -8,26 +8,32 @@ namespace Fire_Emblem.Characters
     {
       
         private readonly CharacterInfo _characterInfo;
-        private CharacterStats _stats;
-        private SkillList _skills;
-        
-        public bool IsInitiatingCombat { get; set; }
-        public Character? MostRecentOpponent { get; private set; }
-        public bool HasAttacked { get; private set; }
-        
+        private readonly CharacterStats _stats;
+        private readonly SkillList _skills;
+        private readonly CombatState _combatState;
+
+        public bool IsInitiatingCombat
+        {
+            get => _combatState.IsInitiatingCombat;
+            set => _combatState.IsInitiatingCombat = value;
+        }
+        public Character? MostRecentOpponent => _combatState.MostRecentOpponent;
+        public bool HasAttacked => _combatState.HasAttacked;
+
         public Character(string name, WeaponName weapon, string gender, string deathQuote,
             int hp, int atk, int spd, int def, int res)
         {
             _characterInfo = new CharacterInfo(name, weapon, gender, deathQuote);
             _stats = new CharacterStats(hp, atk, spd, def, res);
             _skills = new SkillList();
+            _combatState = new CombatState();
         }
         
         public CharacterStats Stats => _stats;
         public CharacterInfo Info => _characterInfo;
         
-        public int GetHp => _stats.BaseStats[StatName.Hp];
-        public int GetMaxHp => _stats.BaseStats[StatName.MaxHp];
+        public int GetHp => _stats.BaseStats.GetBaseStat(StatName.Hp);
+        public int GetMaxHp => _stats.BaseStats.GetBaseStat(StatName.MaxHp);
         public double GetRemainingHpPercentage() => (double)GetHp / GetMaxHp;
 
         public int EffectiveAtk => GetEffectiveStat(StatName.Atk);
@@ -50,7 +56,7 @@ namespace Fire_Emblem.Characters
             {
                 if (skill is OneTimeSkill permanentSkill)
                 {
-                    permanentSkill.ApplyEffect(this, null!);
+                    permanentSkill.ApplySkill(this, null!);
                 }
             }
         }
@@ -59,38 +65,39 @@ namespace Fire_Emblem.Characters
         {
             foreach (var skill in _skills.GetSkills())
             {
-                skill.ApplyEffect(this, opponent);
+                skill.ApplySkill(this, opponent);
             }
         }
 
        
         public void IncreaseMaxHp(int amount)
         {
-            _stats.BaseStats[StatName.Hp] += amount;
-            _stats.BaseStats[StatName.MaxHp] += amount;
+            int currentHp = _stats.BaseStats.GetBaseStat(StatName.Hp);
+            _stats.BaseStats.SetBaseStat(StatName.Hp, currentHp + amount);
+            _stats.BaseStats.SetBaseStat(StatName.MaxHp, currentHp + amount);
         }
 
-        public bool IsAlive() => _stats.BaseStats[StatName.Hp] > 0;
+        public bool IsAlive() => _stats.BaseStats.GetBaseStat(StatName.Hp) > 0;
 
         public void TakeDamage(int damage)
         {
-            _stats.BaseStats[StatName.Hp] = Math.Max(0, GetHp - damage);
+            int damageValue = Math.Max(0, GetHp - damage);
+            _stats.BaseStats.SetBaseStat(StatName.Hp, damageValue);
         }
 
     
-        public void UpdateMostRecentOpponent(Character? opponent)
+        public void UpdateMostRecentOpponent(Character opponent)
         {
-            MostRecentOpponent = opponent;
+            _combatState.UpdateMostRecentOpponent(opponent);        }
+
+        public void MarkAsAttacked()
+        {
+            _combatState.MarkAsAttacked();
         }
 
-        public void SetHasAttackedStatus()
+        public void MarkAsNotAttacked()
         {
-            HasAttacked = true;
-        }
-
-        public void ResetHasAttackStatus()
-        {
-            HasAttacked = false;
+            _combatState.MarkAsNotAttacked();
         }
 
         public void ResetModifiers()
@@ -106,17 +113,17 @@ namespace Fire_Emblem.Characters
       
         private int GetEffectiveStat(StatName stat)
         {
-            int effectiveBonuses = _stats.NeutralizedBonuses[stat]
+            int effectiveBonuses = _stats.NeutralizedBonuses.IsNeutralized(stat)
                 ? 0
-                : _stats.CombatBonuses[stat] + _stats.FirstAttackBonuses[stat] +
-                  (HasAttacked ? _stats.FollowupBonuses[stat] : 0);
+                : _stats.CombatBonuses.GetBonus(stat) + _stats.FirstAttackBonuses.GetBonus(stat) +
+                  (HasAttacked ? _stats.FollowupBonuses.GetBonus(stat) : 0);
 
-            int effectivePenalties = _stats.NeutralizedPenalties[stat]
+            int effectivePenalties = _stats.NeutralizedPenalties.IsNeutralized(stat)
                 ? 0
-                : _stats.CombatPenalties[stat] + _stats.FirstAttackPenalties[stat] +
-                  (HasAttacked ? _stats.FollowupPenalties[stat] : 0);
+                : _stats.CombatPenalties.GetPenalty(stat) + _stats.FirstAttackPenalties.GetPenalty(stat) +
+                  (HasAttacked ? _stats.FollowupPenalties.GetPenalty(stat): 0);
 
-            return Math.Max(0, _stats.BaseStats[stat] + effectiveBonuses + effectivePenalties);
+            return Math.Max(0, _stats.BaseStats.GetBaseStat(stat) + effectiveBonuses - effectivePenalties);
         }
     }
 }

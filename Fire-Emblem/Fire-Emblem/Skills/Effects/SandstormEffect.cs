@@ -4,23 +4,31 @@ namespace Fire_Emblem.Skills.Effects;
 
 public class SandstormEffect : IEffect
 {
+    private const double DefenseMultiplier = 1.5;
+
     public void Apply(Character character, Character opponent)
     {
-        
-        double z = Math.Floor(1.5 * character.Stats.BaseStats[StatName.Def]); 
-        int truncatedZ = Convert.ToInt32(z); 
+        int truncatedZ = CalculateTruncatedZ(character);
+        ApplyAttackDifference(character, truncatedZ);
+    }
 
-       
-        int atkDifference = truncatedZ - character.Stats.BaseStats[StatName.Atk];
+    private int CalculateTruncatedZ(Character character)
+    {
+        double z = Math.Floor(DefenseMultiplier * character.Stats.BaseStats.GetBaseStat(StatName.Def));
+        return Convert.ToInt32(z);
+    }
+
+    private void ApplyAttackDifference(Character character, int truncatedZ)
+    {
+        int atkDifference = truncatedZ - character.Stats.BaseStats.GetBaseStat(StatName.Atk);
         if (atkDifference > 0)
         {
-            character.Stats.FollowupBonuses[StatName.Atk] += atkDifference;
+            character.Stats.FollowupBonuses.AddBonus(StatName.Atk, atkDifference);
         }
         else
         {
             int penalty = Math.Abs(atkDifference);
-            character.Stats.FollowupPenalties[StatName.Atk] -= penalty;
+            character.Stats.FollowupPenalties.AddPenalty(StatName.Atk, penalty);
         }
     }
-
 }
