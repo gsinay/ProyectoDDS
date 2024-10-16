@@ -14,7 +14,7 @@ public class FirstAttackPercentReductionEffect : IEffect
     public void Apply(Character character, Character opponent)
     {
        
-        character.CharacterModifiers.FirstAttackModifiers.ReducePercentageOfDamageRecieved(_reductionPercent);
+        character.CharacterModifiers.FirstAttackModifiers.ReducePercentageOfDamageReceived(_reductionPercent);
     }
     
 }

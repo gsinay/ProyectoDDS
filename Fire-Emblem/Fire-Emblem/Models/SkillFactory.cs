@@ -1,6 +1,7 @@
 using Fire_Emblem.Characters;
 using Fire_Emblem.Collections;
 using Fire_Emblem.Exceptions;
+using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.Conditions;
 using Fire_Emblem.Skills.Effects;
@@ -28,13 +29,15 @@ public class SkillFactory
             ),
             "will to win" => new BasicSkill(
                 "Will to Win",
-                "Si el HP de la unidad está al 50% o menos al inicio del combate, otorga Atk+8 durante el combate.",
+                "Si el HP de la unidad está al 50% o menos al inicio del combate, " +
+                "otorga Atk+8 durante el combate.",
                 new LowHpCondition(0.5),
                 new EffectsList([new StatBoostEffect(StatName.Atk, 8)])
             ),
             "single-minded" => new BasicSkill(
                 "Single-Minded",
-                "En un combate contra un rival que también es el oponente más reciente de la unidad, otorga Atk+8 durante el combate.",
+                "En un combate contra un rival que también es el oponente más reciente de la unidad, " +
+                "otorga Atk+8 durante el combate.",
                 new SameOpponentCondition(),
                 new EffectsList([new StatBoostEffect(StatName.Atk, 8)])
             ),
@@ -46,7 +49,8 @@ public class SkillFactory
             ),
             "perceptive" => new BasicSkill(
                 "Perceptive",
-                "Si la unidad inicia el combate, otorga Spd+12 a la unidad durante el combate, y por cada cuatro puntos de Spd (sin contar bonus o penalty), la unidad gana Spd+1 adicional.",
+                "Si la unidad inicia el combate, otorga Spd+12 a la unidad durante el combate, " +
+                "y por cada cuatro puntos de Spd (sin contar bonus o penalty), la unidad gana Spd+1 adicional.",
                 new InitiatingCombatConditionSelf(),
                 new EffectsList([new StatBoostEffect(StatName.Spd, 12),
                                 new ScalingStatBoostEffect(StatName.Spd, 4)])
@@ -78,7 +82,8 @@ public class SkillFactory
             ),
             "wrath" => new BasicSkill(
                 "Wrath",
-                "Al inicio del combate, por cada punto de HP que la unidad ha perdido, otorga Atk/Spd+1 durante el combate. (Max +30)",
+                "Al inicio del combate, por cada punto de HP que la unidad ha perdido, " +
+                "otorga Atk/Spd+1 durante el combate. (Max +30)",
                 new AlwaysTrueCondition(),
                 new EffectsList([new WrathEffect()])
             ),
@@ -250,25 +255,29 @@ public class SkillFactory
             ),
             "fire boost" => new BasicSkill(
                 "Fire Boost",
-                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, otorga Atk+6 durante el combate.",
+                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, " +
+                "otorga Atk+6 durante el combate.",
                 new GreaterHpCondition(3),
                 new EffectsList([new StatBoostEffect(StatName.Atk, 6)])
             ),
             "wind boost" => new BasicSkill(
                 "Wind Boost",
-                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, otorga Spd+6 durante el combate.",
+                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, " +
+                "otorga Spd+6 durante el combate.",
                 new GreaterHpCondition(3),
                 new EffectsList([new StatBoostEffect(StatName.Spd, 6)])
             ),
             "earth boost" => new BasicSkill(
                 "Earth Boost",
-                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, otorga Def+6 durante el combate.",
+                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, " +
+                "otorga Def+6 durante el combate.",
                 new GreaterHpCondition(3),
                 new EffectsList([new StatBoostEffect(StatName.Def, 6)])
             ),
             "water boost" => new BasicSkill(
                 "Water Boost",
-                "Al inicio del combate, si el HP de la unidad >= HP del rival+3, otorga Res+6 durante el combate.",
+                "Al inicio del combate, si el HP de la unidad >= HP del rival+3," +
+                " otorga Res+6 durante el combate.",
                 new GreaterHpCondition(3),
                 new EffectsList([new StatBoostEffect(StatName.Res, 6)])
             ),
@@ -371,8 +380,8 @@ public class SkillFactory
             ),
             "sandstorm" => new BasicSkill(
                 "Sandstorm",
-                "Calcula el daño del Follow-Up utilizando el 150 % de la Def base de la unidad en vez del Atk. " +
-                "Considere esto como un Bonus o un Penalty de Atk.",
+                "Calcula el daño del Follow-Up utilizando el 150 % de la Def base de la unidad en " +
+                "vez del Atk. Considere esto como un Bonus o un Penalty de Atk.",
                 new AlwaysTrueCondition(),
                 new EffectsList([new SandstormEffect()])
             ),
@@ -627,7 +636,8 @@ public class SkillFactory
             ),
             "light and dark" => new BasicSkill(
                 "Light and Dark",
-                "Inflige Atk/Spd/Def/Res-5 en el rival, neutraliza los penaltis de la unidad y los bonus del rival.",
+                "Inflige Atk/Spd/Def/Res-5 en el rival, neutraliza los penaltis de la unidad y " +
+                "los bonus del rival.",
                 new AlwaysTrueCondition(),
                 new EffectsList([
                     new StatPenaltyOpponentEffect(StatName.Atk, 5),
@@ -736,6 +746,41 @@ public class SkillFactory
                 new AlwaysTrueCondition(),
                 new EffectsList([new FlatAttackIncrementEffect(5)])
                 ),
+            "bushido" => new CompositeSkill(
+                "Bushido",
+                " Inflige +7 de daño por ataque. Si el Spd de la unidad > Spd del rival, reduce el daño " +
+                "de los ataques del rival durante el combate por " +
+                "un porcentaje = diferencia entre stats x 4 (ma. 40 %).",
+                new ConditionalEffectsList(
+                    [
+                        new ConditionalEffect(new AlwaysTrueCondition(), 
+                            new EffectsList([new FlatAttackIncrementEffect(7)])),
+                        new ConditionalEffect(new GreaterSpdConditionWithBonuses(), 
+                            new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))
+                    ])
+                ),
+            //TODO: FIX THIS
+            "moon-twin wing" => new CompositeSkill(
+                "Moon-Twin Wing",
+                "Moon-Twin Wing: Al inicio del combate, si el HP de la unidad \u2265 25%, " +
+                "inflige Atk/Spd-5 en el rival durante el combate, y también, si la Spd de la unidad > Spd del rival, " +
+                "reduce el daño de los ataques del rival durante el combate en un porcentaje = " +
+                "diferencia entre los stats x 4 (ma \u0301x. 40 %).",
+                new ConditionalEffectsList(
+                    [
+                    new ConditionalEffect(
+                        new HighHpCondition(0.25), 
+                        new EffectsList([new StatPenaltyOpponentEffect(StatName.Atk, 5),
+                            new StatPenaltyOpponentEffect(StatName.Spd, 5)])
+                        ),
+                    new ConditionalEffect(
+                        new AndCondition(
+                            new ConditionsList(
+                                [new HighHpCondition(0.25), 
+                                    new GreaterSpdConditionWithBonuses()])),
+                        new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))])
+                ),
+            
             _ => throw new SkillNotImplementedException()
         };
     }

@@ -1,7 +1,6 @@
 using Fire_Emblem.Characters;
 using Fire_Emblem.Collections;
 using Fire_Emblem.Skills.Conditions;
-using Fire_Emblem.Skills.Effects;
 
 namespace Fire_Emblem.Skills;
 
@@ -9,8 +8,8 @@ public abstract class BaseSkill : ISkill
 {
     public string Name { get; }
     public string Description { get; }
-    protected readonly ICondition _condition;  
-    protected readonly EffectsList _effects;
+    private readonly ICondition? _condition;
+    private readonly EffectsList? _effects;
 
     protected BaseSkill(string name, string description, ICondition condition, EffectsList effects)
     {
@@ -19,8 +18,15 @@ public abstract class BaseSkill : ISkill
         _condition = condition;  
         _effects = effects;
     }
+    
+    protected BaseSkill(string name, string description)
+    {
+        Name = name;
+        Description = description;
+      
+    }
 
-    public void ApplySkill(Character character, Character opponent)
+    public virtual void ApplySkill(Character character, Character opponent)
     {
         if (IsConditionSatisfied(character, opponent))
         {
@@ -28,13 +34,14 @@ public abstract class BaseSkill : ISkill
         }
     }
 
-    protected bool IsConditionSatisfied(Character character, Character opponent)
+    private bool IsConditionSatisfied(Character character, Character opponent)
     {
-        return _condition.IsSatisfied(character, opponent);
+        return _condition != null && _condition.IsSatisfied(character, opponent);
     }
 
-    protected void ApplyEffects(Character character, Character opponent)
+    private void ApplyEffects(Character character, Character opponent)
     {
+        if (_effects == null) return;
         foreach (var effect in _effects.GetEffects())
         {
             effect.Apply(character, opponent);

@@ -9,4 +9,8 @@ public class ModifierSkill : BaseSkill
         : base(name, description, condition, effects)
     {
     }
+    protected ModifierSkill(string name, string description)
+        : base(name, description)
+    {
+    }
 }

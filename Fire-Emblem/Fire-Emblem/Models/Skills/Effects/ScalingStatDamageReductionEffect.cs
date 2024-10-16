@@ -24,7 +24,7 @@ public class ScalingStatDamageReductionEffect : IEffect
         double reductionPercentage = reduction / 100.0;
         reductionPercentage = Math.Max(0, reductionPercentage);
 
-        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageRecieved(reductionPercentage);
+        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(reductionPercentage);
     }
 
     private int GetStatDifference(Character character)
