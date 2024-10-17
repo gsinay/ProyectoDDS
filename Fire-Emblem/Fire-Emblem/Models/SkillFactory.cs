@@ -1,7 +1,6 @@
 using Fire_Emblem.Characters;
 using Fire_Emblem.Collections;
 using Fire_Emblem.Exceptions;
-using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.Conditions;
 using Fire_Emblem.Skills.Effects;
@@ -658,59 +657,59 @@ public class SkillFactory
                 "Dragon Wall",
                 "Si Res de la unidad > Res del rival, reduce el dano de cada ataque del rival por un " +
                 "porcentaje=diferencia entre los stats x 4 (ma \u0301x. 40 %).",
-                new GreaterResConditionWithBonuses(),
+                new StatComparisonCondition(StatName.Res, StatName.Res),
                 new EffectsList([new ScalingStatDamageReductionEffect(StatName.Res, 40)])
                 ),
             "dodge" => new ModifierSkill(
                 "Dodge", 
                 "Si Spd de la unidad > Spd del rival, reduce el dano de cada ataque del rival por un " +
                 "porcentaje=diferencia entre los stats x 4 (max. 40 %)",
-                new GreaterSpdConditionWithBonuses(),
+                new StatComparisonCondition(StatName.Spd, StatName.Spd),
                 new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd, 40)])
                 ),
-            "golden lotus" => new ModifierSkill(
+            "golden lotus" => new BasicSkill(
                 "Golden Lotus",
                 "Reduce el daño del primer ataque del rival en un 50 % si este hace daño físico.",
                 new UsingPhysicalWeaponConditionRival(),
                 new EffectsList([new FirstAttackPercentReductionEffect(0.5)])
                 ),
-            "gentility" => new ModifierSkill(
+            "gentility" => new BasicSkill(
                 "Gentility", 
                 "La unidad recibe -5 de daño en cada ataque del rival",
                 new AlwaysTrueCondition(),
                 new EffectsList([new FlatDamageReductionEffect(5)])
                 ),
-            "bow guard" => new ModifierSkill(
+            "bow guard" => new BasicSkill(
                 "Bow Guard",
                 "Si el rival usa un arco, la unidad recibe -5 daño en cada ataque del rival",
                 new UsingSpecificWeaponConditionRival(WeaponName.Bow),
                 new EffectsList([new FlatDamageReductionEffect(5)])
                 ),
-            "arms shield" => new ModifierSkill(
+            "arms shield" => new BasicSkill(
                 "Arms Shield", 
                 "Si la unidad tiene ventaja de arma, la unidad recibe -7 de daño en cada ataque del rival.",
                 new TriangleAdvantageCondition(),
                 new EffectsList([new FlatDamageReductionEffect(7)])
                     ),
-            "axe guard" => new ModifierSkill(
+            "axe guard" => new BasicSkill(
                 "Axe Guard", 
                 "Si el rival usa hachas, la unidad recibe -5 daño en cada ataque del rival",
                 new UsingSpecificWeaponConditionRival(WeaponName.Axe),
                 new EffectsList([new FlatDamageReductionEffect(5)])
                 ),
-            "magic guard" => new ModifierSkill(
+            "magic guard" => new BasicSkill(
                 "Magic Guard", 
                 "Si el rival usa magia, la unidad recibe -5 daño en cada ataque del rival",
                 new UsingSpecificWeaponConditionRival(WeaponName.Magic),
                 new EffectsList([new FlatDamageReductionEffect(5)])
             ),
-            "lance guard" => new ModifierSkill(
+            "lance guard" => new BasicSkill(
                 "Lange Guard", 
                 "Si el rival usa lanza, la unidad recibe -5 daño en cada ataque del rival",
                 new UsingSpecificWeaponConditionRival(WeaponName.Lance),
                 new EffectsList([new FlatDamageReductionEffect(5)])
             ),
-            "sympathetic" => new ModifierSkill(
+            "sympathetic" => new BasicSkill(
                 "Sympathetic", 
                 "Si el rival inicia el combate y el HP de la unidad está" +
                 "  al 50 % o menos al inicio del combate, la unidad recibe -5 daño en cada ataque del rival.",
@@ -722,14 +721,14 @@ public class SkillFactory
                         ])),
                 new EffectsList([new FlatDamageReductionEffect(5)])
                 ),
-            "back at you" => new ModifierSkill(
+            "back at you" => new BasicSkill(
                 "Back At You", 
                 "Si el rival inicia el combate, la unidad inflige daño extra en cada ataque = mitad del HP " +
                 "que la unidad ha perdido (considera solo el HP perdido hasta el combate anterior).",
                 new InitiatingCombatConditionRival(),
                 new EffectsList([new LostHpExtraFlatDamageEffect(0.5)])
                 ),
-            "lunar brace" => new ModifierSkill(
+            "lunar brace" => new BasicSkill(
                 "Lunar Brace",
                 "Si la unidad inicia el combate con un ataque físico, inflige daño" +
                 " extra=30 % de la Def del rival en cada ataque.",
@@ -740,7 +739,7 @@ public class SkillFactory
                     ])),
                 new EffectsList([new LunarBraceEffect(0.3)])
                 ),
-            "bravery" => new ModifierSkill(
+            "bravery" => new BasicSkill(
                 "Bravery",
                 "La unidad inflige +5 de daño en cada ataque.",
                 new AlwaysTrueCondition(),
@@ -751,35 +750,263 @@ public class SkillFactory
                 " Inflige +7 de daño por ataque. Si el Spd de la unidad > Spd del rival, reduce el daño " +
                 "de los ataques del rival durante el combate por " +
                 "un porcentaje = diferencia entre stats x 4 (ma. 40 %).",
-                new ConditionalEffectsList(
-                    [
-                        new ConditionalEffect(new AlwaysTrueCondition(), 
+                    new SkillList([
+                        new BasicSkill(new AlwaysTrueCondition(), 
                             new EffectsList([new FlatAttackIncrementEffect(7)])),
-                        new ConditionalEffect(new GreaterSpdConditionWithBonuses(), 
+                        new ModifierSkill(new StatComparisonCondition(StatName.Spd, StatName.Spd), 
                             new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))
-                    ])
+                   ])
                 ),
-            //TODO: FIX THIS
             "moon-twin wing" => new CompositeSkill(
                 "Moon-Twin Wing",
                 "Moon-Twin Wing: Al inicio del combate, si el HP de la unidad \u2265 25%, " +
                 "inflige Atk/Spd-5 en el rival durante el combate, y también, si la Spd de la unidad > Spd del rival, " +
                 "reduce el daño de los ataques del rival durante el combate en un porcentaje = " +
                 "diferencia entre los stats x 4 (ma \u0301x. 40 %).",
-                new ConditionalEffectsList(
+                new SkillList(
                     [
-                    new ConditionalEffect(
+                    new BasicSkill(
                         new HighHpCondition(0.25), 
                         new EffectsList([new StatPenaltyOpponentEffect(StatName.Atk, 5),
                             new StatPenaltyOpponentEffect(StatName.Spd, 5)])
                         ),
-                    new ConditionalEffect(
+                    new ModifierSkill(
                         new AndCondition(
                             new ConditionsList(
-                                [new HighHpCondition(0.25), 
-                                    new GreaterSpdConditionWithBonuses()])),
+                                [
+                                    new HighHpCondition(0.25), 
+                                    new StatComparisonCondition(StatName.Spd, StatName.Spd)
+                                ])),
                         new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))])
                 ),
+            "blue skies" => new ModifierSkill(
+                "Blue Skies",
+                "La unidad recibe -5 de dan \u0303o en cada ataque del rival " +
+                "e inflige +5 de dan \u0303o en cada ataque.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new FlatDamageReductionEffect(5),
+                        new FlatAttackIncrementEffect(5)
+                    ])
+                ),
+            "aegis shield" => new ModifierSkill(
+                "Aegis shield",
+                "Otorga Def+6 y Res+3. Reduce el dan \u0303o a la mitad en el primer ataque del rival",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Def, 6),
+                        new StatBoostEffect(StatName.Res, 3),
+                        new FirstAttackPercentReductionEffect(0.5)
+                    ])
+                ),
+            "remote sparrow" => new ModifierSkill(
+                "Remote Sparrow",
+                "Si la unidad inicia el combate, otorga Atk/Spd+7 y reduce el daño " +
+                "del primer ataque del rival en un 30 %.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList([
+                    new StatBoostEffect(StatName.Atk, 7),
+                    new StatBoostEffect(StatName.Spd, 7),
+                    new FirstAttackPercentReductionEffect(0.3)])
+                ),
+            "remote mirror" => new BasicSkill(
+                "Remote Mirror",
+                "Si la unidad inicia el combate, otorga Atk/Spd+7 y reduce el daño " +
+                "del primer ataque del rival en un 30 %.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList([
+                    new StatBoostEffect(StatName.Atk, 7),
+                    new StatBoostEffect(StatName.Res, 10),
+                    new FirstAttackPercentReductionEffect(0.3)])
+            ),
+            "remote sturdy" => new ModifierSkill(
+                "Remote sturdy",
+                "Si la unidad inicia el combate, otorga Atk/Deg+7 y reduce el daño " +
+                "del primer ataque del rival en un 30 %.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList([
+                    new StatBoostEffect(StatName.Atk, 7),
+                    new StatBoostEffect(StatName.Def, 10),
+                    new FirstAttackPercentReductionEffect(0.3)])
+            ),
+            "fierce stance" => new ModifierSkill(
+                "Fierce Stance",
+                "Si el rival inicia el combate, otorga Atk+8 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Atk, 8),
+                        new FollowupAttackPercentReductionEffect(0.1)
+                    ])),
+            "darting stance" => new ModifierSkill(
+                "Darting Stance",
+                "Si el rival inicia el combate, otorga Spd+8 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Spd, 8),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "steady stance" => new ModifierSkill(
+                "Steady Stance",
+                "Si el rival inicia el combate, otorga Def+8 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Def, 8),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "warding stance" => new ModifierSkill(
+                "Warding Stance",
+                "Si el rival inicia el combate, otorga Res+8 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Res, 8),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "kestrel stance" => new ModifierSkill(
+                "Kestrel Stance",
+                "Si el rival inicia el combate, otorga Atk/Spd+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Atk, 6),
+                    new StatBoostEffect(StatName.Spd, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "sturdy stance" => new ModifierSkill(
+                "Sturdy Stance",
+                "Si el rival inicia el combate, otorga Atk/Def+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Atk, 6),
+                    new StatBoostEffect(StatName.Def, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "mirror stance" => new ModifierSkill(
+                "Mirror Stance",
+                "Si el rival inicia el combate, otorga Atk/Res+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Atk, 6),
+                    new StatBoostEffect(StatName.Res, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "steady posture" => new ModifierSkill(
+                "Steady Posture",
+                "Si el rival inicia el combate, otorga Spd/Def+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Spd, 6),
+                    new StatBoostEffect(StatName.Def, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "swift stance" => new ModifierSkill(
+                "Swift Stance",
+                "Si el rival inicia el combate, otorga Spd/Res+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Spd, 6),
+                    new StatBoostEffect(StatName.Res, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "bracing stance" => new ModifierSkill(
+                "Bracing Stance",
+                "Si el rival inicia el combate, otorga Def/Res+6 durante el combate y " +
+                "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
+                new InitiatingCombatConditionRival(),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Def, 6),
+                    new StatBoostEffect(StatName.Res, 6),
+                    new FollowupAttackPercentReductionEffect(0.1)
+                ])),
+            "poetic justice" => new ModifierSkill(
+                "Poetic Justic",
+                "Inflige Spd-4 en el rival durante el combate y la unidad inflige dan \u0303o extra = 15 % " +
+                "del ataque del rival.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                [
+                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                    new RivalAtkFlatAttackBoostEffect(0.15)
+                
+                ])),
+            "laguz friend" => new BasicSkill(
+                "Laguz friend",
+                "La unidad recibe 50 % menos dan \u0303o, pero neutraliza todo Bonus a Def y Res y reduce " +
+                "estos stats en un 50 % de su base. (Considere esta reducci \u0301on como un Penalty).,",
+                new AlwaysTrueCondition(),
+                new EffectsList([new LaguzFriendEffect()])
+                ),
+            "chivalry" => new ModifierSkill(
+                "Chivalry",
+                "Si la unidad inicia el combate contra un rival con HP=100%," +
+                "la unidad inflige +2 dan \u0303o en cada ataque y recibe -2 dan \u0303o por cada ataque del rival.",
+                new AndCondition(
+                    new ConditionsList([
+                            new InitiatingCombatConditionSelf(), 
+                            new HighHpConditionRival(1)]
+                    )),
+                new EffectsList(
+                    [
+                        new FlatAttackIncrementEffect(2),
+                        new FlatDamageReductionEffect(2)
+                    ])
+                ),
+            "dragon's wrath" => new CompositeSkill(
+                "Dragon's Wrath",
+                "Reduce el daño del primer ataque del rival durante el combate en un 25 %. " +
+                "Si el Atk de la unidad > Res del rival, el primer ataque de la unidad hace daño extra = 25 %" +
+                " del Atk de la unidad menos Res del rival.",
+                new SkillList([
+                        new ModifierSkill(
+                            new AlwaysTrueCondition(), 
+                            new EffectsList(
+                                [new FirstAttackPercentReductionEffect(0.25)])),
+                        new ModifierSkill(
+                            new StatComparisonCondition(StatName.Atk, StatName.Res), 
+                            new EffectsList(
+                                [new DragonsWrathEffect()])
+                            )])
+                ),
+            "prescience" => new CompositeSkill(
+                "Prescience",
+                "Inflige Atk/Res-5 en el rival durante el combate. Si la unidad inicia el combate o si el " +
+                "rival usa magia o arcos, reduce el dan \u0303o del primer ataque del rival en un 30 %.",
+                new SkillList([
+                    new ModifierSkill(new AlwaysTrueCondition(), new EffectsList(
+                        [
+                            new StatPenaltyOpponentEffect(StatName.Atk, 5),
+                            new StatPenaltyEffect(StatName.Res, 5)
+                        ])),
+                    new ModifierSkill(
+                        new OrCondition(
+                            new ConditionsList(
+                            [
+                                new InitiatingCombatConditionSelf(),
+                                new UsingSpecificWeaponConditionSelf(WeaponName.Bow),
+                                new UsingSpecificWeaponConditionSelf(WeaponName.Magic)
+                            ])),
+                        new EffectsList([new FirstAttackPercentReductionEffect(.3)])
+                        )
+                ])),
             
             _ => throw new SkillNotImplementedException()
         };

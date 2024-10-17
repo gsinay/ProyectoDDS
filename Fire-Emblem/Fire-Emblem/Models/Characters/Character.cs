@@ -84,6 +84,8 @@ namespace Fire_Emblem.Characters
             {
                 if (skill is BasicSkill basicSkill)
                     basicSkill.ApplySkill(this, opponent);
+                if (skill is CompositeSkill compositeSkill)
+                    compositeSkill.ApplyBasicSkills(this, opponent);
             }
         }
 
@@ -92,9 +94,10 @@ namespace Fire_Emblem.Characters
             foreach (var skill in _skills.GetSkills())
             {
                 if (skill is ModifierSkill modifierSkill)
-                {
                     modifierSkill.ApplySkill(this, opponent);
-                }
+                if (skill is CompositeSkill compositeSkill)
+                    compositeSkill.ApplyModifierSkills(this, opponent);
+                
             }
         }
 

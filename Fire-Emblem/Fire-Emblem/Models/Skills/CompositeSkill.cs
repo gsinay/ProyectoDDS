@@ -2,26 +2,36 @@ using Fire_Emblem.Characters;
 using Fire_Emblem.Collections;
 using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills.Conditions;
+using Fire_Emblem.SkillsManager;
 
 namespace Fire_Emblem.Skills
 {
     
-    public class CompositeSkill : ModifierSkill
+    public class CompositeSkill : BaseSkill
     {
-        private ConditionalEffectsList _conditionalEffects;
+        private SkillList _skills;
 
-        public CompositeSkill(string name, string description, ConditionalEffectsList conditionalEffects)
+        public CompositeSkill(string name, string description, SkillList skills)
             : base(name, description) 
         {
-            _conditionalEffects = conditionalEffects;
+            _skills = skills;
         }
-
-       
-        public override void ApplySkill(Character character, Character opponent)
+        
+        public void ApplyBasicSkills(Character character, Character opponent)
         {
-            foreach (var conditionalEffect in _conditionalEffects.GetConditionalEffects())
+            foreach (var skill in _skills.GetSkills())
             {
-                conditionalEffect.ApplyEffects(character, opponent);
+                if (skill is BasicSkill basicSkill)
+                    basicSkill.ApplySkill(character, opponent);
+            }
+        }
+        
+        public void ApplyModifierSkills(Character character, Character opponent)
+        {
+            foreach (var skill in _skills.GetSkills())
+            {
+                if (skill is ModifierSkill modifierSkill)
+                    modifierSkill.ApplySkill(character, opponent);
             }
         }
     }

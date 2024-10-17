@@ -48,8 +48,10 @@ namespace Fire_Emblem.Logging
             PrintNeutralizedBonuses(character);
             PrintNeutralizedPenalties(character);
             PrintCombatFlatAttackIncrement(character);
+            PrintFirstAttackFlatAttackIncrement(character);
             PrintCombatPercentualDamageReduction(character);
             PrintFirstAttackPercentualDamageReduction(character);
+            PrintFollowupAttackPercentualDamageReduction(character);
             PrintCombatFlatDamageReduction(character);
         }
 
@@ -63,8 +65,11 @@ namespace Fire_Emblem.Logging
         protected abstract void PrintNeutralizedBonuses(Character character);
         protected abstract void PrintNeutralizedPenalties(Character character);
         protected abstract void PrintCombatFlatAttackIncrement(Character character);
+        protected abstract void  PrintFirstAttackFlatAttackIncrement(Character character);
         protected abstract void PrintCombatPercentualDamageReduction(Character character);
         protected abstract void PrintFirstAttackPercentualDamageReduction(Character character);
+
+        protected abstract void PrintFollowupAttackPercentualDamageReduction(Character character);
         protected abstract void PrintCombatFlatDamageReduction(Character character);
 
     }

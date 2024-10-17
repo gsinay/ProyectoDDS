@@ -138,6 +138,13 @@ namespace Fire_Emblem.Views
                 _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en cada ataque");
             
         }
+        protected override void PrintFirstAttackFlatAttackIncrement(Character character)
+        {
+            int increment = character.CharacterModifiers.FirstAttackModifiers.FlatAttackIncrement;
+            if (increment > 0)
+                _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en su primer ataque");
+            
+        }
 
         protected override void PrintCombatPercentualDamageReduction(Character character)
         {
@@ -159,6 +166,18 @@ namespace Fire_Emblem.Views
                 
                 _view.WriteLine($"{character.Info.Name} reducirá el daño del primer ataque" +
                                 $" del rival en un {damageReduction}%");
+            }
+        }
+
+        protected override void PrintFollowupAttackPercentualDamageReduction(Character character)
+        {
+            if(character.CharacterModifiers.FollowupModifiers.PercentDamageReceived < 1)
+            {
+                double damageReductionPercent = 1.0 - character.CharacterModifiers.FollowupModifiers.PercentDamageReceived;
+                int damageReduction = Convert.ToInt32(damageReductionPercent * 100);
+                
+                _view.WriteLine($"{character.Info.Name} reducirá el " +
+                                $"daño del Follow-Up del rival en un {damageReduction}%");
             }
         }
         

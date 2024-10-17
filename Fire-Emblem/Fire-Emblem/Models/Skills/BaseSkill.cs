@@ -1,13 +1,14 @@
 using Fire_Emblem.Characters;
 using Fire_Emblem.Collections;
+using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.Conditions;
 
-namespace Fire_Emblem.Skills;
+namespace Fire_Emblem.Models.Skills;
 
 public abstract class BaseSkill : ISkill
 {
-    public string Name { get; }
-    public string Description { get; }
+    public string Name { get; } = null!;
+    public string Description { get; } = null!;
     private readonly ICondition? _condition;
     private readonly EffectsList? _effects;
 
@@ -24,6 +25,12 @@ public abstract class BaseSkill : ISkill
         Name = name;
         Description = description;
       
+    }
+    
+    protected BaseSkill(ICondition condition, EffectsList effects)
+    {
+        _condition = condition;
+        _effects = effects;
     }
 
     public virtual void ApplySkill(Character character, Character opponent)

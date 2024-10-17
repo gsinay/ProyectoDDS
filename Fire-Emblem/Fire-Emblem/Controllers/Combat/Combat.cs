@@ -120,7 +120,7 @@ public class Combat
         int effectiveDefense = GetEffectiveDefense(attacker, defender);
         
         int Rawdamage = CalculateRawDamage(attackPower, effectiveDefense);
-
+        
         int damage = CalculateReducedDamage(Rawdamage, defender);
         
 
@@ -131,6 +131,8 @@ public class Combat
     private int CalculateAttackPower(Character attacker, double wtb)
     {
         var atkModifierExtra = attacker.GetAttackModifier();
+        Console.WriteLine($"el modificador es de {atkModifierExtra} y el attack es de {attacker.EffectiveAtk}");
+        Console.WriteLine($"el wtb es de {wtb}");
         return (int)((attacker.EffectiveAtk * wtb) + atkModifierExtra);
     }
     private int GetEffectiveDefense(Character attacker, Character defender)
