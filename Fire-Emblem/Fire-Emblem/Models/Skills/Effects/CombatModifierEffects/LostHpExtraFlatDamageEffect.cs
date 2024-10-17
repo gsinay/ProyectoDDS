@@ -16,7 +16,8 @@ public class LostHpExtraFlatDamageEffect : IEffect
         int hpLost = character.Stats.BaseStats.GetBaseStat(StatName.MaxHp) -
                      character.Stats.BaseStats.GetBaseStat(StatName.Hp);
 
-        int extraDamage = Convert.ToInt32(hpLost * _lostHpPercent);
+        double extraDamageDouble = Math.Round(hpLost * _lostHpPercent, 9);
+        int extraDamage = (int)Math.Floor(extraDamageDouble);
         character.CharacterModifiers.CombatModifiers.FlatAttackIncrement += extraDamage;
 
 

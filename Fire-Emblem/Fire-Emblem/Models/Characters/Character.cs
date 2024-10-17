@@ -13,6 +13,9 @@ namespace Fire_Emblem.Characters
         private readonly SkillList _skills;
         private readonly CombatState _combatState;
         private readonly CharacterCombatModifiers _characterModifiers;
+        private  bool _hasInitiatedCombat;
+        private  bool _hasDefendedCombat;
+        
 
 
         public bool IsInitiatingCombat
@@ -24,6 +27,9 @@ namespace Fire_Emblem.Characters
         public Character? MostRecentOpponent => _combatState.MostRecentOpponent;
         public bool HasAttacked => _combatState.HasAttacked;
 
+        public bool HasInitiatedCombat => _hasInitiatedCombat;
+        public bool HasDefendedCombat => _hasDefendedCombat;
+        
         public Character(string name, WeaponName weapon, string gender, string deathQuote,
             int hp, int atk, int spd, int def, int res)
         {
@@ -89,14 +95,25 @@ namespace Fire_Emblem.Characters
             }
         }
 
-        public void ApplyModifierSkillsBeforeCombat(Character opponent)
+        public void ApplySecondDegreeSkillsBeforeCombat(Character opponent)
         {
             foreach (var skill in _skills.GetSkills())
             {
-                if (skill is ModifierSkill modifierSkill)
-                    modifierSkill.ApplySkill(this, opponent);
+                if (skill is SecondDegreeSkill secondDegreeSkill)
+                    secondDegreeSkill.ApplySkill(this, opponent);
                 if (skill is CompositeSkill compositeSkill)
-                    compositeSkill.ApplyModifierSkills(this, opponent);
+                    compositeSkill.ApplySecondDegreeSkills(this, opponent);
+                
+            }
+        }
+        public void ApplyThirdDegreeSkillsBeforeCombat(Character opponent)
+        {
+            foreach (var skill in _skills.GetSkills())
+            {
+                if (skill is ThirdDegreeSkill thirdDegreeSkill)
+                    thirdDegreeSkill.ApplySkill(this, opponent);
+                if (skill is CompositeSkill compositeSkill)
+                    compositeSkill.ApplyThirdDegreeSkills(this, opponent);
                 
             }
         }
@@ -131,6 +148,18 @@ namespace Fire_Emblem.Characters
         public void MarkAsNotAttacked()
         {
             _combatState.MarkAsNotAttacked();
+        }
+
+        public void MarkHasInitiatedCombat()
+        {
+            Console.WriteLine($"marcando al jugador {Info.Name} como atacado");
+            _hasInitiatedCombat = true;
+        }
+        public void MarkHasDefendedCombat()
+        {
+            Console.WriteLine($"marcando al jugador {Info.Name} como defendido");
+
+            _hasDefendedCombat = true;
         }
 
         public void ResetModifiers()
@@ -196,7 +225,8 @@ namespace Fire_Emblem.Characters
             int extraAttack = _characterModifiers.CombatModifiers.FlatAttackIncrement;
             if (!HasAttacked)
                 extraAttack += _characterModifiers.FirstAttackModifiers.FlatAttackIncrement;
-            extraAttack += _characterModifiers.FollowupModifiers.FlatAttackIncrement;
+            else 
+                extraAttack += _characterModifiers.FollowupModifiers.FlatAttackIncrement;
             return extraAttack;
         }
         
@@ -223,7 +253,7 @@ namespace Fire_Emblem.Characters
                 ? 0
                 : _stats.CombatPenalties.GetPenalty(stat) + _stats.FirstAttackPenalties.GetPenalty(stat) +
                   (HasAttacked ? _stats.FollowupPenalties.GetPenalty(stat) : 0);
-
+            
             return Math.Max(0, _stats.BaseStats.GetBaseStat(stat) + effectiveBonuses - effectivePenalties);
         }
         

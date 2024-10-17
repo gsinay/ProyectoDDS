@@ -6,6 +6,7 @@ public class CharacterCombatModifiers
     public Modifiers FirstAttackModifiers = new();
     public Modifiers FollowupModifiers = new();
 
+
     public void Reset()
     {
         CombatModifiers.Reset();

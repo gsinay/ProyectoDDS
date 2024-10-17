@@ -26,6 +26,10 @@ public abstract class BaseSkill : ISkill
         Description = description;
       
     }
+    protected BaseSkill(string name)
+    {
+        Name = name;
+    }
     
     protected BaseSkill(ICondition condition, EffectsList effects)
     {

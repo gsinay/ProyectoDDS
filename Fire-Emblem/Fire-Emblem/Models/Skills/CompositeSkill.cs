@@ -16,6 +16,11 @@ namespace Fire_Emblem.Skills
         {
             _skills = skills;
         }
+        public CompositeSkill(string name, SkillList skills)
+            : base(name) 
+        {
+            _skills = skills;
+        }
         
         public void ApplyBasicSkills(Character character, Character opponent)
         {
@@ -26,12 +31,20 @@ namespace Fire_Emblem.Skills
             }
         }
         
-        public void ApplyModifierSkills(Character character, Character opponent)
+        public void ApplySecondDegreeSkills(Character character, Character opponent)
         {
             foreach (var skill in _skills.GetSkills())
             {
-                if (skill is ModifierSkill modifierSkill)
-                    modifierSkill.ApplySkill(character, opponent);
+                if (skill is SecondDegreeSkill secondDegreeSkill)
+                    secondDegreeSkill.ApplySkill(character, opponent);
+            }
+        }
+        public void ApplyThirdDegreeSkills(Character character, Character opponent)
+        {
+            foreach (var skill in _skills.GetSkills())
+            {
+                if (skill is ThirdDegreeSkill thirdDegreeSkill)
+                    thirdDegreeSkill.ApplySkill(character, opponent);
             }
         }
     }

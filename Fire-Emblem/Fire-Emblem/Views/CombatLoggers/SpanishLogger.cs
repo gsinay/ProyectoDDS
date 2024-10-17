@@ -145,6 +145,14 @@ namespace Fire_Emblem.Views
                 _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en su primer ataque");
             
         }
+        
+        protected override void PrintFollowupFlatAttackIncrement(Character character)
+        {
+            int increment = character.CharacterModifiers.FollowupModifiers.FlatAttackIncrement;
+            if (increment > 0)
+                _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en su Follow-Up");
+            
+        }
 
         protected override void PrintCombatPercentualDamageReduction(Character character)
         {

@@ -5,7 +5,7 @@ public class CombatState
     public bool IsInitiatingCombat { get; set; }
     public Character? MostRecentOpponent { get; private set; }
     public bool HasAttacked { get; private set; }
-
+    
     public void UpdateMostRecentOpponent(Character opponent)
     {
         MostRecentOpponent = opponent;
@@ -20,4 +20,5 @@ public class CombatState
     {
         HasAttacked = false;
     }
+    
 }

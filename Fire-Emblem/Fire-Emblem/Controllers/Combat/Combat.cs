@@ -86,8 +86,11 @@ public class Combat
         attacker.ApplyBasicSkillsBeforeCombat(defender);
         defender.ApplyBasicSkillsBeforeCombat(attacker);
 
-        attacker.ApplyModifierSkillsBeforeCombat(defender);
-        defender.ApplyModifierSkillsBeforeCombat(attacker);
+        attacker.ApplySecondDegreeSkillsBeforeCombat(defender);
+        defender.ApplySecondDegreeSkillsBeforeCombat(attacker);
+        
+        attacker.ApplyThirdDegreeSkillsBeforeCombat(defender);
+        defender.ApplyThirdDegreeSkillsBeforeCombat(attacker);
 
 
     }
@@ -101,6 +104,8 @@ public class Combat
     }
     private void PerformAttacks(Character attacker, Character defender)
     {
+        attacker.MarkHasInitiatedCombat();
+        defender.MarkHasDefendedCombat();
         Attack(attacker, defender);
         if (!defender.IsAlive()) return;
         Attack(defender, attacker);
@@ -114,26 +119,22 @@ public class Combat
     private void Attack(Character attacker, Character defender)
     {
         double wtb = _wtbHandler.GetTriangleAdvantage(attacker, defender);
-       
-        int attackPower = CalculateAttackPower(attacker, wtb);
+
+        int attackPower = (int)(attacker.EffectiveAtk * wtb);
+        
         
         int effectiveDefense = GetEffectiveDefense(attacker, defender);
         
-        int Rawdamage = CalculateRawDamage(attackPower, effectiveDefense);
         
-        int damage = CalculateReducedDamage(Rawdamage, defender);
+        var atkModifierExtra = attacker.GetAttackModifier();
+        
+        int rawDamage = Math.Max(0, attackPower - effectiveDefense) + atkModifierExtra;
+        
+        int damage = CalculateReducedDamage(rawDamage, defender);
         
 
         defender.TakeDamage(damage);
         _combatlog.DisplayAttackResult(attacker, defender, damage);
-    }
-    
-    private int CalculateAttackPower(Character attacker, double wtb)
-    {
-        var atkModifierExtra = attacker.GetAttackModifier();
-        Console.WriteLine($"el modificador es de {atkModifierExtra} y el attack es de {attacker.EffectiveAtk}");
-        Console.WriteLine($"el wtb es de {wtb}");
-        return (int)((attacker.EffectiveAtk * wtb) + atkModifierExtra);
     }
     private int GetEffectiveDefense(Character attacker, Character defender)
     {
@@ -143,12 +144,6 @@ public class Combat
         }
        
         return defender.EffectiveDef;
-    }
-    
-    private int CalculateRawDamage(int attackPower, int effectiveDefense)
-    {
-        int rawDamage = attackPower - effectiveDefense;
-        return Math.Max(0, rawDamage);
     }
 
     private int CalculateReducedDamage(int rawDamage, Character defender) => defender.GetAttackWithReduction(rawDamage);

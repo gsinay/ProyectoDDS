@@ -653,14 +653,14 @@ public class SkillFactory
                     new StatPenaltyNeutralizeEffect(StatName.Res)
                 ])
             ),
-            "dragon wall" => new ModifierSkill(
+            "dragon wall" => new SecondDegreeSkill(
                 "Dragon Wall",
                 "Si Res de la unidad > Res del rival, reduce el dano de cada ataque del rival por un " +
                 "porcentaje=diferencia entre los stats x 4 (ma \u0301x. 40 %).",
                 new StatComparisonCondition(StatName.Res, StatName.Res),
                 new EffectsList([new ScalingStatDamageReductionEffect(StatName.Res, 40)])
                 ),
-            "dodge" => new ModifierSkill(
+            "dodge" => new SecondDegreeSkill(
                 "Dodge", 
                 "Si Spd de la unidad > Spd del rival, reduce el dano de cada ataque del rival por un " +
                 "porcentaje=diferencia entre los stats x 4 (max. 40 %)",
@@ -728,7 +728,7 @@ public class SkillFactory
                 new InitiatingCombatConditionRival(),
                 new EffectsList([new LostHpExtraFlatDamageEffect(0.5)])
                 ),
-            "lunar brace" => new BasicSkill(
+            "lunar brace" => new SecondDegreeSkill(
                 "Lunar Brace",
                 "Si la unidad inicia el combate con un ataque físico, inflige daño" +
                 " extra=30 % de la Def del rival en cada ataque.",
@@ -753,7 +753,7 @@ public class SkillFactory
                     new SkillList([
                         new BasicSkill(new AlwaysTrueCondition(), 
                             new EffectsList([new FlatAttackIncrementEffect(7)])),
-                        new ModifierSkill(new StatComparisonCondition(StatName.Spd, StatName.Spd), 
+                        new SecondDegreeSkill(new StatComparisonCondition(StatName.Spd, StatName.Spd), 
                             new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))
                    ])
                 ),
@@ -770,7 +770,7 @@ public class SkillFactory
                         new EffectsList([new StatPenaltyOpponentEffect(StatName.Atk, 5),
                             new StatPenaltyOpponentEffect(StatName.Spd, 5)])
                         ),
-                    new ModifierSkill(
+                    new SecondDegreeSkill(
                         new AndCondition(
                             new ConditionsList(
                                 [
@@ -779,7 +779,7 @@ public class SkillFactory
                                 ])),
                         new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))])
                 ),
-            "blue skies" => new ModifierSkill(
+            "blue skies" => new BasicSkill(
                 "Blue Skies",
                 "La unidad recibe -5 de dan \u0303o en cada ataque del rival " +
                 "e inflige +5 de dan \u0303o en cada ataque.",
@@ -790,7 +790,7 @@ public class SkillFactory
                         new FlatAttackIncrementEffect(5)
                     ])
                 ),
-            "aegis shield" => new ModifierSkill(
+            "aegis shield" => new BasicSkill(
                 "Aegis shield",
                 "Otorga Def+6 y Res+3. Reduce el dan \u0303o a la mitad en el primer ataque del rival",
                 new AlwaysTrueCondition(),
@@ -801,7 +801,7 @@ public class SkillFactory
                         new FirstAttackPercentReductionEffect(0.5)
                     ])
                 ),
-            "remote sparrow" => new ModifierSkill(
+            "remote sparrow" => new SecondDegreeSkill(
                 "Remote Sparrow",
                 "Si la unidad inicia el combate, otorga Atk/Spd+7 y reduce el daño " +
                 "del primer ataque del rival en un 30 %.",
@@ -821,7 +821,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 10),
                     new FirstAttackPercentReductionEffect(0.3)])
             ),
-            "remote sturdy" => new ModifierSkill(
+            "remote sturdy" => new SecondDegreeSkill(
                 "Remote sturdy",
                 "Si la unidad inicia el combate, otorga Atk/Deg+7 y reduce el daño " +
                 "del primer ataque del rival en un 30 %.",
@@ -831,7 +831,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Def, 10),
                     new FirstAttackPercentReductionEffect(0.3)])
             ),
-            "fierce stance" => new ModifierSkill(
+            "fierce stance" => new SecondDegreeSkill(
                 "Fierce Stance",
                 "Si el rival inicia el combate, otorga Atk+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -841,7 +841,7 @@ public class SkillFactory
                         new StatBoostEffect(StatName.Atk, 8),
                         new FollowupAttackPercentReductionEffect(0.1)
                     ])),
-            "darting stance" => new ModifierSkill(
+            "darting stance" => new SecondDegreeSkill(
                 "Darting Stance",
                 "Si el rival inicia el combate, otorga Spd+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -851,17 +851,22 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Spd, 8),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "steady stance" => new ModifierSkill(
+            "steady stance" => new CompositeSkill(
                 "Steady Stance",
                 "Si el rival inicia el combate, otorga Def+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
-                new InitiatingCombatConditionRival(),
-                new EffectsList(
-                [
-                    new StatBoostEffect(StatName.Def, 8),
-                    new FollowupAttackPercentReductionEffect(0.1)
-                ])),
-            "warding stance" => new ModifierSkill(
+                new SkillList([
+                        new BasicSkill(new InitiatingCombatConditionRival(),
+                            new EffectsList([
+                                    new StatBoostEffect(StatName.Def, 8)
+                                ])),
+                        new SecondDegreeSkill(new InitiatingCombatConditionRival(),
+                            new EffectsList(
+                            [
+                                new FollowupAttackPercentReductionEffect(0.1)
+                            ]))
+                    ])),
+            "warding stance" => new SecondDegreeSkill(
                 "Warding Stance",
                 "Si el rival inicia el combate, otorga Res+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -871,7 +876,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 8),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "kestrel stance" => new ModifierSkill(
+            "kestrel stance" => new SecondDegreeSkill(
                 "Kestrel Stance",
                 "Si el rival inicia el combate, otorga Atk/Spd+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -882,7 +887,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Spd, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "sturdy stance" => new ModifierSkill(
+            "sturdy stance" => new BasicSkill(
                 "Sturdy Stance",
                 "Si el rival inicia el combate, otorga Atk/Def+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -893,7 +898,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Def, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "mirror stance" => new ModifierSkill(
+            "mirror stance" => new SecondDegreeSkill(
                 "Mirror Stance",
                 "Si el rival inicia el combate, otorga Atk/Res+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -904,7 +909,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "steady posture" => new ModifierSkill(
+            "steady posture" => new SecondDegreeSkill(
                 "Steady Posture",
                 "Si el rival inicia el combate, otorga Spd/Def+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -915,7 +920,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Def, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "swift stance" => new ModifierSkill(
+            "swift stance" => new BasicSkill(
                 "Swift Stance",
                 "Si el rival inicia el combate, otorga Spd/Res+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -926,7 +931,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "bracing stance" => new ModifierSkill(
+            "bracing stance" => new BasicSkill(
                 "Bracing Stance",
                 "Si el rival inicia el combate, otorga Def/Res+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -937,17 +942,15 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "poetic justice" => new ModifierSkill(
+            "poetic justice" => new CompositeSkill(
                 "Poetic Justic",
                 "Inflige Spd-4 en el rival durante el combate y la unidad inflige dan \u0303o extra = 15 % " +
                 "del ataque del rival.",
-                new AlwaysTrueCondition(),
-                new EffectsList(
-                [
-                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
-                    new RivalAtkFlatAttackBoostEffect(0.15)
-                
-                ])),
+                new SkillList([
+                    new BasicSkill(new AlwaysTrueCondition(), new EffectsList([new StatPenaltyOpponentEffect(StatName.Spd, 4)])),
+                    new SecondDegreeSkill(new AlwaysTrueCondition(), new EffectsList([new RivalAtkFlatAttackBoostEffect(0.15)]))
+                ])
+                ),
             "laguz friend" => new BasicSkill(
                 "Laguz friend",
                 "La unidad recibe 50 % menos dan \u0303o, pero neutraliza todo Bonus a Def y Res y reduce " +
@@ -955,7 +958,7 @@ public class SkillFactory
                 new AlwaysTrueCondition(),
                 new EffectsList([new LaguzFriendEffect()])
                 ),
-            "chivalry" => new ModifierSkill(
+            "chivalry" => new SecondDegreeSkill(
                 "Chivalry",
                 "Si la unidad inicia el combate contra un rival con HP=100%," +
                 "la unidad inflige +2 dan \u0303o en cada ataque y recibe -2 dan \u0303o por cada ataque del rival.",
@@ -976,11 +979,11 @@ public class SkillFactory
                 "Si el Atk de la unidad > Res del rival, el primer ataque de la unidad hace daño extra = 25 %" +
                 " del Atk de la unidad menos Res del rival.",
                 new SkillList([
-                        new ModifierSkill(
+                        new BasicSkill(
                             new AlwaysTrueCondition(), 
                             new EffectsList(
                                 [new FirstAttackPercentReductionEffect(0.25)])),
-                        new ModifierSkill(
+                        new SecondDegreeSkill(
                             new StatComparisonCondition(StatName.Atk, StatName.Res), 
                             new EffectsList(
                                 [new DragonsWrathEffect()])
@@ -991,22 +994,65 @@ public class SkillFactory
                 "Inflige Atk/Res-5 en el rival durante el combate. Si la unidad inicia el combate o si el " +
                 "rival usa magia o arcos, reduce el dan \u0303o del primer ataque del rival en un 30 %.",
                 new SkillList([
-                    new ModifierSkill(new AlwaysTrueCondition(), new EffectsList(
+                    new BasicSkill(new AlwaysTrueCondition(), new EffectsList(
                         [
                             new StatPenaltyOpponentEffect(StatName.Atk, 5),
-                            new StatPenaltyEffect(StatName.Res, 5)
+                            new StatPenaltyOpponentEffect(StatName.Res, 5)
                         ])),
-                    new ModifierSkill(
+                    new BasicSkill(
                         new OrCondition(
                             new ConditionsList(
                             [
                                 new InitiatingCombatConditionSelf(),
-                                new UsingSpecificWeaponConditionSelf(WeaponName.Bow),
-                                new UsingSpecificWeaponConditionSelf(WeaponName.Magic)
+                                new UsingSpecificWeaponConditionRival(WeaponName.Bow),
+                                new UsingSpecificWeaponConditionRival(WeaponName.Magic)
                             ])),
                         new EffectsList([new FirstAttackPercentReductionEffect(.3)])
                         )
                 ])),
+            "extra chivalry" => new CompositeSkill(
+                "Extra Chivalry",
+                new SkillList(
+                    [
+                        new BasicSkill(new HighHpConditionRival(0.5), new EffectsList([
+                            new StatPenaltyOpponentEffect(StatName.Atk, 5),
+                            new StatPenaltyOpponentEffect(StatName.Spd, 5),
+                            new StatPenaltyOpponentEffect(StatName.Def, 5),
+                        ])),
+                        new SecondDegreeSkill(new AlwaysTrueCondition(), new EffectsList([
+                            new ExtraChivalryEffect(0.5)
+                        ]))
+                        
+                    ])),
+            "guard bearing" => new BasicSkill(
+                "Guard bearing",
+                "Inflige Spd/Def-4 en el rival. Reduce el dan \u0303o de los ataques del rival en X %, donde X es" +
+                " 60 durante el primer combate de la unidad en que inicia el combate y durante el primer combate de " +
+                "la unidad en que el rival inicia el combate. X es igual a 30 en cualquier otro caso.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                        new StatPenaltyOpponentEffect(StatName.Def, 4),
+                        new GuardBearingEffect()
+
+                    ])
+                ),
+            "divine recreation" => new CompositeSkill(
+                "Divine recreation",
+                new SkillList(
+                    [
+                    new BasicSkill(new HighHpConditionRival(0.5),new EffectsList([
+                        new StatPenaltyOpponentEffect(StatName.Atk, 4),
+                        new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                        new StatPenaltyOpponentEffect(StatName.Def, 4),
+                        new StatPenaltyOpponentEffect(StatName.Res, 4),
+                        new FirstAttackPercentReductionEffect(0.3)
+                    ])),
+                    new ThirdDegreeSkill(new HighHpConditionRival(0.5), new EffectsList([
+                        new DivineRecreationEffect()
+                    ]))
+                    ])),
             
             _ => throw new SkillNotImplementedException()
         };
