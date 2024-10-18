@@ -89,8 +89,9 @@ public class Combat
         attacker.ApplySecondDegreeSkillsBeforeCombat(defender);
         defender.ApplySecondDegreeSkillsBeforeCombat(attacker);
         
-        attacker.ApplyThirdDegreeSkillsBeforeCombat(defender);
         defender.ApplyThirdDegreeSkillsBeforeCombat(attacker);
+        attacker.ApplyThirdDegreeSkillsBeforeCombat(defender);
+        
 
 
     }

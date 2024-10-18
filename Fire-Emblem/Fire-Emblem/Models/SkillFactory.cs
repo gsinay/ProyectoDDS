@@ -909,7 +909,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "steady posture" => new SecondDegreeSkill(
+            "steady posture" => new BasicSkill(
                 "Steady Posture",
                 "Si el rival inicia el combate, otorga Spd/Def+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",

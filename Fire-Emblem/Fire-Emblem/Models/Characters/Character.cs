@@ -152,12 +152,10 @@ namespace Fire_Emblem.Characters
 
         public void MarkHasInitiatedCombat()
         {
-            Console.WriteLine($"marcando al jugador {Info.Name} como atacado");
             _hasInitiatedCombat = true;
         }
         public void MarkHasDefendedCombat()
         {
-            Console.WriteLine($"marcando al jugador {Info.Name} como defendido");
 
             _hasDefendedCombat = true;
         }
