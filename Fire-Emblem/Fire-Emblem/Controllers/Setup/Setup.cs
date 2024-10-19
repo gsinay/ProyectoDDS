@@ -118,7 +118,7 @@ public class Setup
 
     private bool AreSkillNamesUnique(Character character)
     {
-        var skillNames = character.GetSkills().Select(s => s.Name).ToList();
+        var skillNames = character.Skills.Select(s => s.Name).ToList();
         return skillNames.Count == skillNames.Distinct().Count();
     }
 }

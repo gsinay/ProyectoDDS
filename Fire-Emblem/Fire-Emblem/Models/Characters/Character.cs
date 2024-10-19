@@ -1,3 +1,4 @@
+using Fire_Emblem.Characters.Calculators;
 using Fire_Emblem.Combat;
 using Fire_Emblem.Models.Characters.Modifiers;
 using Fire_Emblem.Skills;
@@ -10,9 +11,10 @@ namespace Fire_Emblem.Characters
 
         private readonly CharacterInfo _characterInfo;
         private readonly CharacterStats _stats;
-        private readonly SkillList _skills;
-        private readonly CombatState _combatState;
-        private readonly CharacterCombatModifiers _characterModifiers;
+        private readonly SkillList _skills = new();
+        private readonly CombatState _combatState = new();
+        private readonly CharacterCombatModifiers _characterModifiers = new();
+        private readonly DamageCalculator _damageCalculator = new();
         private  bool _hasInitiatedCombat;
         private  bool _hasDefendedCombat;
         
@@ -35,9 +37,6 @@ namespace Fire_Emblem.Characters
         {
             _characterInfo = new CharacterInfo(name, weapon, gender, deathQuote);
             _stats = new CharacterStats(hp, atk, spd, def, res);
-            _skills = new SkillList();
-            _combatState = new CombatState();
-            _characterModifiers = new CharacterCombatModifiers();
 
         }
 
@@ -60,65 +59,10 @@ namespace Fire_Emblem.Characters
         public int EffectiveSpd => GetEffectiveStat(StatName.Spd);
         public int EffectiveDef => GetEffectiveStat(StatName.Def);
         public int EffectiveRes => GetEffectiveStat(StatName.Res);
-
-        
-
-
-        public void AddSkill(ISkill skill)
-        {
-            _skills.AddSkill(skill);
-        }
-
         public int SkillCount() => _skills.Count();
 
-        public List<ISkill> GetSkills() => _skills.GetSkills();
-
-        public void ApplyPermanentEffects()
-        {
-            foreach (var skill in _skills.GetSkills())
-            {
-                if (skill is OneTimeSkill permanentSkill)
-                {
-                    permanentSkill.ApplySkill(this, null!);
-                }
-            }
-        }
-
-        public void ApplyBasicSkillsBeforeCombat(Character opponent)
-        {
-            foreach (var skill in _skills.GetSkills())
-            {
-                if (skill is BasicSkill basicSkill)
-                    basicSkill.ApplySkill(this, opponent);
-                if (skill is CompositeSkill compositeSkill)
-                    compositeSkill.ApplyBasicSkills(this, opponent);
-            }
-        }
-
-        public void ApplySecondDegreeSkillsBeforeCombat(Character opponent)
-        {
-            foreach (var skill in _skills.GetSkills())
-            {
-                if (skill is SecondDegreeSkill secondDegreeSkill)
-                    secondDegreeSkill.ApplySkill(this, opponent);
-                if (skill is CompositeSkill compositeSkill)
-                    compositeSkill.ApplySecondDegreeSkills(this, opponent);
-                
-            }
-        }
-        public void ApplyThirdDegreeSkillsBeforeCombat(Character opponent)
-        {
-            foreach (var skill in _skills.GetSkills())
-            {
-                if (skill is ThirdDegreeSkill thirdDegreeSkill)
-                    thirdDegreeSkill.ApplySkill(this, opponent);
-                if (skill is CompositeSkill compositeSkill)
-                    compositeSkill.ApplyThirdDegreeSkills(this, opponent);
-                
-            }
-        }
-
-
+        public List<ISkill> Skills => _skills.GetSkills();
+        
         public void IncreaseMaxHp(int amount)
         {
             int currentHp = _stats.BaseStats.GetBaseStat(StatName.Hp);
@@ -204,20 +148,12 @@ namespace Fire_Emblem.Characters
         {
             
             double percentDamageReceived = _characterModifiers.CombatModifiers.PercentDamageReceived;
-
-         
             if (!HasAttacked)
                 percentDamageReceived *= _characterModifiers.FirstAttackModifiers.PercentDamageReceived;
-            
             else
              percentDamageReceived *= _characterModifiers.FollowupModifiers.PercentDamageReceived;
-
-           
             return percentDamageReceived;
         }
-
-
-
         public  int GetAttackModifier()
         {
             int extraAttack = _characterModifiers.CombatModifiers.FlatAttackIncrement;

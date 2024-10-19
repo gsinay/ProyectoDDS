@@ -31,21 +31,12 @@ public class Player
         Character selectedCharacter = Characters[characterIndex];
         return selectedCharacter.Info.Name;
     }
-    public bool IsAlive()
-    {
-        foreach (var character in Characters)
-        {
-            if (character.GetHp > 0)
-                return true;
-        }
-
-        return false;
-    }
 
     public void RemoveCharacter(Character character)
     {
-        if (Characters.Contains(character))
-            Characters.Remove(character);
+        if (_characters.Contains(character))
+            _characters.Remove(character);
     }
+    
 
 }

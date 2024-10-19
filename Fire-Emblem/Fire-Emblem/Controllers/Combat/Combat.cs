@@ -12,6 +12,8 @@ public class Combat
     private int _turn;
     private readonly SpanishLogger _combatlog;
     private readonly WtbHandler _wtbHandler = new();
+    private readonly SkillsHandler _skillsHandler = new();
+    private readonly PlayerHandler _playerHandler = new();
 
     public Combat(SpanishLogger logger, Setup setup)
     {
@@ -25,7 +27,7 @@ public class Combat
     {
         ApplyMatchBasedEffects();
         
-        while (_players[0].IsAlive() && _players[1].IsAlive())
+        while (_playerHandler.IsAlive(_players[0]) && _playerHandler.IsAlive(_players[1]))
         {
             ExecuteTurn(_players[_turn % 2], _players[(_turn + 1) % 2]);
             _turn++;
@@ -39,7 +41,7 @@ public class Combat
         {
             foreach (var character in player.Characters)
             {
-                character.ApplyPermanentEffects(); 
+                _skillsHandler.ApplyPermanentEffects(character); 
             }
         }
     }
@@ -83,14 +85,15 @@ public class Combat
 
     private void ApplySkills(Character attacker, Character defender)
     {
-        attacker.ApplyBasicSkillsBeforeCombat(defender);
-        defender.ApplyBasicSkillsBeforeCombat(attacker);
-
-        attacker.ApplySecondDegreeSkillsBeforeCombat(defender);
-        defender.ApplySecondDegreeSkillsBeforeCombat(attacker);
         
-        defender.ApplyThirdDegreeSkillsBeforeCombat(attacker);
-        attacker.ApplyThirdDegreeSkillsBeforeCombat(defender);
+        _skillsHandler.ApplyBasicSkillsBeforeCombat(attacker, defender);
+        _skillsHandler.ApplyBasicSkillsBeforeCombat(defender, attacker);
+
+        _skillsHandler.ApplySecondDegreeSkillsBeforeCombat(attacker, defender);
+        _skillsHandler.ApplySecondDegreeSkillsBeforeCombat(defender, attacker);
+        
+        _skillsHandler.ApplyThirdDegreeSkillsBeforeCombat(defender, attacker);
+        _skillsHandler.ApplyThirdDegreeSkillsBeforeCombat(attacker, defender);
         
 
 
@@ -130,8 +133,8 @@ public class Combat
         var atkModifierExtra = attacker.GetAttackModifier();
         
         int rawDamage = Math.Max(0, attackPower - effectiveDefense) + atkModifierExtra;
-        
-        int damage = CalculateReducedDamage(rawDamage, defender);
+
+        int damage = defender.GetAttackWithReduction(rawDamage);
         
 
         defender.TakeDamage(damage);
@@ -147,7 +150,6 @@ public class Combat
         return defender.EffectiveDef;
     }
 
-    private int CalculateReducedDamage(int rawDamage, Character defender) => defender.GetAttackWithReduction(rawDamage);
 
     private void HandleFollowUps(Character attacker, Character defender)
     {
@@ -188,7 +190,7 @@ public class Combat
 
     private void PrintEndGameMessage()
     {
-        Player winner = _players[0].IsAlive() ? _players[0] : _players[1];
+        Player winner = _playerHandler.IsAlive(_players[0]) ? _players[0] : _players[1];
         _combatlog.AnnounceWinner(winner.PlayerNumber);
     }
     

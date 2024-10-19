@@ -6,7 +6,7 @@ public class AttackHandler
 {
     private readonly WtbHandler _wtbHandler = new();  
     
-    public int GetRawInflicitedDamage(Character attacker, Character defender)
+    public int CalculateRawInflicitedDamage(Character attacker, Character defender)
     {
         double wtb = _wtbHandler.GetTriangleAdvantage(attacker, defender);
 

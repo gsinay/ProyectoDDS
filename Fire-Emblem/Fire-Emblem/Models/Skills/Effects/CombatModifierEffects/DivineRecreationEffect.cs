@@ -11,36 +11,24 @@ public class DivineRecreationEffect : IEffect
     {
         Console.WriteLine($"el character {character.Info.Name} activa divine recreation");
 
-        int damagereduced = SimulateCombat(opponent, character);
+        int damageReduced = SimulateCombat(opponent, character);
 
         if (character.IsInitiatingCombat)
-            character.CharacterModifiers.FollowupModifiers.FlatAttackIncrement += damagereduced;
+            character.CharacterModifiers.FollowupModifiers.FlatAttackIncrement += damageReduced;
         else
-            character.CharacterModifiers.FirstAttackModifiers.FlatAttackIncrement += damagereduced;
+            character.CharacterModifiers.FirstAttackModifiers.FlatAttackIncrement += damageReduced;
 
     }
 
     private int SimulateCombat(Character opponent, Character character)
     {
-        int rawdamageattacker = _attackHandler.GetRawInflicitedDamage(opponent, character);
+        int rawInflictedDamage = _attackHandler.CalculateRawInflicitedDamage(opponent, character);
 
-        int damageattacker = _attackHandler.CalculateReducedDamage(rawdamageattacker, character);
-
-        //cuanto yo me defiendo
-        int protectionattacker = rawdamageattacker - damageattacker;
+        int reducedInfilictedDamage = _attackHandler.CalculateReducedDamage(rawInflictedDamage, character);
         
-        /*Console.WriteLine($"the opponent got protected and made {protectionattacker} less damage");
+        int protectionAgainstAttacker = rawInflictedDamage - reducedInfilictedDamage;
         
-        int rawdamageadefender = _attackHandler.GetRawInflicitedDamage(opponent, character);
-
-        rawdamageadefender += protectionattacker;
-
-        int damagedefender = _attackHandler.CalculateReducedDamage(rawdamageadefender, character);
-
-        int protectiondefender = rawdamageadefender - damagedefender;
-
-        if (isInitiatingCombat)
-            return protectiondefender;*/
-        return protectionattacker;
+       
+        return protectionAgainstAttacker;
     }
 }

@@ -32,7 +32,7 @@ public class CharacterBuilder
         foreach (var skillName in skillsArray)
         {
             ISkill skill = _skillFactory.GetSkill(skillName);
-            returnCharacter.AddSkill(skill);
+            returnCharacter.Skills.Add(skill);
         }
 
         return returnCharacter;

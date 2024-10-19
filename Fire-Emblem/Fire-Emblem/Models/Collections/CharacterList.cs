@@ -20,5 +20,9 @@ public class CharacterList
     }
 
     public List<Character> GetCharacters() => _characters;
-    
+
+    public bool Contains(Character character) => _characters.Contains(character);
+
+    public bool Remove(Character character) => _characters.Remove(character);
+
 }
