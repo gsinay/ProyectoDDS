@@ -1,4 +1,4 @@
-namespace Fire_Emblem.Characters.Calculators;
+namespace Fire_Emblem.Models.Characters.Calculators;
 
 public class DamageCalculator
 {  
@@ -6,7 +6,7 @@ public class DamageCalculator
         {
             int attackAfterPercentageReduction = ApplyPercentageReduction(character, originalAttack);
             int totalAbsoluteReduction = CalculateTotalAbsoluteReduction(character);
-            int finalAttack = ApplyAbsoluteReduction(attackAfterPercentageReduction, totalAbsoluteReduction);
+            int finalAttack = attackAfterPercentageReduction - totalAbsoluteReduction;
             return Math.Max(0, finalAttack);
         }
 
@@ -15,6 +15,17 @@ public class DamageCalculator
             double cumulativePercentDamageReceived = CalculateCumulativePercentDamageReceived(character);
             double reducedAttack = Math.Round(originalAttack * cumulativePercentDamageReceived, 9);
             return (int)Math.Floor(reducedAttack);
+        }
+        
+        private double CalculateCumulativePercentDamageReceived(Character character)
+        {
+            
+            double percentDamageReceived = character.CharacterModifiers.CombatModifiers.PercentDamageReceived;
+            if (!character.HasAttacked)
+                percentDamageReceived *= character.CharacterModifiers.FirstAttackModifiers.PercentDamageReceived;
+            else
+                percentDamageReceived *= character.CharacterModifiers.FollowupModifiers.PercentDamageReceived;
+            return percentDamageReceived;
         }
 
         private int CalculateTotalAbsoluteReduction(Character character)
@@ -26,21 +37,7 @@ public class DamageCalculator
             return absoluteReduction + additionalReduction;
         }
 
-        private int ApplyAbsoluteReduction(int attackValue, int totalAbsoluteReduction)
-        {
-            return attackValue - totalAbsoluteReduction;
-        }
-
-        private double CalculateCumulativePercentDamageReceived(Character character)
-        {
-            
-            double percentDamageReceived = character.CharacterModifiers.CombatModifiers.PercentDamageReceived;
-            if (!character.HasAttacked)
-                percentDamageReceived *= character.CharacterModifiers.FirstAttackModifiers.PercentDamageReceived;
-            else
-             percentDamageReceived *= character.CharacterModifiers.FollowupModifiers.PercentDamageReceived;
-            return percentDamageReceived;
-        }
+    
         public  int GetAttackModifier(Character character)
         {
             int extraAttack = character.CharacterModifiers.CombatModifiers.FlatAttackIncrement;

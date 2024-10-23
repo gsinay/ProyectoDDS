@@ -1,6 +1,7 @@
+using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills;
 
-namespace Fire_Emblem.SkillsManager;
+namespace Fire_Emblem.Models.Collections;
 
 public class SkillList
 {

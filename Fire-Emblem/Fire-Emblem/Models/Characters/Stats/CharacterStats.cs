@@ -1,4 +1,4 @@
-namespace Fire_Emblem.Characters
+namespace Fire_Emblem.Models.Characters.Stats
 {
     public class CharacterStats
     {

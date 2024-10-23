@@ -1,4 +1,4 @@
-namespace Fire_Emblem.Characters;
+namespace Fire_Emblem.Models.Names;
 
 public enum WeaponName
 {

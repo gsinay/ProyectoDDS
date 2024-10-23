@@ -1,10 +1,8 @@
-
 using Fire_Emblem_View;
-using Fire_Emblem.Characters;
-using Fire_Emblem.Logging;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Player;
 
-
-namespace Fire_Emblem.Views
+namespace Fire_Emblem.Views.CombatLoggers
 {
     public class SpanishLogger : AbstractLogger
     {

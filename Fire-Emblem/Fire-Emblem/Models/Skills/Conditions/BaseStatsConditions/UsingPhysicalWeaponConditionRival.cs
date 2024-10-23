@@ -1,4 +1,7 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
+using Fire_Emblem.Models.Skills.Conditions;
+
 namespace Fire_Emblem.Skills.Conditions;
 
 public class UsingPhysicalWeaponConditionRival: ICondition

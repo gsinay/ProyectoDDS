@@ -1,4 +1,4 @@
-namespace Fire_Emblem.Exceptions;
+namespace Fire_Emblem.Models.Exceptions;
 
 public class InvalidWeaponTypeException : Exception
 {

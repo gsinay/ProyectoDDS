@@ -1,6 +1,7 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
 
-namespace Fire_Emblem.Skills.Effects;
+namespace Fire_Emblem.Models.Skills.Effects.BaseStatEffects;
 
 public class SandstormEffect : IEffect
 {

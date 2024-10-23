@@ -1,7 +1,8 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills;
 
-namespace Fire_Emblem.Handlers;
+namespace Fire_Emblem.Controllers.Handlers;
 
 public class SkillsHandler
 {
@@ -15,38 +16,52 @@ public class SkillsHandler
             }
         }
     }
+    
+    public void ApplySkillsBeforeCombat(Character character, Character opponent, int skillDegree)
+    {
+        foreach (var skill in character.Skills)
+        {
+            if (skill is CompositeSkill compositeSkill)
+            {
+                ApplyCompositeSkill(compositeSkill, character, opponent, skillDegree);
+                continue;
+            }
 
-    public void ApplyBasicSkillsBeforeCombat(Character character, Character opponent)
-    {
-        foreach (var skill in character.Skills)
-        {
-            if (skill is BasicSkill basicSkill)
-                basicSkill.ApplySkill(character, opponent);
-            if (skill is CompositeSkill compositeSkill)
-                compositeSkill.ApplyBasicSkills(character, opponent);
+            ApplyNonCompositeSkill(skill, character, opponent, skillDegree);
         }
     }
 
-    public void ApplySecondDegreeSkillsBeforeCombat(Character character, Character opponent)
+    private void ApplyCompositeSkill(CompositeSkill compositeSkill, Character character, Character opponent, int skillDegree)
     {
-        foreach (var skill in character.Skills)
+        if (skillDegree == 1)
         {
-            if (skill is SecondDegreeSkill secondDegreeSkill)
-                secondDegreeSkill.ApplySkill(character, opponent);
-            if (skill is CompositeSkill compositeSkill)
-                compositeSkill.ApplySecondDegreeSkills(character, opponent);
-                
+            compositeSkill.ApplyBasicSkills(character, opponent);
+        }
+        else if (skillDegree == 2)
+        {
+            compositeSkill.ApplySecondDegreeSkills(character, opponent);
+        }
+        else 
+        {
+            compositeSkill.ApplyThirdDegreeSkills(character, opponent);
         }
     }
-    public void ApplyThirdDegreeSkillsBeforeCombat(Character character, Character opponent)
+
+    private void ApplyNonCompositeSkill(ISkill skill, Character character, Character opponent, int skillDegree)
     {
-        foreach (var skill in character.Skills)
+        if (skillDegree == 1 && skill is BasicSkill basicSkill)
         {
-            if (skill is ThirdDegreeSkill thirdDegreeSkill)
-                thirdDegreeSkill.ApplySkill(character, opponent);
-            if (skill is CompositeSkill compositeSkill)
-                compositeSkill.ApplyThirdDegreeSkills(character, opponent);
-                
+            basicSkill.ApplySkill(character, opponent);
+        }
+        else if (skillDegree == 2 && skill is SecondDegreeSkill secondDegreeSkill)
+        {
+            secondDegreeSkill.ApplySkill(character, opponent);
+        }
+        else if (skillDegree == 3 && skill is ThirdDegreeSkill thirdDegreeSkill)
+        {
+            thirdDegreeSkill.ApplySkill(character, opponent);
         }
     }
+
+
 }

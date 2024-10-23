@@ -1,4 +1,6 @@
-namespace Fire_Emblem.Characters;
+using Fire_Emblem.Models.Names;
+
+namespace Fire_Emblem.Models.Characters.Stats;
 
 public class StatBonuses
 {

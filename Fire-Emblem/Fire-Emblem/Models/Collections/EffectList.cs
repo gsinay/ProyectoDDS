@@ -1,9 +1,6 @@
+using Fire_Emblem.Models.Skills.Effects;
 
-
-
-using Fire_Emblem.Skills.Effects;
-
-namespace Fire_Emblem.Collections
+namespace Fire_Emblem.Models.Collections
 {
     public class EffectsList
     {

@@ -1,4 +1,6 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Controllers;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Skills;
 using Fire_Emblem.SkillsManager;
 
@@ -6,15 +8,9 @@ namespace Fire_Emblem;
 
 public class CharacterBuilder
 {
-    private JsonHandler _jsonHandler;
-    private SkillFactory _skillFactory;
-
-    public CharacterBuilder(JsonHandler jsonHandler, SkillFactory skillFactory)
-    {
-        _jsonHandler = jsonHandler;
-        _skillFactory = skillFactory;
-    }
-
+    private readonly JsonHandler _jsonHandler = new();
+    private readonly SkillFactory _skillFactory = new();
+    
     public Character CreateCharacter(string line)
     {
         int spaceIndex = line.IndexOf(' ');

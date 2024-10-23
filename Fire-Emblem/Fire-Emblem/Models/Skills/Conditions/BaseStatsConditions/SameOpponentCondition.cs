@@ -1,6 +1,7 @@
-namespace Fire_Emblem.Skills.Conditions;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Skills.Conditions;
 
-using Fire_Emblem.Characters;
+namespace Fire_Emblem.Models.Skills.Conditions.BaseStatsConditions;
 
 public class SameOpponentCondition : ICondition
 {

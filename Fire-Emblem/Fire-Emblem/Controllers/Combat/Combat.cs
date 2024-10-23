@@ -1,25 +1,26 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Handlers;
-using Fire_Emblem.Views;
+using Fire_Emblem.Controllers.Handlers;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Player;
+using Fire_Emblem.Views.CombatLoggers;
 
-
-namespace Fire_Emblem.Combat;
+namespace Fire_Emblem.Controllers.Combat;
 
 public class Combat
 {
     
     private readonly Player[] _players;
     private int _turn;
-    private readonly SpanishLogger _combatlog;
+    private readonly SpanishLogger _combatLog;
     private readonly WtbHandler _wtbHandler = new();
     private readonly SkillsHandler _skillsHandler = new();
     private readonly PlayerHandler _playerHandler = new();
+    private readonly AttackHandler _attackHandler = new();
 
     public Combat(SpanishLogger logger, Setup setup)
     {
         _players = setup.Players;
         _turn = 0;
-        _combatlog = logger;
+        _combatLog = logger;
 
     }
     
@@ -56,7 +57,7 @@ public class Combat
     
         PerformAttacks(attackChar, defendingChar);
     
-        _combatlog.AnnounceResults(attackChar, defendingChar);
+        _combatLog.AnnounceResults(attackChar, defendingChar);
 
         PostAttackCharacterUpdate(attackChar, defendingChar);
        
@@ -76,9 +77,9 @@ public class Combat
 
     private Character SelectCharacter(Player player)
     {
-        _combatlog.AnnounceOption(player.PlayerNumber);
-        _combatlog.ListCharacters(player);
-        string selectionInput = _combatlog.GetUserInput();
+        _combatLog.AnnounceOption(player.PlayerNumber);
+        _combatLog.ListCharacters(player);
+        string selectionInput = _combatLog.GetUserInput();
         int selection = int.Parse(selectionInput); 
         return player.Characters[selection];
     }
@@ -86,25 +87,23 @@ public class Combat
     private void ApplySkills(Character attacker, Character defender)
     {
         
-        _skillsHandler.ApplyBasicSkillsBeforeCombat(attacker, defender);
-        _skillsHandler.ApplyBasicSkillsBeforeCombat(defender, attacker);
+        _skillsHandler.ApplySkillsBeforeCombat(attacker, defender, 1);
+        _skillsHandler.ApplySkillsBeforeCombat(defender, attacker, 1);
 
-        _skillsHandler.ApplySecondDegreeSkillsBeforeCombat(attacker, defender);
-        _skillsHandler.ApplySecondDegreeSkillsBeforeCombat(defender, attacker);
+        _skillsHandler.ApplySkillsBeforeCombat(attacker, defender, 2);
+        _skillsHandler.ApplySkillsBeforeCombat(defender, attacker, 2);
         
-        _skillsHandler.ApplyThirdDegreeSkillsBeforeCombat(defender, attacker);
-        _skillsHandler.ApplyThirdDegreeSkillsBeforeCombat(attacker, defender);
-        
-
+        _skillsHandler.ApplySkillsBeforeCombat(defender, attacker,3 );
+        _skillsHandler.ApplySkillsBeforeCombat(attacker, defender, 3);
 
     }
 
     private void PrintPreAttackLogs(Player attacker, Character attackChar, Character defendingChar)
     {
-        _combatlog.AnnounceTurn(_turn, attackChar.Info.Name, attacker.PlayerNumber);
+        _combatLog.AnnounceTurn(_turn, attackChar.Info.Name, attacker.PlayerNumber);
         double wtb = _wtbHandler.GetTriangleAdvantage(attackChar, defendingChar);
-        _combatlog.PrintAdvantage(attackChar, defendingChar, wtb);
-        _combatlog.PrintLog(attackChar, defendingChar);
+        _combatLog.PrintAdvantage(attackChar, defendingChar, wtb);
+        _combatLog.PrintLog(attackChar, defendingChar);
     }
     private void PerformAttacks(Character attacker, Character defender)
     {
@@ -122,34 +121,12 @@ public class Combat
     }
     private void Attack(Character attacker, Character defender)
     {
-        double wtb = _wtbHandler.GetTriangleAdvantage(attacker, defender);
+        int rawDamage = _attackHandler.CalculateRawInflicitedDamage(attacker, defender);
 
-        int attackPower = (int)(attacker.EffectiveAtk * wtb);
-        
-        
-        int effectiveDefense = GetEffectiveDefense(attacker, defender);
-        
-        
-        var atkModifierExtra = attacker.GetAttackModifier();
-        
-        int rawDamage = Math.Max(0, attackPower - effectiveDefense) + atkModifierExtra;
-
-        int damage = defender.GetAttackWithReduction(rawDamage);
-        
-
-        defender.TakeDamage(damage);
-        _combatlog.DisplayAttackResult(attacker, defender, damage);
+        int realDamage = _attackHandler.CalculateReducedDamage(rawDamage, defender);
+        defender.TakeDamage(realDamage);
+        _combatLog.DisplayAttackResult(attacker, defender, realDamage);
     }
-    private int GetEffectiveDefense(Character attacker, Character defender)
-    {
-        if (attacker.Info.Weapon == WeaponName.Magic)
-        {
-            return defender.EffectiveRes;
-        }
-       
-        return defender.EffectiveDef;
-    }
-
 
     private void HandleFollowUps(Character attacker, Character defender)
     {
@@ -165,7 +142,7 @@ public class Combat
             noFollowUps = false;
         }
         if (noFollowUps)
-            _combatlog.AnnounceNoFollowUps();
+            _combatLog.AnnounceNoFollowUps();
     }
 
     private bool CanFollowUp(Character attacker, Character defender)
@@ -191,7 +168,7 @@ public class Combat
     private void PrintEndGameMessage()
     {
         Player winner = _playerHandler.IsAlive(_players[0]) ? _players[0] : _players[1];
-        _combatlog.AnnounceWinner(winner.PlayerNumber);
+        _combatLog.AnnounceWinner(winner.PlayerNumber);
     }
     
 }

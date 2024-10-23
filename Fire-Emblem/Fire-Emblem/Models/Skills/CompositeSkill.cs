@@ -1,10 +1,8 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Collections;
-using Fire_Emblem.Models.Skills;
-using Fire_Emblem.Skills.Conditions;
-using Fire_Emblem.SkillsManager;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Collections;
+using Fire_Emblem.Skills;
 
-namespace Fire_Emblem.Skills
+namespace Fire_Emblem.Models.Skills
 {
     
     public class CompositeSkill : BaseSkill

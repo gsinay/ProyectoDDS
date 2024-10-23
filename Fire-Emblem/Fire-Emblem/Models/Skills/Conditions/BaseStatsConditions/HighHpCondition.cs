@@ -1,6 +1,8 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
+using Fire_Emblem.Skills.Conditions;
 
-namespace Fire_Emblem.Skills.Conditions;
+namespace Fire_Emblem.Models.Skills.Conditions.BaseStatsConditions;
 
 public class HighHpCondition: ICondition
 {

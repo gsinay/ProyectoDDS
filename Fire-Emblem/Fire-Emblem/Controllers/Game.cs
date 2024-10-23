@@ -1,11 +1,9 @@
 ﻿using Fire_Emblem_View;
-using Fire_Emblem.Exceptions;
-using Fire_Emblem.SkillsManager;
-using Fire_Emblem.Views;
+using Fire_Emblem.Models.Exceptions;
+using Fire_Emblem.Views.CombatLoggers;
 using Fire_Emblem.Views.MainMenu;
 
-
-namespace Fire_Emblem;
+namespace Fire_Emblem.Controllers;
 
 public class Game
 {
@@ -20,8 +18,9 @@ public class Game
     {
         _view = view;
         _menuView = new SpanishMenu(_view);
-        _setup = new Setup(_menuView, teamsFolder, new JsonHandler(), new SkillFactory());
         _logger = new SpanishLogger(_view);
+        _setup = new Setup(_menuView, teamsFolder);
+        
 
     }
     public void Play()

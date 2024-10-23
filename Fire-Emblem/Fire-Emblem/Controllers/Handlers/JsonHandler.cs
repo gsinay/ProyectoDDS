@@ -1,8 +1,9 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Exceptions;
-
-namespace Fire_Emblem;
 using System.Text.Json;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Exceptions;
+using Fire_Emblem.Models.Names;
+
+namespace Fire_Emblem.Controllers;
 
 public class JsonHandler
 {

@@ -1,7 +1,7 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Collections;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Collections;
 
-namespace Fire_Emblem.Skills.Conditions;
+namespace Fire_Emblem.Models.Skills.Conditions;
 
 public class OrCondition : ICondition
 {

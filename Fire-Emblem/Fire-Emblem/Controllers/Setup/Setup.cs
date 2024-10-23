@@ -1,4 +1,6 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Controllers;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Player;
 using Fire_Emblem.SkillsManager;
 using Fire_Emblem.Views.MainMenu;
 
@@ -13,11 +15,11 @@ public class Setup
 
     public Player[] Players => _players;
 
-    public Setup(SpanishMenu menuView, string teamsFolder, JsonHandler jsonHandler, SkillFactory skillFactory)
+    public Setup(SpanishMenu menuView, string teamsFolder)
     {
         _menuView = menuView;
         _fileLoader = new TeamFileLoader(teamsFolder);
-        _characterBuilder = new CharacterBuilder(jsonHandler, skillFactory);
+        _characterBuilder = new CharacterBuilder();
         _players = new Player[2];
         _players[0] = new Player(playerNumber: 1);
         _players[1] = new Player(playerNumber: 2);

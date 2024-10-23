@@ -1,19 +1,20 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
 
-namespace Fire_Emblem.Skills.Effects;
+namespace Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
 
 public class GuardBearingEffect : IEffect
 {
     public void Apply(Character character, Character opponent)
     {
-       
-        if(character is { IsInitiatingCombat: true, HasInitiatedCombat: false })
-            character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(0.6);
-        else if (character is { IsInitiatingCombat: false, HasDefendedCombat: false })
-            character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(0.6);
-        else 
-            character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(0.3);
-
-        
+        double reduction = GetDamageReduction(character);
+        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(reduction);
+    }
+    private double GetDamageReduction(Character character)
+    {
+        if (character is { IsInitiatingCombat: true, HasInitiatedCombat: false })
+            return 0.6;
+        if (character is { IsInitiatingCombat: false, HasDefendedCombat: false })
+            return 0.6;
+        return 0.3;
     }
 }

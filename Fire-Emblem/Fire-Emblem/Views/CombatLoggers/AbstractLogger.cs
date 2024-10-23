@@ -1,8 +1,8 @@
 using Fire_Emblem_View;
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Player;
 
-
-namespace Fire_Emblem.Logging
+namespace Fire_Emblem.Views.CombatLoggers
 {
     public abstract class AbstractLogger
     {

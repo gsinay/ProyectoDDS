@@ -1,7 +1,7 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Handlers;
+using Fire_Emblem.Controllers.Handlers;
+using Fire_Emblem.Models.Characters;
 
-namespace Fire_Emblem.Skills.Effects;
+namespace Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
 
 public class DivineRecreationEffect : IEffect
 {
@@ -9,8 +9,6 @@ public class DivineRecreationEffect : IEffect
 
     public void Apply(Character character, Character opponent)
     {
-        Console.WriteLine($"el character {character.Info.Name} activa divine recreation");
-
         int damageReduced = SimulateCombat(opponent, character);
 
         if (character.IsInitiatingCombat)

@@ -1,9 +1,13 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Collections;
-using Fire_Emblem.Exceptions;
-using Fire_Emblem.Skills;
+using Fire_Emblem.Models.Collections;
+using Fire_Emblem.Models.Exceptions;
+using Fire_Emblem.Models.Names;
+using Fire_Emblem.Models.Skills;
+using Fire_Emblem.Models.Skills.Conditions;
+using Fire_Emblem.Models.Skills.Conditions.BaseStatsConditions;
+using Fire_Emblem.Models.Skills.Conditions.WithBonusesConditions;
+using Fire_Emblem.Models.Skills.Effects.BaseStatEffects;
+using Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
 using Fire_Emblem.Skills.Conditions;
-using Fire_Emblem.Skills.Effects;
 
 namespace Fire_Emblem.SkillsManager;
 
@@ -801,7 +805,7 @@ public class SkillFactory
                         new FirstAttackPercentReductionEffect(0.5)
                     ])
                 ),
-            "remote sparrow" => new SecondDegreeSkill(
+            "remote sparrow" => new BasicSkill(
                 "Remote Sparrow",
                 "Si la unidad inicia el combate, otorga Atk/Spd+7 y reduce el daño " +
                 "del primer ataque del rival en un 30 %.",
@@ -821,7 +825,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 10),
                     new FirstAttackPercentReductionEffect(0.3)])
             ),
-            "remote sturdy" => new SecondDegreeSkill(
+            "remote sturdy" => new BasicSkill(
                 "Remote sturdy",
                 "Si la unidad inicia el combate, otorga Atk/Deg+7 y reduce el daño " +
                 "del primer ataque del rival en un 30 %.",
@@ -831,7 +835,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Def, 10),
                     new FirstAttackPercentReductionEffect(0.3)])
             ),
-            "fierce stance" => new SecondDegreeSkill(
+            "fierce stance" => new BasicSkill(
                 "Fierce Stance",
                 "Si el rival inicia el combate, otorga Atk+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -841,7 +845,7 @@ public class SkillFactory
                         new StatBoostEffect(StatName.Atk, 8),
                         new FollowupAttackPercentReductionEffect(0.1)
                     ])),
-            "darting stance" => new SecondDegreeSkill(
+            "darting stance" => new BasicSkill(
                 "Darting Stance",
                 "Si el rival inicia el combate, otorga Spd+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -851,22 +855,18 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Spd, 8),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "steady stance" => new CompositeSkill(
+            "steady stance" => new BasicSkill(
                 "Steady Stance",
                 "Si el rival inicia el combate, otorga Def+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
-                new SkillList([
-                        new BasicSkill(new InitiatingCombatConditionRival(),
+                new InitiatingCombatConditionRival(),
                             new EffectsList([
-                                    new StatBoostEffect(StatName.Def, 8)
-                                ])),
-                        new SecondDegreeSkill(new InitiatingCombatConditionRival(),
-                            new EffectsList(
-                            [
-                                new FollowupAttackPercentReductionEffect(0.1)
-                            ]))
-                    ])),
-            "warding stance" => new SecondDegreeSkill(
+                                    new StatBoostEffect(StatName.Def, 8),
+                                    new FollowupAttackPercentReductionEffect(0.1)
+
+                                ])
+                ),
+            "warding stance" => new BasicSkill(
                 "Warding Stance",
                 "Si el rival inicia el combate, otorga Res+8 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -876,7 +876,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Res, 8),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "kestrel stance" => new SecondDegreeSkill(
+            "kestrel stance" => new BasicSkill(
                 "Kestrel Stance",
                 "Si el rival inicia el combate, otorga Atk/Spd+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -898,7 +898,7 @@ public class SkillFactory
                     new StatBoostEffect(StatName.Def, 6),
                     new FollowupAttackPercentReductionEffect(0.1)
                 ])),
-            "mirror stance" => new SecondDegreeSkill(
+            "mirror stance" => new BasicSkill(
                 "Mirror Stance",
                 "Si el rival inicia el combate, otorga Atk/Res+6 durante el combate y " +
                 "reduce el dan \u0303o del Follow-Up del rival en un 10 %.",
@@ -958,7 +958,7 @@ public class SkillFactory
                 new AlwaysTrueCondition(),
                 new EffectsList([new LaguzFriendEffect()])
                 ),
-            "chivalry" => new SecondDegreeSkill(
+            "chivalry" => new BasicSkill(
                 "Chivalry",
                 "Si la unidad inicia el combate contra un rival con HP=100%," +
                 "la unidad inflige +2 dan \u0303o en cada ataque y recibe -2 dan \u0303o por cada ataque del rival.",

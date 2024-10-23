@@ -2,9 +2,9 @@ namespace Fire_Emblem.Models.Characters.Modifiers;
 
 public class CharacterCombatModifiers
 {
-    public Modifiers CombatModifiers = new();
-    public Modifiers FirstAttackModifiers = new();
-    public Modifiers FollowupModifiers = new();
+    public readonly Modifiers CombatModifiers = new();
+    public readonly Modifiers FirstAttackModifiers = new();
+    public readonly Modifiers FollowupModifiers = new();
 
 
     public void Reset()

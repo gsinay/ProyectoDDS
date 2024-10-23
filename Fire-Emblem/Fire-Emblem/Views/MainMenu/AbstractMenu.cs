@@ -4,16 +4,16 @@ namespace Fire_Emblem.Views.MainMenu;
 
 public abstract class AbstractMenu
 {
-    protected readonly View _view;
+    protected readonly View View;
 
     public AbstractMenu(View view)
     {
-        _view = view;
+        View = view;
     }
     
     public string  GetUserInput()
     {
-        return _view.ReadLine();
+        return View.ReadLine();
     }
 
     public abstract void AskForFile();
@@ -22,7 +22,7 @@ public abstract class AbstractMenu
 
     public void PrintFileNumberAndName(int number, string fileName)
     {
-        _view.WriteLine($"{number}: {fileName}");
+        View.WriteLine($"{number}: {fileName}");
     }
     
     public abstract void PrintFileNotValid();

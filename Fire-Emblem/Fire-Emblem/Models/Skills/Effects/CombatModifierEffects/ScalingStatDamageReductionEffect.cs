@@ -1,5 +1,7 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Skills.Effects;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
+
+namespace Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
 
 public class ScalingStatDamageReductionEffect : IEffect
 {

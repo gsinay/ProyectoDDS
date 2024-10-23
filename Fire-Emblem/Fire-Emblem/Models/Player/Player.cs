@@ -1,6 +1,7 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Collections;
 
-namespace Fire_Emblem;
+namespace Fire_Emblem.Models.Player;
 
 public class Player
 {

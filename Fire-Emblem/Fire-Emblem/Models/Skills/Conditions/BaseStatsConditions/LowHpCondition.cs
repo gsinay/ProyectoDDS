@@ -1,4 +1,5 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Skills.Conditions;
 
 namespace Fire_Emblem.Skills.Conditions;
 

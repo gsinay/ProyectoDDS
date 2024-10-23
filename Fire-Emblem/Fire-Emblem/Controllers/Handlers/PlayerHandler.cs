@@ -1,6 +1,6 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Player;
 
-namespace Fire_Emblem.Handlers;
+namespace Fire_Emblem.Controllers.Handlers;
 
 public class PlayerHandler
 {

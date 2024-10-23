@@ -1,4 +1,6 @@
-namespace Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+
+namespace Fire_Emblem.Models.Collections;
 
 public class CharacterList
 {
@@ -23,6 +25,6 @@ public class CharacterList
 
     public bool Contains(Character character) => _characters.Contains(character);
 
-    public bool Remove(Character character) => _characters.Remove(character);
+    public void Remove(Character character) => _characters.Remove(character);
 
 }

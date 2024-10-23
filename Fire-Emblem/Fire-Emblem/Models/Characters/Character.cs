@@ -1,10 +1,12 @@
-using Fire_Emblem.Characters.Calculators;
-using Fire_Emblem.Combat;
+using Fire_Emblem.Models.Characters.Calculators;
 using Fire_Emblem.Models.Characters.Modifiers;
-using Fire_Emblem.Skills;
-using Fire_Emblem.SkillsManager;
+using Fire_Emblem.Models.Characters.Stats;
+using Fire_Emblem.Models.Collections;
+using Fire_Emblem.Models.Names;
+using Fire_Emblem.Models.Skills;
 
-namespace Fire_Emblem.Characters
+
+namespace Fire_Emblem.Models.Characters
 {
     public class Character
     {
@@ -15,11 +17,18 @@ namespace Fire_Emblem.Characters
         private readonly CombatState _combatState = new();
         private readonly CharacterCombatModifiers _characterModifiers = new();
         private readonly DamageCalculator _damageCalculator = new();
+        private readonly StatCalculator _statCalculator = new();
+        
         private  bool _hasInitiatedCombat;
         private  bool _hasDefendedCombat;
         
+        public Character(string name, WeaponName weapon, string gender, string deathQuote,
+            int hp, int atk, int spd, int def, int res)
+        {
+            _characterInfo = new CharacterInfo(name, weapon, gender, deathQuote);
+            _stats = new CharacterStats(hp, atk, spd, def, res);
 
-
+        }
         public bool IsInitiatingCombat
         {
             get => _combatState.IsInitiatingCombat;
@@ -31,14 +40,6 @@ namespace Fire_Emblem.Characters
 
         public bool HasInitiatedCombat => _hasInitiatedCombat;
         public bool HasDefendedCombat => _hasDefendedCombat;
-        
-        public Character(string name, WeaponName weapon, string gender, string deathQuote,
-            int hp, int atk, int spd, int def, int res)
-        {
-            _characterInfo = new CharacterInfo(name, weapon, gender, deathQuote);
-            _stats = new CharacterStats(hp, atk, spd, def, res);
-
-        }
 
         public CharacterStats Stats => _stats;
 
@@ -49,19 +50,19 @@ namespace Fire_Emblem.Characters
         public int GetHp => _stats.BaseStats.GetBaseStat(StatName.Hp);
         public int GetMaxHp => _stats.BaseStats.GetBaseStat(StatName.MaxHp);
         public double GetRemainingHpPercentage() => (double)GetHp / GetMaxHp;
-
+        public List<ISkill> Skills => _skills.GetSkills();
         
-        public int GeneralEffectiveAtk => GetGeneralEffectiveStat(StatName.Atk);
-        public int GeneralEffectiveSpd => GetGeneralEffectiveStat(StatName.Spd);
-        public int GeneralEffectiveDef => GetGeneralEffectiveStat(StatName.Def);
-        public int GeneralEffectiveRes => GetGeneralEffectiveStat(StatName.Res);
-        public int EffectiveAtk => GetEffectiveStat(StatName.Atk);
-        public int EffectiveSpd => GetEffectiveStat(StatName.Spd);
-        public int EffectiveDef => GetEffectiveStat(StatName.Def);
-        public int EffectiveRes => GetEffectiveStat(StatName.Res);
         public int SkillCount() => _skills.Count();
 
-        public List<ISkill> Skills => _skills.GetSkills();
+        
+        public int GeneralEffectiveAtk => _statCalculator.GetGeneralEffectiveStat(this, StatName.Atk);
+        public int GeneralEffectiveSpd => _statCalculator.GetGeneralEffectiveStat(this, StatName.Spd);
+        public int GeneralEffectiveDef => _statCalculator.GetGeneralEffectiveStat(this, StatName.Def);
+        public int GeneralEffectiveRes => _statCalculator.GetGeneralEffectiveStat(this, StatName.Res);
+        public int EffectiveAtk => _statCalculator.GetEffectiveStat(this, StatName.Atk);
+        public int EffectiveSpd => _statCalculator.GetEffectiveStat(this, StatName.Spd);
+        public int EffectiveDef => _statCalculator.GetEffectiveStat(this, StatName.Def);
+        public int EffectiveRes => _statCalculator.GetEffectiveStat(this, StatName.Res);
         
         public void IncreaseMaxHp(int amount)
         {
@@ -117,83 +118,12 @@ namespace Fire_Emblem.Characters
 
         public int GetAttackWithReduction(int originalAttack)
         {
-            int attackAfterPercentageReduction = ApplyPercentageReduction(originalAttack);
-            int totalAbsoluteReduction = CalculateTotalAbsoluteReduction();
-            int finalAttack = ApplyAbsoluteReduction(attackAfterPercentageReduction, totalAbsoluteReduction);
-            return Math.Max(0, finalAttack);
-        }
-
-        private int ApplyPercentageReduction(int originalAttack)
-        {
-            double cumulativePercentDamageReceived = CalculateCumulativePercentDamageReceived();
-            double reducedAttack = Math.Round(originalAttack * cumulativePercentDamageReceived, 9);
-            return (int)Math.Floor(reducedAttack);
-        }
-
-        private int CalculateTotalAbsoluteReduction()
-        {
-            int absoluteReduction = _characterModifiers.CombatModifiers.FlatDamageReduction;
-            int additionalReduction = HasAttacked 
-                ? _characterModifiers.FollowupModifiers.FlatDamageReduction
-                : _characterModifiers.FirstAttackModifiers.FlatDamageReduction;
-            return absoluteReduction + additionalReduction;
-        }
-
-        private int ApplyAbsoluteReduction(int attackValue, int totalAbsoluteReduction)
-        {
-            return attackValue - totalAbsoluteReduction;
-        }
-
-        private double CalculateCumulativePercentDamageReceived()
-        {
-            
-            double percentDamageReceived = _characterModifiers.CombatModifiers.PercentDamageReceived;
-            if (!HasAttacked)
-                percentDamageReceived *= _characterModifiers.FirstAttackModifiers.PercentDamageReceived;
-            else
-             percentDamageReceived *= _characterModifiers.FollowupModifiers.PercentDamageReceived;
-            return percentDamageReceived;
+            return _damageCalculator.GetAttackWithReduction(this, originalAttack);
         }
         public  int GetAttackModifier()
         {
-            int extraAttack = _characterModifiers.CombatModifiers.FlatAttackIncrement;
-            if (!HasAttacked)
-                extraAttack += _characterModifiers.FirstAttackModifiers.FlatAttackIncrement;
-            else 
-                extraAttack += _characterModifiers.FollowupModifiers.FlatAttackIncrement;
-            return extraAttack;
+            return _damageCalculator.GetAttackModifier(this);
         }
         
-        private int GetGeneralEffectiveStat(StatName stat)
-        {
-            int effectiveBonuses = _stats.NeutralizedBonuses.IsNeutralized(stat)
-                ? 0
-                : _stats.CombatBonuses.GetBonus(stat);
-
-            int effectivePenalties = _stats.NeutralizedPenalties.IsNeutralized(stat)
-                ? 0
-                : _stats.CombatPenalties.GetPenalty(stat);
-
-            return Math.Max(0, _stats.BaseStats.GetBaseStat(stat) + effectiveBonuses - effectivePenalties);
-        }
-        private int GetEffectiveStat(StatName stat)
-        {
-            int effectiveBonuses = _stats.NeutralizedBonuses.IsNeutralized(stat)
-                ? 0
-                : _stats.CombatBonuses.GetBonus(stat) + _stats.FirstAttackBonuses.GetBonus(stat) +
-                  (HasAttacked ? _stats.FollowupBonuses.GetBonus(stat) : 0);
-
-            int effectivePenalties = _stats.NeutralizedPenalties.IsNeutralized(stat)
-                ? 0
-                : _stats.CombatPenalties.GetPenalty(stat) + _stats.FirstAttackPenalties.GetPenalty(stat) +
-                  (HasAttacked ? _stats.FollowupPenalties.GetPenalty(stat) : 0);
-            
-            return Math.Max(0, _stats.BaseStats.GetBaseStat(stat) + effectiveBonuses - effectivePenalties);
-        }
-        
-        
-
-        
-
     }
 }

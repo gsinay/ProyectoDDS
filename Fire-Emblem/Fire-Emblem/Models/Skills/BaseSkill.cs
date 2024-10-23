@@ -1,5 +1,6 @@
-using Fire_Emblem.Characters;
-using Fire_Emblem.Collections;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Collections;
+using Fire_Emblem.Models.Skills.Conditions;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.Conditions;
 

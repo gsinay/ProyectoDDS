@@ -1,6 +1,7 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
 
-namespace Fire_Emblem.Handlers;
+namespace Fire_Emblem.Controllers.Handlers;
 
 public class WtbHandler
 {

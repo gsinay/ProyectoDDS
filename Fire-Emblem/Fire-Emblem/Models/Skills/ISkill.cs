@@ -1,6 +1,6 @@
-using Fire_Emblem.Characters;
+using Fire_Emblem.Models.Characters;
 
-namespace Fire_Emblem.Skills;
+namespace Fire_Emblem.Models.Skills;
 
 public interface ISkill
 {

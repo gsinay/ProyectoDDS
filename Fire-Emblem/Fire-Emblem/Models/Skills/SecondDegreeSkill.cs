@@ -1,8 +1,7 @@
-using Fire_Emblem.Collections;
-using Fire_Emblem.Models.Skills;
-using Fire_Emblem.Skills.Conditions;
+using Fire_Emblem.Models.Collections;
+using Fire_Emblem.Models.Skills.Conditions;
 
-namespace Fire_Emblem.Skills;
+namespace Fire_Emblem.Models.Skills;
 
 public class SecondDegreeSkill : BaseSkill
 {
