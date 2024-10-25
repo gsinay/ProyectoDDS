@@ -8,7 +8,7 @@ namespace Fire_Emblem.Controllers;
 public class Game
 {
     private readonly View _view;
-    private readonly Setup _setup;
+    private readonly Fire_Emblem.Setup _setup;
     private readonly SpanishLogger _logger;
     private readonly SpanishMenu _menuView;
 
@@ -19,7 +19,7 @@ public class Game
         _view = view;
         _menuView = new SpanishMenu(_view);
         _logger = new SpanishLogger(_view);
-        _setup = new Setup(_menuView, teamsFolder);
+        _setup = new Fire_Emblem.Setup(_menuView, teamsFolder);
         
 
     }

@@ -25,8 +25,7 @@ public class Player
     {
         return _characters.Count();
     }
-    public List<Character> Characters => _characters.GetCharacters();
-    
+    public IReadOnlyList<Character> Characters => _characters.GetCharacters();
     public string GetCharacterName(int characterIndex)
     {
         Character selectedCharacter = Characters[characterIndex];

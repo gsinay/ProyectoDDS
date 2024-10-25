@@ -13,7 +13,7 @@ public class StatCalculator
         int effectivePenalties = character.Stats.NeutralizedPenalties.IsNeutralized(stat)
             ? 0
             : character.Stats.CombatPenalties.GetPenalty(stat);
-
+        
         return Math.Max(0, character.Stats.BaseStats.GetBaseStat(stat) + effectiveBonuses - effectivePenalties);
     }
     public int GetEffectiveStat(Character character, StatName stat)

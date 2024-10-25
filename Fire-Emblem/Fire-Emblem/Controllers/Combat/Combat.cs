@@ -16,7 +16,7 @@ public class Combat
     private readonly PlayerHandler _playerHandler = new();
     private readonly AttackHandler _attackHandler = new();
 
-    public Combat(SpanishLogger logger, Setup setup)
+    public Combat(SpanishLogger logger, Fire_Emblem.Setup setup)
     {
         _players = setup.Players;
         _turn = 0;
@@ -121,7 +121,7 @@ public class Combat
     }
     private void Attack(Character attacker, Character defender)
     {
-        int rawDamage = _attackHandler.CalculateRawInflicitedDamage(attacker, defender);
+        int rawDamage = _attackHandler.CalculateRawInflictedDamage(attacker, defender);
 
         int realDamage = _attackHandler.CalculateReducedDamage(rawDamage, defender);
         defender.TakeDamage(realDamage);

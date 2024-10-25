@@ -1,10 +1,8 @@
-using Fire_Emblem.Controllers;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Skills;
-using Fire_Emblem.Skills;
 using Fire_Emblem.SkillsManager;
 
-namespace Fire_Emblem;
+namespace Fire_Emblem.Controllers.Setup;
 
 public class CharacterBuilder
 {
@@ -28,7 +26,7 @@ public class CharacterBuilder
         foreach (var skillName in skillsArray)
         {
             ISkill skill = _skillFactory.GetSkill(skillName);
-            returnCharacter.Skills.Add(skill);
+            returnCharacter.AddSkill(skill);
         }
 
         return returnCharacter;

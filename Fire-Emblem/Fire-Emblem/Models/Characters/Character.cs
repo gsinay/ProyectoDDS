@@ -50,9 +50,14 @@ namespace Fire_Emblem.Models.Characters
         public int GetHp => _stats.BaseStats.GetBaseStat(StatName.Hp);
         public int GetMaxHp => _stats.BaseStats.GetBaseStat(StatName.MaxHp);
         public double GetRemainingHpPercentage() => (double)GetHp / GetMaxHp;
-        public List<ISkill> Skills => _skills.GetSkills();
+        public IReadOnlyList<ISkill> Skills => _skills.GetSkills();
         
         public int SkillCount() => _skills.Count();
+        
+        public void AddSkill(ISkill skill)
+        {
+            _skills.AddSkill(skill);
+        }
 
         
         public int GeneralEffectiveAtk => _statCalculator.GetGeneralEffectiveStat(this, StatName.Atk);

@@ -1,4 +1,5 @@
 using Fire_Emblem.Controllers;
+using Fire_Emblem.Controllers.Setup;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Player;
 using Fire_Emblem.SkillsManager;

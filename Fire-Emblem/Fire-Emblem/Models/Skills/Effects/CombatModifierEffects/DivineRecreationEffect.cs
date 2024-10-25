@@ -1,5 +1,6 @@
 using Fire_Emblem.Controllers.Handlers;
 using Fire_Emblem.Models.Characters;
+using Fire_Emblem.Models.Names;
 
 namespace Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
 
@@ -20,8 +21,11 @@ public class DivineRecreationEffect : IEffect
 
     private int SimulateCombat(Character opponent, Character character)
     {
-        int rawInflictedDamage = _attackHandler.CalculateRawInflicitedDamage(opponent, character);
+        
 
+
+        int rawInflictedDamage = _attackHandler.CalculateRawInflictedDamage(opponent, character);
+        
         int reducedInfilictedDamage = _attackHandler.CalculateReducedDamage(rawInflictedDamage, character);
         
         int protectionAgainstAttacker = rawInflictedDamage - reducedInfilictedDamage;

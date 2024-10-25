@@ -7,15 +7,13 @@ public class AttackHandler
 {
     private readonly WtbHandler _wtbHandler = new();  
     
-    public int CalculateRawInflicitedDamage(Character attacker, Character defender)
+    public int CalculateRawInflictedDamage(Character attacker, Character defender)
     {
         double wtb = _wtbHandler.GetTriangleAdvantage(attacker, defender);
 
         int attackPower = (int)(attacker.EffectiveAtk * wtb);
-
         
         int effectiveDefense = GetEffectiveDefense(attacker, defender);
-
         
         var atkModifierExtra = attacker.GetAttackModifier();
         

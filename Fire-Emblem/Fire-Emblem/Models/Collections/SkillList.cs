@@ -1,9 +1,10 @@
+using System.Collections;
 using Fire_Emblem.Models.Skills;
-using Fire_Emblem.Skills;
+
 
 namespace Fire_Emblem.Models.Collections;
 
-public class SkillList
+public class SkillList : IEnumerable<ISkill>
 {
     private readonly List<ISkill> _skills;
 
@@ -21,6 +22,16 @@ public class SkillList
     }
     public int Count() => _skills.Count;
 
-    public List<ISkill> GetSkills() => _skills;
+    public IReadOnlyList<ISkill> GetSkills() => _skills;
+    
+    public IEnumerator<ISkill> GetEnumerator()
+    {
+        return _skills.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
 }
