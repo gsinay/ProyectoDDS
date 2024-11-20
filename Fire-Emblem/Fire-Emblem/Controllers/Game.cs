@@ -20,7 +20,6 @@ public class Game
         _menuView = new SpanishMenu(_view);
         _logger = new SpanishLogger(_view);
         _setup = new Fire_Emblem.Setup(_menuView, teamsFolder);
-        
 
     }
     public void Play()

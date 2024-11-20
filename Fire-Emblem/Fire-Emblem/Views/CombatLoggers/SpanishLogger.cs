@@ -1,26 +1,37 @@
 using Fire_Emblem_View;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Player;
+using Fire_Emblem.Models.Names;
 
 namespace Fire_Emblem.Views.CombatLoggers
 {
-    public class SpanishLogger : AbstractLogger
+    public class SpanishLogger : ILogger
     {
-        public SpanishLogger(View view) : base(view)
+        private const double AdvantageWtb = 1.2;
+        private const double DisadvantageWtb = 0.8;
+        private readonly View _view;
+
+        public SpanishLogger(View view)
         {
+            _view = view;
         }
 
-        public override void AnnounceTurn(int turn, string characterName, int playerNumber)
+        public string GetUserInput()
+        {
+            return _view.ReadLine();
+        }
+
+        public void AnnounceTurn(int turn, string characterName, int playerNumber)
         {
             _view.WriteLine($"Round {turn + 1}: {characterName} (Player {playerNumber}) comienza");
         }
 
-        public override void AnnounceOption(int playerNumber)
+        public void AnnounceOption(int playerNumber)
         {
             _view.WriteLine($"Player {playerNumber} selecciona una opción");
         }
 
-        public override void ListCharacters(Player player)
+        public void ListCharacters(Player player)
         {
             for (int i = 0; i < player.CharacterCount(); i++)
             {
@@ -28,21 +39,85 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        public override void PrintAdvantage(Character attacker, Character defender, double wtb)
+        public void PrintAdvantage(Character attacker, Character defender, double wtb)
         {
             if (wtb == AdvantageWtb)
-                _view.WriteLine($"{attacker.Info.Name} ({attacker.Info.Weapon}) tiene ventaja con respecto a " +
-                                $"{defender.Info.Name} ({defender.Info.Weapon})");
+            {
+                _view.WriteLine($"{attacker.Info.Name} ({attacker.Info.Weapon}) tiene ventaja con respecto a {defender.Info.Name} ({defender.Info.Weapon})");
+            }
             else if (wtb == DisadvantageWtb)
-                _view.WriteLine($"{defender.Info.Name} ({defender.Info.Weapon}) tiene ventaja con respecto a " +
-                                $"{attacker.Info.Name} ({attacker.Info.Weapon})");
+            {
+                _view.WriteLine($"{defender.Info.Name} ({defender.Info.Weapon}) tiene ventaja con respecto a {attacker.Info.Name} ({attacker.Info.Weapon})");
+            }
             else
             {
                 _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
             }
         }
 
-        protected override void PrintCombatBonuses(Character character)
+        public void DisplayAttackResult(Character attacker, Character defender, int damage)
+        {
+            _view.WriteLine($"{attacker.Info.Name} ataca a {defender.Info.Name} con {damage} de daño");
+        }
+        
+        public void DisplayHealingResult(Character attacker, int healing)
+        {
+            if (healing > 0)
+            {
+                _view.WriteLine($"{attacker.Info.Name} recupera {healing} HP luego de atacar y queda con " +
+                                $"{attacker.Stats.BaseStats.GetBaseStat(StatName.Hp)} HP.");
+            }
+        }
+
+        public void AnnounceNoFollowUps(Character attacker, Character defender)
+        {
+            if (defender.CharacterModifiers.CombatModifiers.CounterAttackIsNegated)
+                _view.WriteLine($"{attacker.Info.Name} no puede hacer un follow up");
+            else
+                _view.WriteLine("Ninguna unidad puede hacer un follow up");
+        }
+
+        public void AnnounceResults(Character attacker, Character defender)
+        {
+            _view.WriteLine($"{attacker.Info.Name} ({attacker.GetHp}) : {defender.Info.Name} ({defender.GetHp})");
+        }
+
+        public void AnnounceWinner(int playerNumber)
+        {
+            _view.WriteLine($"Player {playerNumber} ganó");
+        }
+
+        public void PrintPreCombatLog(Character attacker, Character defender)
+        {
+            PrintCharacterPreCombatLog(attacker);
+            PrintCharacterPreCombatLog(defender);
+        }
+
+        private void PrintCharacterPreCombatLog(Character character)
+        {
+            PrintCombatBonuses(character);
+            PrintFirstAttackBonuses(character);
+            PrintFollowupBonuses(character);
+            PrintCombatPenalties(character);
+            PrintFirstAttackPenalties(character);
+            PrintFollowupPenalties(character);
+            PrintNeutralizedBonuses(character);
+            PrintNeutralizedPenalties(character);
+            PrintCombatFlatAttackIncrement(character);
+            PrintFirstAttackFlatAttackIncrement(character);
+            PrintFollowupFlatAttackIncrement(character);
+            PrintCombatPercentualDamageReduction(character);
+            PrintFirstAttackPercentualDamageReduction(character);
+            PrintFollowupAttackPercentualDamageReduction(character);
+            PrintCombatFlatDamageReduction(character);
+            PrintHasNegatedCounterAttack(character);
+            PrintHealingForEachAttack(character);
+            PrintHpLostBeforeCombat(character);
+            
+        }
+        
+
+        private void PrintCombatBonuses(Character character)
         {
             foreach (var stat in character.Stats.CombatBonuses.GetAllBonuses())
             {
@@ -53,7 +128,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintFirstAttackBonuses(Character character)
+        private void PrintFirstAttackBonuses(Character character)
         {
             foreach (var stat in character.Stats.FirstAttackBonuses.GetAllBonuses())
             {
@@ -64,7 +139,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintFollowupBonuses(Character character)
+        private void PrintFollowupBonuses(Character character)
         {
             foreach (var stat in character.Stats.FollowupBonuses.GetAllBonuses())
             {
@@ -75,7 +150,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintCombatPenalties(Character character)
+        private void PrintCombatPenalties(Character character)
         {
             foreach (var stat in character.Stats.CombatPenalties.GetAllPenalties())
             {
@@ -86,7 +161,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintFirstAttackPenalties(Character character)
+        private void PrintFirstAttackPenalties(Character character)
         {
             foreach (var stat in character.Stats.FirstAttackPenalties.GetAllPenalties())
             {
@@ -97,7 +172,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintFollowupPenalties(Character character)
+        private void PrintFollowupPenalties(Character character)
         {
             foreach (var stat in character.Stats.FollowupPenalties.GetAllPenalties())
             {
@@ -108,7 +183,7 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        protected override void PrintNeutralizedBonuses(Character character)
+        private void PrintNeutralizedBonuses(Character character)
         {
             foreach (var stat in character.Stats.NeutralizedBonuses.GetAllNeutralizations())
             {
@@ -118,7 +193,8 @@ namespace Fire_Emblem.Views.CombatLoggers
                 }
             }
         }
-        protected override void PrintNeutralizedPenalties(Character character)
+
+        private void PrintNeutralizedPenalties(Character character)
         {
             foreach (var stat in character.Stats.NeutralizedPenalties.GetAllNeutralizations())
             {
@@ -128,92 +204,118 @@ namespace Fire_Emblem.Views.CombatLoggers
                 }
             }
         }
-        
-        protected override void PrintCombatFlatAttackIncrement(Character character)
+
+        private void PrintCombatFlatAttackIncrement(Character character)
         {
             int increment = character.CharacterModifiers.CombatModifiers.FlatAttackIncrement;
             if (increment > 0)
                 _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en cada ataque");
-            
         }
-        protected override void PrintFirstAttackFlatAttackIncrement(Character character)
+
+        private void PrintFirstAttackFlatAttackIncrement(Character character)
         {
             int increment = character.CharacterModifiers.FirstAttackModifiers.FlatAttackIncrement;
             if (increment > 0)
                 _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en su primer ataque");
-            
         }
-        
-        protected override void PrintFollowupFlatAttackIncrement(Character character)
+
+        private void PrintFollowupFlatAttackIncrement(Character character)
         {
             int increment = character.CharacterModifiers.FollowupModifiers.FlatAttackIncrement;
             if (increment > 0)
                 _view.WriteLine($"{character.Info.Name} realizará +{increment} daño extra en su Follow-Up");
-            
         }
 
-        protected override void PrintCombatPercentualDamageReduction(Character character)
+        private void PrintCombatPercentualDamageReduction(Character character)
         {
-            if(character.CharacterModifiers.CombatModifiers.PercentDamageReceived < 1)
+            if (character.CharacterModifiers.CombatModifiers.PercentDamageReceived < 1)
             {
                 double damageReductionPercent = 1.0 - character.CharacterModifiers.CombatModifiers.PercentDamageReceived;
                 int damageReduction = Convert.ToInt32(damageReductionPercent * 100);
-                
+
                 _view.WriteLine($"{character.Info.Name} reducirá el daño de los ataques del rival en un {damageReduction}%");
             }
         }
-        
-        protected override void PrintFirstAttackPercentualDamageReduction(Character character)
+
+        private void PrintFirstAttackPercentualDamageReduction(Character character)
         {
-            if(character.CharacterModifiers.FirstAttackModifiers.PercentDamageReceived < 1)
+            if (character.CharacterModifiers.FirstAttackModifiers.PercentDamageReceived < 1)
             {
                 double damageReductionPercent = 1.0 - character.CharacterModifiers.FirstAttackModifiers.PercentDamageReceived;
                 int damageReduction = Convert.ToInt32(damageReductionPercent * 100);
-                
-                _view.WriteLine($"{character.Info.Name} reducirá el daño del primer ataque" +
-                                $" del rival en un {damageReduction}%");
+
+                _view.WriteLine($"{character.Info.Name} reducirá el daño del primer ataque del rival en un {damageReduction}%");
             }
         }
 
-        protected override void PrintFollowupAttackPercentualDamageReduction(Character character)
+        private void PrintFollowupAttackPercentualDamageReduction(Character character)
         {
-            if(character.CharacterModifiers.FollowupModifiers.PercentDamageReceived < 1)
+            if (character.CharacterModifiers.FollowupModifiers.PercentDamageReceived < 1)
             {
                 double damageReductionPercent = 1.0 - character.CharacterModifiers.FollowupModifiers.PercentDamageReceived;
                 int damageReduction = Convert.ToInt32(damageReductionPercent * 100);
-                
-                _view.WriteLine($"{character.Info.Name} reducirá el " +
-                                $"daño del Follow-Up del rival en un {damageReduction}%");
+
+                _view.WriteLine($"{character.Info.Name} reducirá el daño del Follow-Up del rival en un {damageReduction}%");
             }
         }
-        
-        protected override void PrintCombatFlatDamageReduction(Character character)
+
+        private void PrintCombatFlatDamageReduction(Character character)
         {
-            if(character.CharacterModifiers.CombatModifiers.FlatDamageReduction > 0)
+            if (character.CharacterModifiers.CombatModifiers.FlatDamageReduction > 0)
             {
                 int amount = character.CharacterModifiers.CombatModifiers.FlatDamageReduction;
                 _view.WriteLine($"{character.Info.Name} recibirá -{amount} daño en cada ataque");
             }
         }
-
-        public override void DisplayAttackResult(Character attacker, Character defender, int damage)
+        
+        private void PrintHasNegatedCounterAttack(Character character)
         {
-            _view.WriteLine($"{attacker.Info.Name} ataca a {defender.Info.Name} con {damage} de daño");
+            if (character.CharacterModifiers.CombatModifiers.CounterAttackIsNegated)
+            {
+                if (character.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation)
+                    _view.WriteLine($"{character.Info.Name} neutraliza los efectos que previenen sus contraataques");
+                else
+                    _view.WriteLine($"{character.Info.Name} no podrá contraatacar");
+            }
+        }
+        
+        private void PrintHealingForEachAttack(Character character)
+        {
+            if (character.CharacterModifiers.CombatModifiers.PercentHealingReceivedAfterAttack > 0)
+            {
+                double healingPercent = character.CharacterModifiers.CombatModifiers.PercentHealingReceivedAfterAttack;
+                int healing = Convert.ToInt32(healingPercent * 100);
+                _view.WriteLine($"{character.Info.Name} recuperará HP igual al {healing}% del daño " +
+                                $"realizado en cada ataque");
+            }
+        }
+        
+        private void PrintHpLostBeforeCombat(Character character)
+        {
+            int hpLost = character.CharacterModifiers.CombatModifiers.BeforeCombatHpReduction;
+            if (hpLost > 0)
+                _view.WriteLine($"{character.Info.Name} recibe {hpLost} de daño antes de iniciar el combate " +
+                                $"y queda con {character.GetHp} HP");
         }
 
-        public override void AnnounceNoFollowUps()
+        public void PrintPostCombatLog(Character attacker, Character defender)
         {
-            _view.WriteLine("Ninguna unidad puede hacer un follow up");
+            PrintCharacterAfterCombatLog(attacker);
+            PrintCharacterAfterCombatLog(defender);
         }
 
-        public override void AnnounceResults(Character attacker, Character defender)
+        private void PrintCharacterAfterCombatLog(Character character)
         {
-            _view.WriteLine($"{attacker.Info.Name} ({attacker.GetHp}) : {defender.Info.Name} ({defender.GetHp})");
+            PrintHpChangedAfterCombat(character);
         }
-
-        public override void AnnounceWinner(int playerNumber)
+        private void PrintHpChangedAfterCombat(Character character)
         {
-            _view.WriteLine($"Player {playerNumber} ganó");
+            int hpChange = character.CharacterModifiers.CombatModifiers.AfterCombatHpChange;
+            if (hpChange < 0 && character.IsAlive())
+                _view.WriteLine($"{character.Info.Name} recibe {hpChange} de daño despues del combate");
+            else if(hpChange > 0 && character.IsAlive())
+                _view.WriteLine($"{character.Info.Name} recupera {hpChange} HP despues del combate");
         }
+        
     }
 }

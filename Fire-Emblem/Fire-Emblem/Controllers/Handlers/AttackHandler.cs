@@ -35,6 +35,16 @@ public class AttackHandler
     }
 
     public int CalculateReducedDamage(int rawDamage, Character defender) => defender.GetAttackWithReduction(rawDamage);
-    
-    
+
+
+    public bool CanCounterAttack(Character attacker, Character defender)
+    {
+       
+        bool defenderCounterAttackIsNotNegated = !defender.CharacterModifiers.CombatModifiers.CounterAttackIsNegated;
+        bool defenderNegatesNegation = defender.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation;
+        
+        bool defenderCanCounterAttack = defenderCounterAttackIsNotNegated || defenderNegatesNegation;
+
+        return defender.IsAlive() && defenderCanCounterAttack;
+    }
 }

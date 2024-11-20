@@ -9,11 +9,13 @@ public class StatComparisonCondition : ICondition
 
     private readonly StatName _characterStat;
     private readonly StatName _rivalStat;
+    private readonly int _threshold;
 
-    public StatComparisonCondition(StatName characterStat, StatName rivalStat)
+    public StatComparisonCondition(StatName characterStat, StatName rivalStat, int threshold = 0)
     {
         _characterStat = characterStat;
         _rivalStat = rivalStat;
+        _threshold = threshold;
     }
 
     
@@ -22,7 +24,7 @@ public class StatComparisonCondition : ICondition
         int characterGeneralStat = GetGeneralStat(character, _characterStat);
         int rivalGeneralStat = GetGeneralStat(opponent, _rivalStat);
  
-        return characterGeneralStat > rivalGeneralStat;
+        return characterGeneralStat > rivalGeneralStat + _threshold;
     }
 
     private static int GetGeneralStat(Character unit, StatName stat)

@@ -78,11 +78,41 @@ namespace Fire_Emblem.Models.Characters
 
         public bool IsAlive() => _stats.BaseStats.GetBaseStat(StatName.Hp) > 0;
 
+        public void ChangeHp()
+        {
+            int hpDelta = _characterModifiers.CombatModifiers.AfterCombatHpChange;
+            if (hpDelta > 0)
+                Heal(hpDelta);
+            else
+                TakeDamage(-hpDelta);
+        }
+        
+        public void Heal(int healingAmount)
+        {
+            int currentHp = _stats.BaseStats.GetBaseStat(StatName.Hp);
+            int maxHp = _stats.BaseStats.GetBaseStat(StatName.MaxHp);
+            int newHp = Math.Min(currentHp + healingAmount, maxHp);
+            _stats.BaseStats.SetBaseStat(StatName.Hp, newHp);
+        }
         public void TakeDamage(int damage)
         {
-            int damageValue = Math.Max(0, GetHp - damage);
-            _stats.BaseStats.SetBaseStat(StatName.Hp, damageValue);
+            int newHp = Math.Max(0, GetHp - damage);
+            _stats.BaseStats.SetBaseStat(StatName.Hp, newHp);
         }
+        
+        public void TakeOutsideAttackDamage(int damage)
+        {
+            int newHp = Math.Max(1, GetHp - damage);
+            _stats.BaseStats.SetBaseStat(StatName.Hp, newHp);
+        }
+        
+        public int PercentHealAfterAttack(int damageDealt)
+        {
+            int healingAmount = (int)(_characterModifiers.CombatModifiers.PercentHealingReceivedAfterAttack * damageDealt);
+            Heal(healingAmount);
+            return healingAmount;
+        }
+        
 
 
         public void UpdateMostRecentOpponent(Character opponent)

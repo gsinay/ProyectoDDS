@@ -52,13 +52,19 @@ public class Combat
         Character defendingChar = SelectAndPrepareCharacter(defender);
 
         ApplySkills(attackChar, defendingChar);
+        
+        LoadPreAttackHpReduction(attackChar, defendingChar);
 
         PrintPreAttackLogs(attacker, attackChar, defendingChar);
     
         PerformAttacks(attackChar, defendingChar);
-    
-        _combatLog.AnnounceResults(attackChar, defendingChar);
-
+        
+        if (attackChar.IsAlive() && defendingChar.IsAlive()) HandleFollowUps(attackChar, defendingChar);
+        
+        ApplyAfterCombatEffects(attackChar, defendingChar);
+        
+        PrintAfterCombatLogs(attackChar, defendingChar);
+        
         PostAttackCharacterUpdate(attackChar, defendingChar);
        
     
@@ -97,36 +103,60 @@ public class Combat
         _skillsHandler.ApplySkillsBeforeCombat(attacker, defender, 3);
 
     }
+    
+    private void LoadPreAttackHpReduction(Character attacker, Character defender)
+    {
+        int attackerHpReduction = attacker.CharacterModifiers.CombatModifiers.BeforeCombatHpReduction;
+        int defenderHpReduction = defender.CharacterModifiers.CombatModifiers.BeforeCombatHpReduction;
+        attacker.TakeOutsideAttackDamage(attackerHpReduction);
+        defender.TakeOutsideAttackDamage(defenderHpReduction);
+    }
 
     private void PrintPreAttackLogs(Player attacker, Character attackChar, Character defendingChar)
     {
         _combatLog.AnnounceTurn(_turn, attackChar.Info.Name, attacker.PlayerNumber);
         double wtb = _wtbHandler.GetTriangleAdvantage(attackChar, defendingChar);
         _combatLog.PrintAdvantage(attackChar, defendingChar, wtb);
-        _combatLog.PrintLog(attackChar, defendingChar);
+        _combatLog.PrintPreCombatLog(attackChar, defendingChar);
     }
     private void PerformAttacks(Character attacker, Character defender)
     {
         attacker.MarkHasInitiatedCombat();
         defender.MarkHasDefendedCombat();
         Attack(attacker, defender);
-        if (!defender.IsAlive()) return;
+        if (!_attackHandler.CanCounterAttack(attacker, defender)) return;
         Attack(defender, attacker);
         attacker.MarkAsAttacked();
         defender.MarkAsAttacked();
         attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
-        if (!attacker.IsAlive()) return;
-        HandleFollowUps(attacker, defender);
+       
     }
+
+   
+
     private void Attack(Character attacker, Character defender)
     {
-        int rawDamage = _attackHandler.CalculateRawInflictedDamage(attacker, defender);
+        int damageDealt = CalculateAndApplyDamage(attacker, defender); 
+        _combatLog.DisplayAttackResult(attacker, defender, damageDealt); 
 
+        HandleAttackHealingAndLog(attacker, damageDealt); 
+    }
+    
+    private int CalculateAndApplyDamage(Character attacker, Character defender)
+    {
+        int rawDamage = _attackHandler.CalculateRawInflictedDamage(attacker, defender);
         int realDamage = _attackHandler.CalculateReducedDamage(rawDamage, defender);
         defender.TakeDamage(realDamage);
-        _combatLog.DisplayAttackResult(attacker, defender, realDamage);
+        return realDamage;
     }
+    
+    private void HandleAttackHealingAndLog(Character character, int damageDealt)
+    {
+        int healing = character.PercentHealAfterAttack(damageDealt);
+        _combatLog.DisplayHealingResult(character, healing);
+    }
+    
 
     private void HandleFollowUps(Character attacker, Character defender)
     {
@@ -142,12 +172,35 @@ public class Combat
             noFollowUps = false;
         }
         if (noFollowUps)
-            _combatLog.AnnounceNoFollowUps();
+            _combatLog.AnnounceNoFollowUps(attacker, defender);
     }
 
     private bool CanFollowUp(Character attacker, Character defender)
     {
-        return attacker.EffectiveSpd - defender.EffectiveSpd >= 5;
+        return attacker.EffectiveSpd - defender.EffectiveSpd >= 5 && 
+               (!attacker.CharacterModifiers.CombatModifiers.CounterAttackIsNegated || 
+                attacker.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation);
+    }
+
+    private void ApplyAfterCombatEffects(Character attacker, Character defender)
+    {
+        LoadAfterCombatHpChange(attacker);
+        LoadAfterCombatHpChange(defender);
+    }
+
+    private void LoadAfterCombatHpChange(Character character)
+    {
+        if (character.IsAlive())
+            character.ChangeHp();
+        
+    }
+    
+    
+    private void PrintAfterCombatLogs(Character attacker, Character defender)
+    {
+        _combatLog.PrintPostCombatLog(attacker, defender);
+        _combatLog.AnnounceResults(attacker, defender);
+
     }
 
     private void PostAttackCharacterUpdate(Character attacker, Character defender)

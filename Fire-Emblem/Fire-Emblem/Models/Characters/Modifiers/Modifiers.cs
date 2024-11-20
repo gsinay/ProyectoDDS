@@ -4,8 +4,14 @@ public class Modifiers
 {
     public int FlatAttackIncrement;
     public int FlatDamageReduction;
-    public double PercentDamageReceived = 1.0
-        ;
+    public double PercentDamageReceived = 1.0;
+    public double PercentHealingReceivedAfterAttack = 0;
+    public bool CounterAttackIsNegated = false;
+    public bool NegatedCounterAttackNegation = false;
+    public int BeforeCombatHpReduction = 0;
+    public int AfterCombatHpChange = 0;
+   
+
 
     public void ReducePercentageOfDamageReceived(double reductionFactor)
     {
@@ -17,5 +23,10 @@ public class Modifiers
         FlatAttackIncrement = 0;
         FlatDamageReduction = 0;
         PercentDamageReceived = 1;
+        PercentHealingReceivedAfterAttack = 0;
+        CounterAttackIsNegated = false;
+        NegatedCounterAttackNegation = false;
+        BeforeCombatHpReduction = 0;
+        AfterCombatHpChange = 0;
     }
 }

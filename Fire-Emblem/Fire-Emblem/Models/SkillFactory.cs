@@ -770,7 +770,7 @@ public class SkillFactory
                 new SkillList(
                     [
                     new BasicSkill(
-                        new HighHpCondition(0.25), 
+                        new HighHpPercentCondition(0.25), 
                         new EffectsList([new StatPenaltyOpponentEffect(StatName.Atk, 5),
                             new StatPenaltyOpponentEffect(StatName.Spd, 5)])
                         ),
@@ -778,7 +778,7 @@ public class SkillFactory
                         new AndCondition(
                             new ConditionsList(
                                 [
-                                    new HighHpCondition(0.25), 
+                                    new HighHpPercentCondition(0.25), 
                                     new StatComparisonCondition(StatName.Spd, StatName.Spd)
                                 ])),
                         new EffectsList([new ScalingStatDamageReductionEffect(StatName.Spd,40)]))])
@@ -1053,7 +1053,153 @@ public class SkillFactory
                         new DivineRecreationEffect()
                     ]))
                     ])),
-            
+            "sol" => new BasicSkill(
+                "Sol",
+                " Por cada ataque, la unidad recupera HP=25 % del daño infligido.",
+                new AlwaysTrueCondition(),
+                new EffectsList([new HealingAfterAttackEffect(0.25)])
+                ),
+            "nosferatu" => new BasicSkill(
+                "Nosferatu",
+                "Al usar magia, la unidad recupera HP = 50 % del daño realizado por cada ataque.",
+                new UsingSpecificWeaponConditionSelf(WeaponName.Magic), 
+                new EffectsList([new HealingAfterAttackEffect(0.5)])),
+            "solar brace" => new BasicSkill(
+                "Solar Brace",
+                "Si la unidad inicia el combate, recupera HP=50 % del daño realizado en cada ataque,",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList([new HealingAfterAttackEffect(0.5)])
+                ),
+            "windsweep" => new BasicSkill(
+                "Windsweep",
+                "Si la unidad inicia el combate con una espada contra un rival que usa espadas, el " +
+                "rival no podrá contraatacar.",
+                new AndCondition(
+                    new ConditionsList(
+                        [
+                            new InitiatingCombatConditionSelf(),
+                            new UsingSpecificWeaponConditionSelf(WeaponName.Sword),
+                            new UsingSpecificWeaponConditionRival(WeaponName.Sword)
+                        ])),
+                new EffectsList([new NegateCounterAttackEffect()])
+                ),
+            "surprise attack" => new BasicSkill(
+                "Surprise Attack",
+                "Si la unidad inicia el combate con un arco contra un rival que usa arcos, " +
+                "el rival no podrá contraatacar.",
+                new AndCondition(
+                    new ConditionsList(
+                        [
+                            new InitiatingCombatConditionSelf(),
+                            new UsingSpecificWeaponConditionSelf(WeaponName.Bow),
+                            new UsingSpecificWeaponConditionRival(WeaponName.Bow)
+                        ])),
+                new EffectsList([ new NegateCounterAttackEffect()])
+                ),
+            "hliðskjálf" => new BasicSkill(
+                "Hliðskjálf",
+                "Si la unidad inicia el combate con magia contra un rival que usa magia, " +
+                "el rival no podrá contraatacar",
+                new AndCondition(
+                    new ConditionsList(
+                        [
+                            new InitiatingCombatConditionSelf(),
+                            new UsingSpecificWeaponConditionSelf(WeaponName.Magic),
+                            new UsingSpecificWeaponConditionRival(WeaponName.Magic)
+                        ])),
+                new EffectsList([new NegateCounterAttackEffect()])
+                ),
+            "null c-disrupt" => new BasicSkill(
+                "Null C-Disrupt",
+                "Neutraliza los efectos que previenen los contraataques de la unidad.",
+                new AlwaysTrueCondition(),
+                new EffectsList([new NegateCounterAttackNegationEffect()])),
+            "laws of sacae" => new CompositeSkill(
+                "Laws of Sacae",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new InitiatingCombatConditionSelf(), 
+                            new EffectsList(
+                                [
+                                    new StatBoostEffect(StatName.Atk, 6),
+                                    new StatBoostEffect(StatName.Def, 6),
+                                    new StatBoostEffect(StatName.Res, 6),
+                                    new StatBoostEffect(StatName.Spd, 6)
+                        ])),
+                        new SecondDegreeSkill(
+                            new AndCondition(
+                                new ConditionsList(
+                                [
+                                    new InitiatingCombatConditionSelf(),
+                                    new StatComparisonCondition(StatName.Spd, StatName.Spd, 4),
+                                    new OrCondition(
+                                        new ConditionsList(
+                                            [
+                                                new UsingSpecificWeaponConditionRival(WeaponName.Lance),
+                                                new UsingSpecificWeaponConditionRival(WeaponName.Axe),
+                                                new UsingSpecificWeaponConditionRival(WeaponName.Sword)
+                                            ]))])),
+                            new EffectsList([new NegateCounterAttackEffect()])
+                            )
+                    ])),
+            "eclipse brace" => new CompositeSkill(
+                "Eclipse Brace",
+                "Si la unidad inicia el combate, inflige daño extra=30% de la Def del rival en cada ataque físico" +
+                " y recupera HP=50 % del daño realizado en cada ataque.",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new InitiatingCombatConditionSelf(),
+                            new EffectsList([new HealingAfterAttackEffect(0.5)])
+                            ),
+                        new SecondDegreeSkill(
+                            new AndCondition(new ConditionsList(
+                            [
+                                new UsingPhysicalWeaponConditionSelf(), 
+                                new InitiatingCombatConditionSelf()
+                            ])),
+                            new EffectsList([new LunarBraceEffect(0.3)])
+                            )
+                    ])),
+            "resonance" => new BasicSkill(
+                "Resonance",
+                "Si la unidad usa magia y si HP de la unidad \u22652, la unidad pierde 1 HP al inicio del" +
+                " combate e inflige +3 de daño por ataque durante el combate.",
+                new AndCondition(new ConditionsList(
+                    [
+                        new UsingSpecificWeaponConditionSelf(WeaponName.Magic),
+                        new HighHpFlatCondition(2)
+                    ])),
+                new EffectsList(
+                    [
+                        new BeforeCombatHpReductionEffect(1),
+                        new FlatAttackIncrementEffect(3)
+                    ])
+                ),
+            //TODO: AGREGAR SKILL FLARE
+            "fury" => new BasicSkill(
+                "Fury",
+                "Otorga Atk/Spd/Def/Res+4. Después del combate, inflige 8 de daño en la unidad.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Atk, 4),
+                        new StatBoostEffect(StatName.Def, 4),
+                        new StatBoostEffect(StatName.Res, 4),
+                        new StatBoostEffect(StatName.Spd, 4),
+                        new AfterCombatHpReductionEffect(8)
+                    ])),
+            "mystic boost" => new BasicSkill(
+                "Mystic Boost",
+                "Inflige Atk-5 en el rival durante el combate. Restaura 10 HP a la unidad después del combate.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new StatPenaltyOpponentEffect(StatName.Atk, 5),
+                        new AfterCombatHpIncrementEffect(10)
+                    ]
+                    )),
             _ => throw new SkillNotImplementedException()
         };
     }
