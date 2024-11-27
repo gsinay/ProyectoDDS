@@ -1,6 +1,10 @@
 ﻿using Fire_Emblem;
 using Fire_Emblem_View;
 using Fire_Emblem.Controllers;
+using Fire_Emblem_GUI;
+using Fire_Emblem.Views;
+using Fire_Emblem.Views.CombatLoggers;
+
 
 /* 
  * Este código permite replicar un test case. Primero pregunta por el grupo de test
@@ -21,14 +25,18 @@ using Fire_Emblem.Controllers;
  * por:
  *      var view = View.BuildConsoleView();
  */
-string testFolder = SelectTestFolder();
-string test = SelectTest(testFolder);
-string teamsFolder = testFolder.Replace("-Tests","");
-AnnounceTestCase(test);
-
-var view = View.BuildManualTestingView(test);
-var game = new Game(view, teamsFolder);
-game.Play();
+bool useGui = true; // permite cambiar entre el modo consola y el modo GUI
+if (useGui) {
+    WindowView view = new WindowView();
+    Game game = new Game(view);
+    view.Start(game.Play); }
+else
+{
+    string testFolder = SelectTestFolder(); string test = SelectTest(testFolder);
+    string teamsFolder = testFolder.Replace("-Tests",""); AnnounceTestCase(test);
+    var view = View.BuildManualTestingView(test);
+    Game game = new Game(view, teamsFolder); game.Play();
+}
 
 string SelectTestFolder()
 {

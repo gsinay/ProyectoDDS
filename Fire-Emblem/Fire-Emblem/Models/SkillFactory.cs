@@ -4,9 +4,11 @@ using Fire_Emblem.Models.Names;
 using Fire_Emblem.Models.Skills;
 using Fire_Emblem.Models.Skills.Conditions;
 using Fire_Emblem.Models.Skills.Conditions.BaseStatsConditions;
+using Fire_Emblem.Models.Skills.Conditions.TeamConditions;
 using Fire_Emblem.Models.Skills.Conditions.WithBonusesConditions;
 using Fire_Emblem.Models.Skills.Effects.BaseStatEffects;
 using Fire_Emblem.Models.Skills.Effects.CombatModifierEffects;
+using Fire_Emblem.Models.Skills.Effects.NegatorsAndGuarantorsEffects;
 using Fire_Emblem.Skills.Conditions;
 
 namespace Fire_Emblem.SkillsManager;
@@ -47,7 +49,7 @@ public class SkillFactory
             "ignis" => new BasicSkill(
                 "Ignis",
                 "Otorga Atk+50% al primer ataque de la unidad.",
-                new FirstAttackCondition(),
+                new AlwaysTrueCondition(),
                 new EffectsList([new FirstAttackBoostEffect(50)])
             ),
             "perceptive" => new BasicSkill(
@@ -948,7 +950,7 @@ public class SkillFactory
                 "del ataque del rival.",
                 new SkillList([
                     new BasicSkill(new AlwaysTrueCondition(), new EffectsList([new StatPenaltyOpponentEffect(StatName.Spd, 4)])),
-                    new SecondDegreeSkill(new AlwaysTrueCondition(), new EffectsList([new RivalAtkFlatAttackBoostEffect(0.15)]))
+                    new SecondDegreeSkill(new AlwaysTrueCondition(), new EffectsList([new FlatAttackIncrementGivenAtkEffect(0.15)]))
                 ])
                 ),
             "laguz friend" => new BasicSkill(
@@ -1177,7 +1179,17 @@ public class SkillFactory
                         new FlatAttackIncrementEffect(3)
                     ])
                 ),
-            //TODO: AGREGAR SKILL FLARE
+            "flare" => new BasicSkill(
+            "Flare",
+            "Si la unidad usa magia, inflige Res-20 % en el rival (considere esto como un Penalty y" +
+            " Res como el valor base) y la unidad recupera el 50 % del daño realizado por ataque.",
+            new UsingSpecificWeaponConditionSelf(WeaponName.Magic),
+            new EffectsList(
+                [
+                    new HealingAfterAttackEffect(0.5),
+                    new StatPenaltyPercentageOpponentEffect(StatName.Res, 0.2)
+                ])),
+            
             "fury" => new BasicSkill(
                 "Fury",
                 "Otorga Atk/Spd/Def/Res+4. Después del combate, inflige 8 de daño en la unidad.",
@@ -1188,7 +1200,7 @@ public class SkillFactory
                         new StatBoostEffect(StatName.Def, 4),
                         new StatBoostEffect(StatName.Res, 4),
                         new StatBoostEffect(StatName.Spd, 4),
-                        new AfterCombatHpReductionEffect(8)
+                        new AfterCombatHpChangeEffect(-8)
                     ])),
             "mystic boost" => new BasicSkill(
                 "Mystic Boost",
@@ -1197,9 +1209,709 @@ public class SkillFactory
                 new EffectsList(
                     [
                         new StatPenaltyOpponentEffect(StatName.Atk, 5),
-                        new AfterCombatHpIncrementEffect(10)
+                        new AfterCombatHpChangeEffect(10)
                     ]
                     )),
+            "atk/spd push" => new BasicSkill(
+                "Atk/Spd Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Atk/Spd+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Atk, 7),
+                        new StatBoostEffect(StatName.Spd, 7),
+                        new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                    ])
+                ),
+            "atk/def push" => new BasicSkill(
+                "Atk/def Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Atk/def+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Atk, 7),
+                    new StatBoostEffect(StatName.Def, 7),
+                    new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                ])
+            ),
+            "atk/res push" => new BasicSkill(
+                "Atk/Res Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Atk/Res+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Atk, 7),
+                    new StatBoostEffect(StatName.Res, 7),
+                    new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                ])
+            ),
+            "spd/def push" => new BasicSkill(
+                "Spd/Def Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Spd/Def+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Spd, 7),
+                    new StatBoostEffect(StatName.Def, 7),
+                    new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                ])
+            ),
+            "spd/res push" => new BasicSkill(
+                "Spd/Res Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Spd/Res+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Spd, 7),
+                    new StatBoostEffect(StatName.Res, 7),
+                    new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                ])
+            ),
+            "def/res push" => new BasicSkill(
+                "Def/Res Push",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, otorga Def/Res+7, " +
+                "pero si la unidad atacó, inflige 5 de daño en la unidad después del combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                [
+                    new StatBoostEffect(StatName.Def, 7),
+                    new StatBoostEffect(StatName.Res, 7),
+                    new AfterCombatHpChangeEffectIfAttacked(-5)
+                    
+                ])
+            ),
+            "true dragon wall" => new CompositeSkill(
+               "True Dragon Wall",
+               new SkillList(
+                   [
+                       new SecondDegreeSkill(
+                           new StatComparisonCondition(StatName.Res, StatName.Res),
+                           new EffectsList([
+                               new ScalingStatDamageReductionEffect(StatName.Res, 
+                                   60, 6, "first"),
+                               new ScalingStatDamageReductionEffect(StatName.Res, 40, 4, 
+                                   "followup")
+                           ])
+                           ),
+                       new BasicSkill(
+                           new AlliedUsingWeaponCondition(WeaponName.Magic),
+                           new EffectsList([
+                               new AfterCombatHpChangeEffect(7)
+                           ]))
+                   ]
+                   )),
+            "scendscale" => new SecondDegreeSkill(
+                "Scendscale",
+                "Hace Daño extra por ataque = 25 % del Atk de la unidad, pero después del combate, " +
+                "si la unidad atacó, inflige 7 de daño a la unidad.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new FlatAttackIncrementGivenAtkEffect(0.25, false),
+                        new AfterCombatHpChangeEffectIfAttacked(-7)
+                    ])
+                ),
+            "mastermind" => new CompositeSkill(
+                "Mastermind",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new HighHpFlatCondition(2),
+                        new EffectsList(
+                            [
+                                new BeforeCombatHpReductionEffect(1)
+                            ])),
+                    new BasicSkill(
+                        new InitiatingCombatConditionSelf(),
+                        new EffectsList(
+                            [
+                                new StatBoostEffect(StatName.Atk, 9),
+                                new StatBoostEffect(StatName.Spd, 9)
+                            ])),
+                    new SecondDegreeSkill(
+                        new InitiatingCombatConditionSelf(),
+                        new EffectsList(
+                        [
+                           new MastermindEffect()
+                        ]))
+                ])),
+            "bewitching tome" => new CompositeSkill(
+                "Bewitching Tome",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new OrCondition(new ConditionsList(
+                                [
+                                    new InitiatingCombatConditionSelf(),
+                                    new UsingSpecificWeaponConditionRival(WeaponName.Magic),
+                                    new UsingSpecificWeaponConditionRival(WeaponName.Bow)
+                                ])),
+                            new EffectsList(
+                                [
+                                    new StatBoostEffect(StatName.Atk, 5),
+                                    new StatBoostEffect(StatName.Def, 5),
+                                    new StatBoostEffect(StatName.Res, 5),
+                                    new StatBoostEffect(StatName.Spd, 5),
+                                    new StatBoostPercentEffect(StatName.Atk, StatName.Spd, 0.2),
+                                    new StatBoostPercentEffect(StatName.Spd, StatName.Spd, 0.2),
+                                    new FirstAttackPercentReductionEffect(0.3),
+                                    new AfterCombatHpChangeEffect(7)
+
+                                ])
+                            ),
+                        new SecondDegreeSkill(
+                            new OrCondition(new ConditionsList(
+                            [
+                                new InitiatingCombatConditionSelf(),
+                                new UsingSpecificWeaponConditionRival(WeaponName.Magic),
+                                new UsingSpecificWeaponConditionRival(WeaponName.Bow)
+                            ])),
+                            new EffectsList(
+                            [
+                                new BewitchingTomeEffect()
+
+                            ])
+                        ),
+                    ])),
+            "quick riposte" => new BasicSkill(
+                "Quick Riposte",
+                "Si el HP de la unidad está al 60% o más y el rival inicia el combate, " +
+                "la unidad realizará un follow-up garantizado.",
+                new AndCondition(
+                    new ConditionsList(
+                        [
+                            new HighHpPercentCondition(0.6),
+                            new InitiatingCombatConditionRival()
+                        ])),
+                new EffectsList([new GuaranteedFollowupEffect()])
+                ),
+            "follow-up ring" => new BasicSkill(
+                "Follow-up Ring",
+                "Al inicio del combate, si el HP de la unidad >= 50 %, " +
+                "la unidad puede realizar un Follow-Up garantizado.",
+                new HighHpPercentCondition(0.5),
+                new EffectsList([new GuaranteedFollowupEffect()])
+                ),
+            "wary fighter" => new BasicSkill(
+                "Wary Fighter",
+                "Si el HP de la unidad \u2265 50 % al inicio del combate," +
+                " la unidad y el rival no pueden realizar un Follow-Up.",
+                new HighHpPercentCondition(0.5),
+                new EffectsList(
+                    [
+                        new NegateFollowupRivalEffect(),
+                        new NegateFollowupSelfEffect()
+                    ])
+                ),
+            "piercing tribute" => new BasicSkill(
+                "Piercing Tribute",
+                "Neutraliza los efectos que garantizan los Follow-Up del rival.",
+                new AlwaysTrueCondition(),
+                new EffectsList([new NegateGuaranteedFollowupEffect()])
+                ),
+            "mjölnir" => new BasicSkill(
+                "Mjölnir",
+                "Neutraliza los efectos que previenen los Follow-Up de la unidad.",
+                new AlwaysTrueCondition(),
+                new EffectsList([new NegateNegatedFollowupEffect()])
+                ),
+            "brash assault" => new BasicSkill(
+                "Brash Assault",
+                "Si el HP de la unidad \u2264 99 % y la unidad inicia el combate, o si el HP del rival = 100 % y" +
+                " la unidad inicia el combate, inflige Def/Res-4 en el rival, reduce el daño del primer ataque del " +
+                "rival en un 30 %, la unidad realiza un Follow-Up garantizado y hace daño extra en el siguiente ataque" +
+                " de la unidad = 30 % del daño del primer ataque del rival antes de la reducción. Reinicia al final del" +
+                " combate.\n",
+                new OrCondition( new ConditionsList( 
+                    [
+                        new AndCondition( new ConditionsList(
+                            [
+                                new LowHpCondition(0.99),
+                                new InitiatingCombatConditionSelf()
+                            ])),
+                        new AndCondition( new ConditionsList(
+                            [
+                                new HighHpConditionRival(1.00),
+                                new InitiatingCombatConditionSelf()
+                            ]))
+                    ])),
+                new EffectsList(
+                    [
+                        new StatPenaltyOpponentEffect(StatName.Def, 4),
+                        new StatPenaltyOpponentEffect(StatName.Res, 4),
+                        new BrashAssaultEffect(),
+                        new FirstAttackPercentReductionEffect(0.3),
+                        new GuaranteedFollowupEffect(),
+                    ])
+            ),
+            "melee breaker" => new BasicSkill(
+                "Melee Breaker",
+                "Si el HP de la unidad está al 50 % o más al inicio del combate contra un rival que usa " +
+                "espada, lanza o hacha, la unidad hace un follow-up garantizado " +
+                "y el rival no puede realizar un follow-up.",
+                new AndCondition( new ConditionsList(
+                [
+                    new HighHpPercentCondition(0.5),
+                    new OrCondition(
+                        new ConditionsList(
+                            [
+                                new UsingSpecificWeaponConditionRival(WeaponName.Sword),
+                                new UsingSpecificWeaponConditionRival(WeaponName.Lance),
+                                new UsingSpecificWeaponConditionRival(WeaponName.Axe)
+                            ]))
+                ])),
+                new EffectsList(
+                    [
+                        new GuaranteedFollowupEffect(),
+                        new NegateFollowupRivalEffect()
+                    ])
+                ),
+            "range breaker" => new BasicSkill(
+                "Range Breaker",
+                "Si el HP de la unidad está al 50 % o más al inicio del combate contra un rival que usa magia" +
+                " o arco, la unidad hace un follow-up garantizado y el rival no puede realizar un follow-up",
+                new AndCondition( new ConditionsList(
+                [
+                    new HighHpPercentCondition(0.5),
+                    new OrCondition(
+                        new ConditionsList(
+                        [
+                            new UsingSpecificWeaponConditionRival(WeaponName.Magic),
+                            new UsingSpecificWeaponConditionRival(WeaponName.Bow),
+                        ]))
+                ])),
+                new EffectsList(
+                [
+                    new GuaranteedFollowupEffect(),
+                    new NegateFollowupRivalEffect()
+                ])
+            ),
+            "pegasus flight" => new CompositeSkill(
+                "Pegasus Flight",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new AlwaysTrueCondition(),
+                            new EffectsList(
+                                [
+                                    new StatPenaltyOpponentEffect(StatName.Atk, 4),
+                                    new StatPenaltyOpponentEffect(StatName.Def, 4)
+                                ])
+                            ),
+                         new BasicSkill(
+                            new BaseStatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                            new EffectsList(
+                                [
+                                    new ScalingPenaltyEffect(StatName.Res, StatName.Atk, 
+                                        0.8, 8),
+                                    new ScalingPenaltyEffect(StatName.Res, StatName.Def, 
+                                        0.8, 8)
+                                ])
+                            ),
+                        new SecondDegreeSkill(
+                            new AndCondition(new ConditionsList(
+                            [
+                                new BaseStatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                                new DualStatComparisonCondition(StatName.Spd, StatName.Res, 
+                                    StatName.Spd, StatName.Res, 0)
+
+                            ])),
+                            new EffectsList(
+                            [
+                                new NegateFollowupRivalEffect()
+                            ]))
+                    ])),
+            "wyvern flight" => new CompositeSkill(
+                "Wyvern Flight",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new AlwaysTrueCondition(),
+                        new EffectsList(
+                        [
+                            new StatPenaltyOpponentEffect(StatName.Atk, 4),
+                            new StatPenaltyOpponentEffect(StatName.Def, 4)
+                        ])
+                    ),
+                    new BasicSkill(
+                        new BaseStatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                        new EffectsList(
+                        [
+                            new ScalingPenaltyEffect(StatName.Def, StatName.Atk, 
+                                0.8, 8),
+                            new ScalingPenaltyEffect(StatName.Def, StatName.Def, 
+                                0.8, 8)
+                        ])
+                    ),
+                    new SecondDegreeSkill(
+                        new AndCondition(new ConditionsList(
+                        [
+                            new BaseStatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                            new DualStatComparisonCondition(StatName.Spd, StatName.Def, 
+                                StatName.Spd, StatName.Def, 0)
+
+                        ])),
+                        new EffectsList(
+                        [
+                            new NegateFollowupRivalEffect()
+                        ]))
+                ])),
+            "null follow-up" => new BasicSkill(
+                "Null Follow-Up",
+                "Neutraliza los efectos que previenen los Follow-Up de la unidad y " +
+                "que garantizan los Follow-Up del rival.",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                    [
+                        new NegateNegatedFollowupEffect(),
+                        new NegateGuaranteedFollowupEffect()
+                    ])),
+            "sturdy impact" => new BasicSkill(
+                "Sturdy Impact",
+                "Si la unidad inicia el combate, otorga Atk+6, Def+10 y el rival no puede realizar un Follow-up.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Atk, 6),
+                        new StatBoostEffect(StatName.Def, 10),
+                        new NegateFollowupRivalEffect()
+                        
+                    ]
+                )),
+            "mirror impact" => new BasicSkill(
+                "Mirror Impact",
+                "Si la unidad inicia el combate, otorga Atk+6, Res+10 y el rival no puede realizar un Follow-up.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Atk, 6),
+                        new StatBoostEffect(StatName.Res, 10),
+                        new NegateFollowupRivalEffect()
+                        
+                    ]
+                )),
+            "swift impact" => new BasicSkill(
+                "Swift Impact",
+                "Si la unidad inicia el combate, otorga Spd+6, Res+10 y el rival no puede realizar un Follow-up.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Spd, 6),
+                        new StatBoostEffect(StatName.Res, 10),
+                        new NegateFollowupRivalEffect()
+                        
+                    ]
+                )),
+            "steady impact" => new BasicSkill(
+                "Steady Impact",
+                "Si la unidad inicia el combate, otorga Spd+6, Def+10 y el rival no puede realizar un Follow-up.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                        new StatBoostEffect(StatName.Spd, 6),
+                        new StatBoostEffect(StatName.Def, 10),
+                        new NegateFollowupRivalEffect()
+                        
+                    ]
+                )),
+            "slick fighter" => new BasicSkill(
+                "Slick Fighter",
+                "Si el HP de la unidad \u2265 25 % y el rival inicia el combate, neutraliza los penalties " +
+                "de la unidad durante el combate y la unidad realiza un Follow-Up garantizado.",
+                new AndCondition(new ConditionsList(
+                [
+                    new HighHpPercentCondition(0.25),
+                    new InitiatingCombatConditionRival()
+                        
+                ])),
+                new EffectsList(
+                [
+                    new StatPenaltyNeutralizeEffect(StatName.Atk),
+                    new StatPenaltyNeutralizeEffect(StatName.Def),
+                    new StatPenaltyNeutralizeEffect(StatName.Spd),
+                    new StatPenaltyNeutralizeEffect(StatName.Res),
+                    new GuaranteedFollowupEffect()
+                ])
+            ),
+            "wily fighter" => new BasicSkill(
+                "Willy Fighter",
+                "Si el HP de la unidad \u2265 25 % y el rival inicia el combate, neutraliza los bonus del " +
+                "rival durante el combate y la unidad realiza un Follow-Up garantizado.",
+                new AndCondition(new ConditionsList(
+                [
+                    new HighHpPercentCondition(0.25),
+                    new InitiatingCombatConditionRival()
+                        
+                ])),
+                new EffectsList(
+                [
+                    new StatBonusNeutralizeEffect(StatName.Atk),
+                    new StatBonusNeutralizeEffect(StatName.Def),
+                    new StatBonusNeutralizeEffect(StatName.Spd),
+                    new StatBonusNeutralizeEffect(StatName.Res),
+                    new GuaranteedFollowupEffect()
+                ])
+            ),
+            "savvy fighter" => new CompositeSkill(
+                "Savvy Fighter",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new InitiatingCombatConditionRival(),
+                            new EffectsList(
+                                [
+                                    new NegateGuaranteedFollowupEffect(),
+                                    new NegateNegatedFollowupEffect()
+                                ])),
+                        new SecondDegreeSkill(
+                            new AndCondition(new ConditionsList(
+                                [
+                                    new InitiatingCombatConditionRival(),
+                                    new StatComparisonCondition(StatName.Spd, StatName.Spd, -4)
+                                ])),
+                            new EffectsList(
+                            [
+                                new FirstAttackPercentReductionEffect(0.3)]))
+                    ])
+            ),
+            "flow force" => new BasicSkill(
+                "Flow Force",
+                "Si la unidad inicia el combate, neutraliza los efectos que previenen los Follow-Up de la unidad " +
+                "y neutraliza los penaltis a Atk/Spd de la unidad durante el combate.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                        new NegateNegatedFollowupEffect(),
+                        new StatPenaltyNeutralizeEffect(StatName.Atk),
+                        new StatPenaltyNeutralizeEffect(StatName.Spd)
+                    ])),
+            "flow refresh" => new BasicSkill(
+                "Flow Refresh",
+                "Si la unidad inicia el combate, neutraliza los efectos que previenen los Follow-Up de la unidad " +
+                "y restaura 10 HP a la unidad después del combate.",
+                new InitiatingCombatConditionSelf(),
+                new EffectsList(
+                    [
+                      new NegateNegatedFollowupEffect(),
+                      new AfterCombatHpChangeEffect(10)
+                    ])),
+            "flow flight" => new CompositeSkill(
+                "Flow Flight",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new InitiatingCombatConditionSelf(),
+                            new EffectsList(
+                                [
+                                    new NegateNegatedFollowupEffect()
+                                ])
+                            ),
+                        new SecondDegreeSkill(
+                            new AndCondition(new ConditionsList(
+                                [
+                                    new StatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                                    new InitiatingCombatConditionSelf()
+                                ])),
+                            new EffectsList(
+                            [
+                                new FlowEffect(StatName.Def, 0.7)
+                            ])
+                        ),
+                        
+                    ])),
+            "flow feather" => new CompositeSkill(
+                "Flow Feather",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new InitiatingCombatConditionSelf(),
+                        new EffectsList(
+                        [
+                            new NegateNegatedFollowupEffect()
+                        ])
+                    ),
+                    new SecondDegreeSkill(
+                        new AndCondition(new ConditionsList(
+                        [
+                            new StatComparisonCondition(StatName.Spd, StatName.Spd, -10),
+                            new InitiatingCombatConditionSelf()
+                        ])),
+                        new EffectsList(
+                        [
+                            new FlowEffect(StatName.Res, 0.7)
+                        ])
+                    ),
+                        
+                ])),
+            "binding shield" => new CompositeSkill(
+                "Binding Shield",
+                new SkillList(
+                    [
+                        new SecondDegreeSkill(
+                            new StatComparisonCondition(StatName.Spd, StatName.Spd, 5),
+                            new EffectsList(
+                                [
+                                    new GuaranteedFollowupEffect(),
+                                    new NegateFollowupRivalEffect()
+                                ])
+                            ),
+                        new BasicSkill(
+                            new  AndCondition(new ConditionsList(
+                                [
+                                    new StatComparisonCondition(StatName.Spd, StatName.Spd, 5),
+                                    new InitiatingCombatConditionSelf(),
+                                ])),
+                            new EffectsList(
+                            [
+                                new NegateCounterAttackEffect()
+                            ])
+                        ),
+                    ])),
+            "sun-twin wing" => new BasicSkill(
+                "Sun-Twin Wing",
+                "Al inicio del combate, si el HP de la unidad \u2265 25 %, inflige Spd/Def-5 en el rival " +
+                "y también neutraliza los efectos que garantizan los Follow-Up del rival y los efectos que " +
+                "previenen los Follow-Up de la unidad durante el combate.",
+                new HighHpPercentCondition(0.25),
+                new EffectsList(
+                    [
+                        new StatPenaltyOpponentEffect(StatName.Spd, 5),
+                        new StatPenaltyOpponentEffect(StatName.Def, 5),
+                        new NegateGuaranteedFollowupEffect(),
+                        new NegateNegatedFollowupEffect()
+                    ])),
+            "dragon's ire" => new CompositeSkill(
+                "Dragon's Ire",
+                new SkillList(
+                    [
+                        new BasicSkill(
+                            new HighHpPercentCondition(0.25),
+                            new EffectsList(
+                                [
+                                    new StatPenaltyOpponentEffect(StatName.Atk, 4),
+                                    new StatPenaltyOpponentEffect(StatName.Res, 4),
+                                    new GuaranteedFollowupEffect()
+                                ])),
+                        new BasicSkill(
+                            new AndCondition(new ConditionsList(
+                                [
+                                    new HighHpPercentCondition(0.25),
+                                    new InitiatingCombatConditionRival()
+                                ])),
+                            new EffectsList(
+                            [
+                                new NegateNegatedFollowupEffect()
+                            ]))
+                        
+                    ])),
+            "black eagle rule" => new CompositeSkill(
+                "Black Eagle Rule",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new HighHpPercentCondition(0.25),
+                        new EffectsList(
+                        [
+                            new GuaranteedFollowupEffect()
+                        ])),
+                    new BasicSkill(
+                        new AndCondition(new ConditionsList(
+                        [
+                            new HighHpPercentCondition(0.25),
+                            new InitiatingCombatConditionRival()
+                        ])),
+                        new EffectsList(
+                        [
+                            new FollowupAttackPercentReductionEffect(0.8)
+                        ]))
+                ])),
+            "blue lion rule" => new CompositeSkill(
+                "Blue Lion Rule",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new InitiatingCombatConditionRival(),
+                        new EffectsList(
+                        [
+                            new GuaranteedFollowupEffect()
+                        ])),
+                    new SecondDegreeSkill(
+                        new StatComparisonCondition(StatName.Def, StatName.Def),
+                        new EffectsList(
+                        [
+                            new ScalingStatDamageReductionEffect(StatName.Def, 40)
+                        ]))
+                ])),
+            "new divinity" => new CompositeSkill(
+                "New Divinity",
+                new SkillList(
+                [
+                    new BasicSkill(
+                        new HighHpPercentCondition(0.25),
+                        new EffectsList(
+                        [
+                            new StatPenaltyOpponentEffect(StatName.Atk, 5),
+                            new StatPenaltyOpponentEffect(StatName.Res, 5)
+                        ])),
+                    new BasicSkill(
+                        new HighHpPercentCondition(0.40),
+                        new EffectsList(
+                        [
+                            new NegateFollowupRivalEffect()
+                        ])),
+                    new SecondDegreeSkill(
+                        new AndCondition(new ConditionsList(
+                        [
+                            new HighHpPercentCondition(0.25),
+                            new StatComparisonCondition(StatName.Res, StatName.Res)
+                        ])),
+                        new EffectsList(
+                        [
+                            new ScalingStatDamageReductionEffect(StatName.Res, 40)
+                        ]))
+                ])),
+            "phys. null follow" => new BasicSkill(
+                "Phys. Null Follow",
+                "Inflige Spd/Def-4 en el rival, neutraliza los efectos que previenen los Follow-Up de la unidad " +
+                "y que garantizan los Follow-Up del rival, y reduce el porcentaje de las habilidades que “reducen el" +
+                " daño en un X %” en un 50 %",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                [
+                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                    new StatPenaltyOpponentEffect(StatName.Def, 4),
+                    new NegateNegatedFollowupEffect(),
+                    new NegateGuaranteedFollowupEffect(),
+                    new PercentDamageReductionPercentReductionEffect(0.5)
+                    
+                ])),
+            "mag. null follow" => new BasicSkill(
+                "Mag. Null Follow",
+                "Inflige Spd/Res-4 en el rival, neutraliza los efectos que previenen los Follow-Up de la unidad " +
+                "y que garantizan los Follow-Up del rival, y reduce el porcentaje de las habilidades que “reducen el" +
+                " daño en un X %” en un 50 %",
+                new AlwaysTrueCondition(),
+                new EffectsList(
+                [
+                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                    new StatPenaltyOpponentEffect(StatName.Res, 4),
+                    new NegateNegatedFollowupEffect(),
+                    new NegateGuaranteedFollowupEffect(),
+                    new PercentDamageReductionPercentReductionEffect(0.5)
+                    
+                ])),
+
+         
             _ => throw new SkillNotImplementedException()
         };
     }

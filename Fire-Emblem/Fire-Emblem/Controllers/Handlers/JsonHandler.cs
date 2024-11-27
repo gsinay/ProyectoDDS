@@ -2,6 +2,7 @@ using System.Text.Json;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Exceptions;
 using Fire_Emblem.Models.Names;
+using Fire_Emblem.Models.Player;
 
 namespace Fire_Emblem.Controllers;
 

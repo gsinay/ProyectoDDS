@@ -7,5 +7,5 @@ public enum WeaponName
     Sword,
     Lance,
     Magic,
-    None
+    None,
 }

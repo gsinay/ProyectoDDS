@@ -16,9 +16,40 @@ namespace Fire_Emblem.Views.CombatLoggers
             _view = view;
         }
 
-        public string GetUserInput()
+        public int GetUserFileInput()
         {
-            return _view.ReadLine();
+            return Convert.ToInt32(_view.ReadLine());
+        }
+       
+        public void AskForFile()
+        {
+            _view.WriteLine("Elige un archivo para cargar los equipos");
+        }
+
+        public void PrintNoFileFound()
+        {
+            _view.WriteLine("No se encontraron archivos de equipos.");
+        }
+
+        public void PrintFileNumberAndName(int number, string fileName)
+        {
+            _view.WriteLine($"{number}: {fileName}");
+        }
+
+        public void PrintGameNotValid()
+        {
+            _view.WriteLine("Archivo de equipos no válido");
+        }
+
+        public string[] GetTeamsFromUser()
+        {
+            return [];
+            
+        }
+        
+        public void UpdateTeams(Player attacker, Player defender)
+        {
+           
         }
 
         public void AnnounceTurn(int turn, string characterName, int playerNumber)
@@ -37,6 +68,11 @@ namespace Fire_Emblem.Views.CombatLoggers
             {
                 _view.WriteLine($"{i}: {player.GetCharacterName(i)}");
             }
+        }
+        
+        public int GetUserCharacterInput(Player player)
+        {
+            return Convert.ToInt32(_view.ReadLine());
         }
 
         public void PrintAdvantage(Character attacker, Character defender, double wtb)
@@ -91,8 +127,22 @@ namespace Fire_Emblem.Views.CombatLoggers
         {
             PrintCharacterPreCombatLog(attacker);
             PrintCharacterPreCombatLog(defender);
+            PrintCharacterChangesBeforeCombat(attacker);
+            PrintCharacterChangesBeforeCombat(defender);
         }
-
+        
+        private void PrintCharacterChangesBeforeCombat(Character character)
+        {
+            PrintHpLostBeforeCombat(character);
+        }
+        
+        private void PrintHpLostBeforeCombat(Character character)
+        {
+            int hpLost = character.CharacterModifiers.CombatModifiers.BeforeCombatHpReduction;
+            if (hpLost > 0)
+                _view.WriteLine($"{character.Info.Name} recibe {hpLost} de daño antes de iniciar el combate " +
+                                $"y queda con {character.GetHp} HP");
+        }
         private void PrintCharacterPreCombatLog(Character character)
         {
             PrintCombatBonuses(character);
@@ -110,10 +160,13 @@ namespace Fire_Emblem.Views.CombatLoggers
             PrintFirstAttackPercentualDamageReduction(character);
             PrintFollowupAttackPercentualDamageReduction(character);
             PrintCombatFlatDamageReduction(character);
-            PrintHasNegatedCounterAttack(character);
             PrintHealingForEachAttack(character);
-            PrintHpLostBeforeCombat(character);
-            
+            PrintHasNegatedCounterAttack(character);
+            PrintGuaranteedFollowupCounter(character);
+            PrintNegatedFollowupCounter(character);
+            PrintImmuneToFollowupNegation(character);
+            PrintImmuneToFollowupGuaranteed(character);
+
         }
         
 
@@ -267,18 +320,6 @@ namespace Fire_Emblem.Views.CombatLoggers
                 _view.WriteLine($"{character.Info.Name} recibirá -{amount} daño en cada ataque");
             }
         }
-        
-        private void PrintHasNegatedCounterAttack(Character character)
-        {
-            if (character.CharacterModifiers.CombatModifiers.CounterAttackIsNegated)
-            {
-                if (character.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation)
-                    _view.WriteLine($"{character.Info.Name} neutraliza los efectos que previenen sus contraataques");
-                else
-                    _view.WriteLine($"{character.Info.Name} no podrá contraatacar");
-            }
-        }
-        
         private void PrintHealingForEachAttack(Character character)
         {
             if (character.CharacterModifiers.CombatModifiers.PercentHealingReceivedAfterAttack > 0)
@@ -289,14 +330,52 @@ namespace Fire_Emblem.Views.CombatLoggers
                                 $"realizado en cada ataque");
             }
         }
-        
-        private void PrintHpLostBeforeCombat(Character character)
+        private void PrintHasNegatedCounterAttack(Character character)
         {
-            int hpLost = character.CharacterModifiers.CombatModifiers.BeforeCombatHpReduction;
-            if (hpLost > 0)
-                _view.WriteLine($"{character.Info.Name} recibe {hpLost} de daño antes de iniciar el combate " +
-                                $"y queda con {character.GetHp} HP");
+            if (character.CharacterModifiers.CombatModifiers.CounterAttackIsNegated)
+            {
+                if (character.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation)
+                    _view.WriteLine($"{character.Info.Name} neutraliza los efectos que previenen sus contraataques");
+                else
+                    _view.WriteLine($"{character.Info.Name} no podrá contraatacar");
+            }
         }
+
+
+        private void PrintGuaranteedFollowupCounter(Character character)
+        {
+            int count = character.CharacterModifiers.CombatModifiers.GuaranteedFollowupCounter;
+            if (count > 0)
+                _view.WriteLine($"{character.Info.Name} tiene {count} efecto(s) " +
+                                $"que garantiza(n) su follow up activo(s)");
+        }
+        
+        private void PrintNegatedFollowupCounter(Character character)
+        {
+            int count = character.CharacterModifiers.CombatModifiers.NegatedFollowupCounter;
+            if (count > 0)
+                _view.WriteLine($"{character.Info.Name} tiene {count} efecto(s)" +
+                                $" que neutraliza(n) su follow up activo(s)");
+        }
+
+        private void PrintImmuneToFollowupNegation(Character character)
+        {
+            if (character.CharacterModifiers.CombatModifiers.NegateNegatedFollowup)
+            {
+                _view.WriteLine($"{character.Info.Name} es inmune a los efectos que neutralizan su follow up");
+            }
+        }
+        
+        private void PrintImmuneToFollowupGuaranteed(Character character)
+        {
+            if (character.CharacterModifiers.CombatModifiers.NegatedGuaranteedFollowup)
+            {
+                _view.WriteLine($"{character.Info.Name} es inmune a los efectos que garantizan su follow up");
+            }
+        }
+
+        
+        
 
         public void PrintPostCombatLog(Character attacker, Character defender)
         {
@@ -310,9 +389,9 @@ namespace Fire_Emblem.Views.CombatLoggers
         }
         private void PrintHpChangedAfterCombat(Character character)
         {
-            int hpChange = character.CharacterModifiers.CombatModifiers.AfterCombatHpChange;
+            int hpChange = character.GetHpChange();
             if (hpChange < 0 && character.IsAlive())
-                _view.WriteLine($"{character.Info.Name} recibe {hpChange} de daño despues del combate");
+                _view.WriteLine($"{character.Info.Name} recibe {-hpChange} de daño despues del combate");
             else if(hpChange > 0 && character.IsAlive())
                 _view.WriteLine($"{character.Info.Name} recupera {hpChange} HP despues del combate");
         }

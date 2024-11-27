@@ -16,7 +16,7 @@ public class ScalingStatBoostEffect : IEffect
 
     public void Apply(Character character, Character opponent)
     {
-        int baseStatValue = GetBaseStat(character); 
+        int baseStatValue = character.Stats.BaseStats.GetBaseStat(_stat);
         int additionalBonus = baseStatValue / _scalingFactor; 
 
         if (additionalBonus > 0)
@@ -24,18 +24,7 @@ public class ScalingStatBoostEffect : IEffect
             ApplyBonus(character, additionalBonus);
         }
     }
-
-    private int GetBaseStat(Character character)
-    {
-        return _stat switch
-        {
-            StatName.Atk => character.Stats.BaseStats.GetBaseStat(StatName.Atk),
-           StatName.Spd => character.Stats.BaseStats.GetBaseStat(StatName.Spd),
-            StatName.Def => character.Stats.BaseStats.GetBaseStat(StatName.Def),
-            StatName.Res => character.Stats.BaseStats.GetBaseStat(StatName.Res),
-            _ => 0
-        };
-    }
+    
 
     private void ApplyBonus(Character character, int amount)
     {

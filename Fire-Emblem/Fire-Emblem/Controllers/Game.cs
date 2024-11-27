@@ -1,45 +1,42 @@
 ﻿using Fire_Emblem_View;
+using Fire_Emblem.Controllers.Setup;
 using Fire_Emblem.Models.Exceptions;
 using Fire_Emblem.Views.CombatLoggers;
-using Fire_Emblem.Views.MainMenu;
-
 namespace Fire_Emblem.Controllers;
 
 public class Game
 {
-    private readonly View _view;
-    private readonly Fire_Emblem.Setup _setup;
-    private readonly SpanishLogger _logger;
-    private readonly SpanishMenu _menuView;
-
+    private readonly BaseSetup _setup;
+    private readonly ILogger _logger;
     
-
     public Game(View view, string teamsFolder)
     {
-        _view = view;
-        _menuView = new SpanishMenu(_view);
-        _logger = new SpanishLogger(_view);
-        _setup = new Fire_Emblem.Setup(_menuView, teamsFolder);
-
+        _logger = new SpanishLogger(view);
+        _setup = new CLISetup(_logger, teamsFolder);
+    }
+    
+    public Game(WindowView windowLogger) {
+        _logger = windowLogger; 
+        _setup = new GUISetup(_logger);
     }
     public void Play()
     {
         try
         {
             _setup.SetUpGame(); 
-            if (_setup.AreTeamsValid()) 
+            if (_setup.AreTeamsValid())
             {
                 Combat.Combat combat = new Combat.Combat(_logger, _setup);
                 combat.StartCombat();
             }
             else
             {
-                _menuView.PrintFileNotValid();
+                _logger.PrintGameNotValid();
             }
         }
-        catch (SkillNotImplementedException ex) 
+        catch (SkillNotImplementedException) 
         {
-            _menuView.PrintFileNotValid();
+            _logger.PrintGameNotValid();
         }
        
     }

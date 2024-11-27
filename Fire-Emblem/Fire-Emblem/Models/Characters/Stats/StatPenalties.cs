@@ -29,7 +29,8 @@ public class StatPenalties
 
     public void AddPenalty(StatName stat, int amount)
     {
-        _penalties[stat] += amount;
+        if (amount > 0)
+            _penalties[stat] += amount;
     }
 
     public void Reset()

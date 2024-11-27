@@ -1,3 +1,4 @@
+using Fire_Emblem_GUI;
 using Fire_Emblem.Models.Characters.Calculators;
 using Fire_Emblem.Models.Characters.Modifiers;
 using Fire_Emblem.Models.Characters.Stats;
@@ -18,6 +19,8 @@ namespace Fire_Emblem.Models.Characters
         private readonly CharacterCombatModifiers _characterModifiers = new();
         private readonly DamageCalculator _damageCalculator = new();
         private readonly StatCalculator _statCalculator = new();
+        public Player.Player OwnerPlayer { get; private set; } 
+
         
         private  bool _hasInitiatedCombat;
         private  bool _hasDefendedCombat;
@@ -29,6 +32,11 @@ namespace Fire_Emblem.Models.Characters
             _stats = new CharacterStats(hp, atk, spd, def, res);
 
         }
+        
+        public void AssignOwner(Player.Player player)
+        {
+            OwnerPlayer = player;
+        }
         public bool IsInitiatingCombat
         {
             get => _combatState.IsInitiatingCombat;
@@ -36,6 +44,7 @@ namespace Fire_Emblem.Models.Characters
         }
 
         public Character? MostRecentOpponent => _combatState.MostRecentOpponent;
+        
         public bool HasAttacked => _combatState.HasAttacked;
 
         public bool HasInitiatedCombat => _hasInitiatedCombat;
@@ -59,15 +68,15 @@ namespace Fire_Emblem.Models.Characters
             _skills.AddSkill(skill);
         }
 
-        
+        public int GetGeneralStat(StatName stat) => _statCalculator.GetGeneralEffectiveStat(this, stat);
         public int GeneralEffectiveAtk => _statCalculator.GetGeneralEffectiveStat(this, StatName.Atk);
         public int GeneralEffectiveSpd => _statCalculator.GetGeneralEffectiveStat(this, StatName.Spd);
         public int GeneralEffectiveDef => _statCalculator.GetGeneralEffectiveStat(this, StatName.Def);
         public int GeneralEffectiveRes => _statCalculator.GetGeneralEffectiveStat(this, StatName.Res);
-        public int EffectiveAtk => _statCalculator.GetEffectiveStat(this, StatName.Atk);
-        public int EffectiveSpd => _statCalculator.GetEffectiveStat(this, StatName.Spd);
-        public int EffectiveDef => _statCalculator.GetEffectiveStat(this, StatName.Def);
-        public int EffectiveRes => _statCalculator.GetEffectiveStat(this, StatName.Res);
+        public int EffectiveAtk(string attackType) => _statCalculator.GetEffectiveStat(this, StatName.Atk, attackType);
+        public int EffectiveSpd(string attackType) => _statCalculator.GetEffectiveStat(this, StatName.Spd, attackType);
+        public int EffectiveDef(string attackType) => _statCalculator.GetEffectiveStat(this, StatName.Def, attackType);
+        public int EffectiveRes(string attackType) => _statCalculator.GetEffectiveStat(this, StatName.Res, attackType);
         
         public void IncreaseMaxHp(int amount)
         {
@@ -81,10 +90,12 @@ namespace Fire_Emblem.Models.Characters
         public void ChangeHp()
         {
             int hpDelta = _characterModifiers.CombatModifiers.AfterCombatHpChange;
+            if (HasAttacked)
+                hpDelta += _characterModifiers.CombatModifiers.AfterCombatIfAttackedHpChange;
             if (hpDelta > 0)
                 Heal(hpDelta);
             else
-                TakeDamage(-hpDelta);
+                TakeOutsideAttackDamage(-hpDelta);
         }
         
         public void Heal(int healingAmount)
@@ -151,14 +162,21 @@ namespace Fire_Emblem.Models.Characters
             _stats.ResetFirstAttackModifiers();
         }
 
-        public int GetAttackWithReduction(int originalAttack)
+        public int GetAttackWithReduction(int originalAttack, string attackType)
         {
-            return _damageCalculator.GetAttackWithReduction(this, originalAttack);
+            return _damageCalculator.GetAttackWithReduction(this, originalAttack, attackType);
         }
-        public  int GetAttackModifier()
+        public  int GetAttackModifier(string attackType)
         {
-            return _damageCalculator.GetAttackModifier(this);
+            return _damageCalculator.GetAttackModifier(this, attackType);
         }
-        
+
+        public int GetHpChange()
+        {
+            int delta = CharacterModifiers.CombatModifiers.AfterCombatHpChange;
+            if (HasAttacked)
+                delta += _characterModifiers.CombatModifiers.AfterCombatIfAttackedHpChange;
+            return delta;
+        }
     }
 }

@@ -10,17 +10,18 @@ public class Combat
     
     private readonly Player[] _players;
     private int _turn;
-    private readonly SpanishLogger _combatLog;
+    private readonly ILogger _combatLog;
     private readonly WtbHandler _wtbHandler = new();
     private readonly SkillsHandler _skillsHandler = new();
     private readonly PlayerHandler _playerHandler = new();
     private readonly AttackHandler _attackHandler = new();
 
-    public Combat(SpanishLogger logger, Fire_Emblem.Setup setup)
+    public Combat(ILogger logger, Fire_Emblem.BaseSetup setup)
     {
         _players = setup.Players;
         _turn = 0;
         _combatLog = logger;
+        
 
     }
     
@@ -48,6 +49,8 @@ public class Combat
     }
     private void ExecuteTurn(Player attacker, Player defender)
     {
+        _combatLog.UpdateTeams(attacker, defender);
+        
         Character attackChar = SelectAndPrepareCharacter(attacker);
         Character defendingChar = SelectAndPrepareCharacter(defender);
 
@@ -66,8 +69,7 @@ public class Combat
         PrintAfterCombatLogs(attackChar, defendingChar);
         
         PostAttackCharacterUpdate(attackChar, defendingChar);
-       
-    
+        
         CheckAndRemoveDeadCharacter(attacker, attackChar);
         CheckAndRemoveDeadCharacter(defender, defendingChar);
     }
@@ -75,8 +77,8 @@ public class Combat
     private Character SelectAndPrepareCharacter(Player player)
     {
         Character character = SelectCharacter(player);
-        character.IsInitiatingCombat = (_turn % 2 + 1 == player.PlayerNumber);
         character.MarkAsNotAttacked();
+        character.IsInitiatingCombat = (_turn % 2 + 1 == player.PlayerNumber);
         return character;
 
     }
@@ -85,8 +87,7 @@ public class Combat
     {
         _combatLog.AnnounceOption(player.PlayerNumber);
         _combatLog.ListCharacters(player);
-        string selectionInput = _combatLog.GetUserInput();
-        int selection = int.Parse(selectionInput); 
+        int selection = _combatLog.GetUserCharacterInput(player);
         return player.Characters[selection];
     }
 
@@ -123,11 +124,9 @@ public class Combat
     {
         attacker.MarkHasInitiatedCombat();
         defender.MarkHasDefendedCombat();
-        Attack(attacker, defender);
+        Attack(attacker, defender, "first");
         if (!_attackHandler.CanCounterAttack(attacker, defender)) return;
-        Attack(defender, attacker);
-        attacker.MarkAsAttacked();
-        defender.MarkAsAttacked();
+        Attack(defender, attacker, "first");
         attacker.ResetFirstAttackModifiers();
         defender.ResetFirstAttackModifiers();
        
@@ -135,19 +134,20 @@ public class Combat
 
    
 
-    private void Attack(Character attacker, Character defender)
+    private void Attack(Character attacker, Character defender, string attackType)
     {
-        int damageDealt = CalculateAndApplyDamage(attacker, defender); 
+        int damageDealt = CalculateDamage(attacker, defender, attackType); 
         _combatLog.DisplayAttackResult(attacker, defender, damageDealt); 
+        attacker.MarkAsAttacked();
+        defender.TakeDamage(damageDealt);
 
         HandleAttackHealingAndLog(attacker, damageDealt); 
     }
     
-    private int CalculateAndApplyDamage(Character attacker, Character defender)
+    private int CalculateDamage(Character attacker, Character defender, string attackType)
     {
-        int rawDamage = _attackHandler.CalculateRawInflictedDamage(attacker, defender);
-        int realDamage = _attackHandler.CalculateReducedDamage(rawDamage, defender);
-        defender.TakeDamage(realDamage);
+        int rawDamage = _attackHandler.CalculateRawInflictedDamage(attacker, defender, attackType);
+        int realDamage = _attackHandler.CalculateReducedDamage(rawDamage, defender, attackType);
         return realDamage;
     }
     
@@ -163,12 +163,12 @@ public class Combat
         bool noFollowUps = true;
         if (CanFollowUp(attacker, defender))
         {
-            Attack(attacker, defender);
+            Attack(attacker, defender, "followup");
             noFollowUps = false;
         }
         if (CanFollowUp(defender, attacker))
         {
-            Attack(defender, attacker);
+            Attack(defender, attacker, "followup");
             noFollowUps = false;
         }
         if (noFollowUps)
@@ -177,9 +177,25 @@ public class Combat
 
     private bool CanFollowUp(Character attacker, Character defender)
     {
-        return attacker.EffectiveSpd - defender.EffectiveSpd >= 5 && 
-               (!attacker.CharacterModifiers.CombatModifiers.CounterAttackIsNegated || 
-                attacker.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation);
+        if(!attacker.IsAlive() || !defender.IsAlive()) return false;
+        bool hasNegatedCounterAttack = attacker.CharacterModifiers.CombatModifiers.CounterAttackIsNegated && 
+                                       !attacker.CharacterModifiers.CombatModifiers.NegatedCounterAttackNegation;
+        if (hasNegatedCounterAttack) return false;
+        
+        int FollowUpCount = CountFollowUpPossibilities(attacker, defender);
+        return FollowUpCount > 0;
+    }
+
+    private int CountFollowUpPossibilities(Character attacker, Character defender)
+    {
+        int count = 0;
+        if (attacker.EffectiveSpd("followup") - defender.EffectiveSpd("followup") >= 5)
+            count++;
+        if(!attacker.CharacterModifiers.CombatModifiers.NegatedGuaranteedFollowup)
+            count += attacker.CharacterModifiers.CombatModifiers.GuaranteedFollowupCounter;
+        if(!attacker.CharacterModifiers.CombatModifiers.NegateNegatedFollowup)
+            count -= attacker.CharacterModifiers.CombatModifiers.NegatedFollowupCounter;
+        return count;
     }
 
     private void ApplyAfterCombatEffects(Character attacker, Character defender)

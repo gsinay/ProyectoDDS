@@ -24,9 +24,9 @@ public class DivineRecreationEffect : IEffect
         
 
 
-        int rawInflictedDamage = _attackHandler.CalculateRawInflictedDamage(opponent, character);
+        int rawInflictedDamage = _attackHandler.CalculateRawInflictedDamage(opponent, character, "first");
         
-        int reducedInfilictedDamage = _attackHandler.CalculateReducedDamage(rawInflictedDamage, character);
+        int reducedInfilictedDamage = _attackHandler.CalculateReducedDamage(rawInflictedDamage, character, "first");
         
         int protectionAgainstAttacker = rawInflictedDamage - reducedInfilictedDamage;
         

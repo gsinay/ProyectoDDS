@@ -7,15 +7,15 @@ public class AttackHandler
 {
     private readonly WtbHandler _wtbHandler = new();  
     
-    public int CalculateRawInflictedDamage(Character attacker, Character defender)
+    public int CalculateRawInflictedDamage(Character attacker, Character defender, string attackType)
     {
         double wtb = _wtbHandler.GetTriangleAdvantage(attacker, defender);
 
-        int attackPower = (int)(attacker.EffectiveAtk * wtb);
+        int attackPower = (int)(attacker.EffectiveAtk(attackType) * wtb);
         
-        int effectiveDefense = GetEffectiveDefense(attacker, defender);
+        int effectiveDefense = GetEffectiveDefense(attacker, defender, attackType);
         
-        var atkModifierExtra = attacker.GetAttackModifier();
+        var atkModifierExtra = attacker.GetAttackModifier(attackType);
         
 
         
@@ -24,17 +24,18 @@ public class AttackHandler
         return rawDamage;
     }
     
-    private int GetEffectiveDefense(Character attacker, Character defender)
+    private int GetEffectiveDefense(Character attacker, Character defender, string attackType)
     {
         if (attacker.Info.Weapon == WeaponName.Magic)
         {
-            return defender.EffectiveRes;
+            return defender.EffectiveRes(attackType);
         }
        
-        return defender.EffectiveDef;
+        return defender.EffectiveDef(attackType);
     }
 
-    public int CalculateReducedDamage(int rawDamage, Character defender) => defender.GetAttackWithReduction(rawDamage);
+    public int CalculateReducedDamage(int rawDamage, Character defender, string attackType) =>
+        defender.GetAttackWithReduction(rawDamage, attackType);
 
 
     public bool CanCounterAttack(Character attacker, Character defender)
