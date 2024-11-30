@@ -1,3 +1,4 @@
+using Fire_Emblem.Controllers.Combat;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Player;
 
@@ -25,10 +26,10 @@ namespace Fire_Emblem.Views.CombatLoggers
         
         void PrintPreCombatLog(Character attacker, Character defender);
 
-        void DisplayAttackResult(Character attacker, Character defender, int damage);
+        void DisplayAttackResult(CombatContext context);
         void AnnounceNoFollowUps(Character attacker, Character defender);
         void AnnounceResults(Character attacker, Character defender);
-        void AnnounceWinner(int playerNumber);
+        void AnnounceWinner(Player player);
         void PrintPostCombatLog(Character attacker, Character defender);
         void DisplayHealingResult(Character character, int healingAmount);
     }

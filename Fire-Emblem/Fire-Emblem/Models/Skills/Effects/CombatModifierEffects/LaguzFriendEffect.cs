@@ -7,7 +7,7 @@ public class LaguzFriendEffect : IEffect
 {
     public void Apply(Character character, Character opponent)
     {
-        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(0.5);
+        character.CharacterModifiers.CombatModifiers.DamageReduction.AddEffect(0.5);
         character.Stats.NeutralizedBonuses.Neutralize(StatName.Def);
         character.Stats.NeutralizedBonuses.Neutralize(StatName.Res);
         int penaltyDef = character.Stats.BaseStats.GetBaseStat(StatName.Def) / 2;

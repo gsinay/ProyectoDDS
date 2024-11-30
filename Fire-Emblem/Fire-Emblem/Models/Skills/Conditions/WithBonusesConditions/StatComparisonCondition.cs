@@ -22,7 +22,6 @@ public class StatComparisonCondition : ICondition
     {
         int characterGeneralStat = character.GetGeneralStat(_characterStat);
         int rivalGeneralStat = opponent.GetGeneralStat(_rivalStat);
- 
         return characterGeneralStat >= rivalGeneralStat + _threshold;
     }
     

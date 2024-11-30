@@ -27,9 +27,9 @@ using Fire_Emblem.Views.CombatLoggers;
  */
 bool useGui = true; // permite cambiar entre el modo consola y el modo GUI
 if (useGui) {
-    WindowView view = new WindowView();
-    Game game = new Game(view);
-    view.Start(game.Play); }
+    WindowLogger logger = new WindowLogger();
+    Game game = new Game(logger);
+    logger.Start(game.Play); }
 else
 {
     string testFolder = SelectTestFolder(); string test = SelectTest(testFolder);

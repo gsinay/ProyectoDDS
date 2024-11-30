@@ -32,11 +32,11 @@ public class ScalingStatDamageReductionEffect : IEffect
         reductionPercentage = Math.Max(0, reductionPercentage);
         
         if (_attackType == "combat")
-            character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(reductionPercentage);
+            character.CharacterModifiers.CombatModifiers.DamageReduction.AddEffect(reductionPercentage);
         else if (_attackType == "first")
-            character.CharacterModifiers.FirstAttackModifiers.ReducePercentageOfDamageReceived(reductionPercentage);
+            character.CharacterModifiers.FirstAttackModifiers.DamageReduction.AddEffect(reductionPercentage);
         else
-            character.CharacterModifiers.FollowupModifiers.ReducePercentageOfDamageReceived(reductionPercentage);
+            character.CharacterModifiers.FollowupModifiers.DamageReduction.AddEffect(reductionPercentage);
 
 
 

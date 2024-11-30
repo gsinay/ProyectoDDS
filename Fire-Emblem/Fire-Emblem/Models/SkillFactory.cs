@@ -1425,7 +1425,7 @@ public class SkillFactory
                 new AlwaysTrueCondition(),
                 new EffectsList([new NegateNegatedFollowupEffect()])
                 ),
-            "brash assault" => new BasicSkill(
+            "brash assault" => new SecondDegreeSkill(
                 "Brash Assault",
                 "Si el HP de la unidad \u2264 99 % y la unidad inicia el combate, o si el HP del rival = 100 % y" +
                 " la unidad inicia el combate, inflige Def/Res-4 en el rival, reduce el daño del primer ataque del " +
@@ -1765,7 +1765,7 @@ public class SkillFactory
                                     new NegateFollowupRivalEffect()
                                 ])
                             ),
-                        new BasicSkill(
+                        new SecondDegreeSkill(
                             new  AndCondition(new ConditionsList(
                                 [
                                     new StatComparisonCondition(StatName.Spd, StatName.Spd, 5),
@@ -1880,35 +1880,37 @@ public class SkillFactory
                             new ScalingStatDamageReductionEffect(StatName.Res, 40)
                         ]))
                 ])),
-            "phys. null follow" => new BasicSkill(
+            "phys. null follow" => new CompositeSkill(
                 "Phys. Null Follow",
-                "Inflige Spd/Def-4 en el rival, neutraliza los efectos que previenen los Follow-Up de la unidad " +
-                "y que garantizan los Follow-Up del rival, y reduce el porcentaje de las habilidades que “reducen el" +
-                " daño en un X %” en un 50 %",
-                new AlwaysTrueCondition(),
-                new EffectsList(
-                [
-                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
-                    new StatPenaltyOpponentEffect(StatName.Def, 4),
-                    new NegateNegatedFollowupEffect(),
-                    new NegateGuaranteedFollowupEffect(),
-                    new PercentDamageReductionPercentReductionEffect(0.5)
-                    
+                new SkillList(
+                    [
+                        new BasicSkill(new AlwaysTrueCondition(), new EffectsList(
+                            [
+                                new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                                new StatPenaltyOpponentEffect(StatName.Def, 4),
+                                new NegateNegatedFollowupEffect(),
+                                new NegateGuaranteedFollowupEffect(),
+                            ])),
+                        new ThirdDegreeSkill(new AlwaysTrueCondition(), new EffectsList(
+                            [
+                                new PercentDamageReductionPercentReductionEffect(0.5)
+                            ]))
                 ])),
-            "mag. null follow" => new BasicSkill(
-                "Mag. Null Follow",
-                "Inflige Spd/Res-4 en el rival, neutraliza los efectos que previenen los Follow-Up de la unidad " +
-                "y que garantizan los Follow-Up del rival, y reduce el porcentaje de las habilidades que “reducen el" +
-                " daño en un X %” en un 50 %",
-                new AlwaysTrueCondition(),
-                new EffectsList(
+            "mag. null follow" => new CompositeSkill(
+                "Mag.. Null Follow",
+                new SkillList(
                 [
-                    new StatPenaltyOpponentEffect(StatName.Spd, 4),
-                    new StatPenaltyOpponentEffect(StatName.Res, 4),
-                    new NegateNegatedFollowupEffect(),
-                    new NegateGuaranteedFollowupEffect(),
-                    new PercentDamageReductionPercentReductionEffect(0.5)
-                    
+                    new BasicSkill(new AlwaysTrueCondition(), new EffectsList(
+                    [
+                        new StatPenaltyOpponentEffect(StatName.Spd, 4),
+                        new StatPenaltyOpponentEffect(StatName.Res, 4),
+                        new NegateNegatedFollowupEffect(),
+                        new NegateGuaranteedFollowupEffect(),
+                    ])),
+                    new ThirdDegreeSkill(new AlwaysTrueCondition(), new EffectsList(
+                    [
+                        new PercentDamageReductionPercentReductionEffect(0.5)
+                    ]))
                 ])),
 
          

@@ -9,4 +9,5 @@ public class MyUnit(string name, string weapon, int hp, int atk, int spd, int de
     public string Weapon { get; } = weapon; public int Hp { get; set; } = hp;
     public int Atk { get; } = atk; public int Spd { get; } = spd;
     public int Def { get; } = def; public int Res { get; } = res;
-    public string[] Skills { get; } = []; }
+    public string[] Skills { get; } = []; 
+}

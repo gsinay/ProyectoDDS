@@ -39,6 +39,12 @@ public class Player
             _characters.Remove(character);
     }
     
+    public int GetCharacterIndex(Character character)
+    {
+        return _characters.IndexOf(character);
+    }
+
+    
     public MyUnit GetMyUnit(int characterIndex)
     {
         Character character = Characters[characterIndex];

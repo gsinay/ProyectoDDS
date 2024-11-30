@@ -14,7 +14,7 @@ public class FollowupAttackPercentReductionEffect : IEffect
     public void Apply(Character character, Character opponent)
     {
        
-        character.CharacterModifiers.FollowupModifiers.ReducePercentageOfDamageReceived(_reductionPercent);
+        character.CharacterModifiers.FollowupModifiers.DamageReduction.AddEffect(_reductionPercent);
     }
     
 }

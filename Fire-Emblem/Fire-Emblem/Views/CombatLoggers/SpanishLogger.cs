@@ -1,4 +1,5 @@
 using Fire_Emblem_View;
+using Fire_Emblem.Controllers.Combat;
 using Fire_Emblem.Models.Characters;
 using Fire_Emblem.Models.Player;
 using Fire_Emblem.Models.Names;
@@ -91,9 +92,10 @@ namespace Fire_Emblem.Views.CombatLoggers
             }
         }
 
-        public void DisplayAttackResult(Character attacker, Character defender, int damage)
+        public void DisplayAttackResult(CombatContext context)
         {
-            _view.WriteLine($"{attacker.Info.Name} ataca a {defender.Info.Name} con {damage} de daño");
+            _view.WriteLine($"{context.AttackChar.Info.Name} ataca a " +
+                            $"{context.DefendingChar.Info.Name} con {context.DamageDealt} de daño");
         }
         
         public void DisplayHealingResult(Character attacker, int healing)
@@ -118,9 +120,9 @@ namespace Fire_Emblem.Views.CombatLoggers
             _view.WriteLine($"{attacker.Info.Name} ({attacker.GetHp}) : {defender.Info.Name} ({defender.GetHp})");
         }
 
-        public void AnnounceWinner(int playerNumber)
+        public void AnnounceWinner(Player player)
         {
-            _view.WriteLine($"Player {playerNumber} ganó");
+            _view.WriteLine($"Player {player.PlayerNumber} ganó");
         }
 
         public void PrintPreCombatLog(Character attacker, Character defender)

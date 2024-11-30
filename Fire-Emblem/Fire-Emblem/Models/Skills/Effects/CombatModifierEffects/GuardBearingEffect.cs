@@ -7,7 +7,7 @@ public class GuardBearingEffect : IEffect
     public void Apply(Character character, Character opponent)
     {
         double reduction = GetDamageReduction(character);
-        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(reduction);
+        character.CharacterModifiers.CombatModifiers.DamageReduction.AddEffect(reduction);
     }
     private double GetDamageReduction(Character character)
     {

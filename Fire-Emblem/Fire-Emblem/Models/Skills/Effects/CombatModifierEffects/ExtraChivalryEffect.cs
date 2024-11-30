@@ -14,6 +14,6 @@ public class ExtraChivalryEffect : IEffect
     {
         double percentOfRemainingHp = opponent.GetRemainingHpPercentage() * _percentMultiplier;
         double truncatedValue = Math.Truncate(percentOfRemainingHp * 100) / 100;
-        character.CharacterModifiers.CombatModifiers.ReducePercentageOfDamageReceived(truncatedValue);
+        character.CharacterModifiers.CombatModifiers.DamageReduction.AddEffect(truncatedValue);
     }
 }

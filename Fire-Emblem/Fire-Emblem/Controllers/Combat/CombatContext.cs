@@ -9,14 +9,19 @@ public class CombatContext
     public Player Defender { get; }
     public Character AttackChar { get; }
     public Character DefendingChar { get; }
-    public int DamageDealt { get; }
+    public int DamageDealt { get; set; }
+    public int AttackCharIndex { get; } 
+    public int DefendingCharIndex { get; } 
 
-    public CombatContext(Player attacker, Player defender, Character attackChar, Character defendingChar, int damageDealt)
+    public CombatContext(Player attacker, Player defender, Character attackChar, Character defendingChar)
     {
         Attacker = attacker;
         Defender = defender;
         AttackChar = attackChar;
         DefendingChar = defendingChar;
-        DamageDealt = damageDealt;
+        AttackCharIndex = attacker.GetCharacterIndex(attackChar);
+        DefendingCharIndex = defender.GetCharacterIndex(defendingChar);
+
+        DamageDealt = 0; 
     }
 }

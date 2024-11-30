@@ -15,7 +15,7 @@ public class Game
         _setup = new CLISetup(_logger, teamsFolder);
     }
     
-    public Game(WindowView windowLogger) {
+    public Game(WindowLogger windowLogger) {
         _logger = windowLogger; 
         _setup = new GUISetup(_logger);
     }

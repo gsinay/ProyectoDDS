@@ -32,6 +32,19 @@ namespace Fire_Emblem.Models.Collections
         {
              _characters.Remove(character);
         }
+        
+        public int IndexOf(Character character)
+        {
+
+            for (int i = 0; i < _characters.Count; i++)
+            {
+                if (_characters[i] == character)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         public IReadOnlyList<Character> GetCharacters()
         {
